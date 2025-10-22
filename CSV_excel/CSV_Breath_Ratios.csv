@@ -1,0 +1,48 @@
+Harmonic Pair:,Archetype,Component,Face Energy,Final BR*,Status/Interpretation,,,"Purpose: To provide a high-level, strategic view of the six primary energetic balances within the organization. This sheet calculates the ""inhale/exhale"" dynamic for each of the six geometrically-defined harmonic pairs. It is the ""macro-scope"" that reveals the fundamental state of equilibrium or disequilibrium in the system, complementing the tactical, neighbor-to-neighbor view of the EDGE_TENSION_MAP."
+Pair 1 (F1 ? F11),Resource Flow Axis,Projection (Exhale): Funding Pursuit,0.000,#DIV/0!,#DIV/0!,,,
+,,Reception (Inhale): Capital Held,0.182,,,,,"Pair 1 (Face 1 ? 11): Financial Capital ? Funding Pipeline (The ""Resource Flow"" Axis)"
+,,,,,,,,"Pair 2 (Face 2 ? 7): Intellectual Capital ? Brand & Reputation (The ""Substance & Story"" Axis)"
+Pair 2 (F2 ? F7),Substance & Story Axis,Projection (Exhale): Brand Projected,0.000,#DIV/0!,#DIV/0!,,,"Pair 3 (Face 3 ? 8): Human Capital ? Core Operations (The ""Being & Doing"" Axis)"
+,,Reception (Inhale): IP Embodied,0.200,,,,,"Pair 4 (Face 4 ? 9): Structural Capital ? Regenerative Flow (The ""Form & Integrity"" Axis)"
+,,,,,,,,"Pair 5 (Face 5 ? 10): Market Resonance ? Foundational Values (The ""Perception & Truth"" Axis)"
+Pair 3 (F3 ? F8),Being & Doing Axis,Projection (Exhale): Operations Done,1.000,0.4,Strong Exhale,,,"Pair 6 (Face 6 ? 12): Community & Partners ? Risk & Resilience (The ""Network & Fortress"" Axis)"
+,,Reception (Inhale): Human Energy,0.430,,,,,
+,,,,,,,,A score above 1.2 suggests the organization is receiving/holding more energy than it is projecting/acting. A score below 0.8 suggests it is projecting/acting with more energy than it is receiving/regenerating.
+Pair 4 (F4 ? F9),Form & Integrity Axis,Projection (Exhale): Structures Built,0.100,4.0,Abundant Inhale,,,
+,,Reception (Inhale): Regen. Flow,0.400,,,,,Axis 1: The Resource Axis
+,,,,,,,,Projection Face: F11: Funding Pipeline (The act of seeking resources)
+Pair 5 (F5 ? F10),Perception & Truth Axis,Projection (Exhale): Market Resonance,0.400,0.9,Balanced,,,Reception Face: F1: Financial Capital (The resources held)
+,,Reception (Inhale): Values Embodied,0.350,,,,,Axis 2: The Embodiment Axis
+,,,,,,,,Projection Face: F7: Brand & Reputation (The story told)
+Pair 6 (F6 ? F12),Network & Fortress Axis,Projection (Exhale): Community Built,0.250,0.0,Strong Exhale,,,Reception Face: F2: Intellectual Capital (The substance built)
+,,Reception (Inhale): Resilience Held,0.000,,,,,Axis 3: The Action Axis
+,,,,,,,,Projection Face: F8: Core Operations (The work done)
+,,,,,,,,Reception Face: F3: Human Capital (The energy to do work)
+,,,,,,,,Axis 4: The Integrity Axis
+,,,,,,,,Projection Face: F4: Structural Capital (The rules made)
+,,,,,,,,Reception Face: F9: Regenerative Flow (The living integrity)
+,,,,,,,,Axis 5: The Truth Axis
+,,,,,,,,Projection Face: F5: Market Resonance (The truth perceived by others)
+,,,,,,,,Reception Face: F10: Foundational Values (The truth held within)
+,,,,,,,,Axis 6: The Resilience Axis
+,,,,,,,,Projection Face: F6: Community & Partners (The external network)
+,,,,,,,,Reception Face: F12: Risk & Resilience (The internal fortress)
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+,,,,,,,,
+PROJECTION (Numerator),KPI_ID,Value,Weight,,,,,
+Capital Deployed,F02,_value_,0.6,Computed P:,,,,
+Operating Expenditure,F03,_value_,0.4,0,,,,
+,,,,,,,,
+RECEPTION (Denominator),KPI_ID,Value,Weight,,,,,
+Regenerative Yield (Euros) eq,E02,_value_,0.7,Computed R:,,,,
+Circularity Savings ,E03,_value_,0.3,0,,,,
+,,,,,,,,
+Shadow Penalty (S),Manual Input or Formula,,0.1,Breath Ratio (BR),,,,
+,,,,,,,,
+Harmonic Pair:,Governance - People,,,Final BR*,,,,

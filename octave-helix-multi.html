@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧬 Complete Octave Helix - 12 Faces & 6 Breath Axes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 100%);
+            color: #00ffcc;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .ui-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            background: rgba(10, 10, 26, 0.85);
+            border-bottom: 2px solid #00ffcc;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ffcc;
+            text-shadow: 0 0 15px #00ffcc;
+        }
+
+        .subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .btn {
+            background: rgba(0, 255, 204, 0.1);
+            color: #00ffcc;
+            border: 1px solid #00ffcc;
+            padding: 8px 15px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #00ffcc;
+            color: #0a0a1a;
+            box-shadow: 0 0 15px #00ffcc;
+        }
+
+        .btn.active {
+            background: #00ffcc;
+            color: #0a0a1a;
+        }
+
+        .legend {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: rgba(10, 10, 26, 0.9);
+            border: 2px solid #00ffcc;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 280px;
+            font-size: 11px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .legend-title {
+            color: #00ffcc;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 13px;
+            text-shadow: 0 0 10px #00ffcc;
+        }
+
+        .legend-section {
+            margin-bottom: 15px;
+        }
+
+        .legend-section-title {
+            color: #00ffcc;
+            font-size: 11px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+            padding-bottom: 3px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            gap: 8px;
+            font-size: 10px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 12px;
+            border-radius: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(10, 10, 26, 0.9);
+            border: 2px solid #00ffcc;
+            border-radius: 8px;
+            padding: 15px;
+            max-width: 300px;
+            font-size: 11px;
+        }
+
+        .info-title {
+            color: #00ffcc;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .info-label {
+            color: #888;
+        }
+
+        .info-value {
+            color: #00ffcc;
+            font-weight: bold;
+        }
+
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ffcc;
+            font-size: 18px;
+            text-align: center;
+            text-shadow: 0 0 20px #00ffcc;
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 255, 204, 0.3);
+            border-top: 3px solid #00ffcc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 255, 204, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 204, 0.5);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+
+    <div class="ui-container">
+        <div class="header">
+            <div>
+                <div class="title">🧬 Complete Octave Helix Spiral</div>
+                <div class="subtitle">12 Domains × 12 Octaves (7 Real + 5 Future) × 6 Breath Axes | Golden Ratio Expansion: φ = 1.618...</div>
+            </div>
+            <div class="controls">
+                <button class="btn" id="resetCameraBtn">Reset Camera</button>
+                <button class="btn active" id="pausePlayBtn">Pause</button>
+                <button class="btn" id="toggleLabelsBtn">Hide Labels</button>
+                <button class="btn" id="toggleBreathBtn">Toggle Breath Axes</button>
+                <button class="btn" id="toggleHelicesBtn">Toggle All Helices</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-title">🧬 Visualization Guide</div>
+        
+        <div class="legend-section">
+            <div class="legend-section-title">12 Face Helices</div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #9b59b6;"></div>
+                <span>F1: Financial Capital</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e74c3c;"></div>
+                <span>F2: Intellectual Capital</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f39c12;"></div>
+                <span>F3: Human Capital</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #2ecc71;"></div>
+                <span>F4: Structural Capital</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #3498db;"></div>
+                <span>F5: Market Resonance</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #1abc9c;"></div>
+                <span>F6: Community & Partners</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e67e22;"></div>
+                <span>F7: Brand & Reputation</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #95a5a6;"></div>
+                <span>F8: Core Operations</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #27ae60;"></div>
+                <span>F9: Regenerative Flow</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #c0392b;"></div>
+                <span>F10: Foundational Values</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #8e44ad;"></div>
+                <span>F11: Funding Pipeline</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #34495e;"></div>
+                <span>F12: Risk & Resilience</span>
+            </div>
+        </div>
+
+        <div class="legend-section">
+            <div class="legend-section-title">6 Breath Axes (Harmonic Pairs)</div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ff6b6b;"></div>
+                <span>Axis 1: Resource Flow (F1↔F11)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #4ecdc4;"></div>
+                <span>Axis 2: Substance & Story (F2↔F7)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #ffe66d;"></div>
+                <span>Axis 3: Being & Doing (F3↔F8)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #95e1d3;"></div>
+                <span>Axis 4: Form & Integrity (F4↔F9)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f38181;"></div>
+                <span>Axis 5: Perception & Truth (F5↔F10)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #aa96da;"></div>
+                <span>Axis 6: Network & Fortress (F6↔F12)</span>
+            </div>
+        </div>
+
+        <div class="legend-section">
+            <div class="legend-section-title">Octave Progression</div>
+            <div style="font-size: 9px; line-height: 1.5; color: #aaa;">
+                <strong style="color: #00ffcc;">Real Octaves (Solid):</strong><br>
+                O1: Survival | O2: Structure<br>
+                O3: Relationships | O4: Creativity<br>
+                O5: Expression | O6: Vision<br>
+                O7: Radiance<br><br>
+                <strong style="color: #6666ff;">Future Octaves (Transparent):</strong><br>
+                O8: Transcendence | O9: Unity<br>
+                O10: Cosmic | O11: Divine | O12: ∞
+            </div>
+        </div>
+    </div>
+
+    <div class="info-panel">
+        <div class="info-title">📊 Spiral Stats</div>
+        <div class="info-item">
+            <span class="info-label">Domains (Faces):</span>
+            <span class="info-value" id="infoFaces">12</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Real Octaves:</span>
+            <span class="info-value" id="infoOctaves">7</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Future Octaves:</span>
+            <span class="info-value">5 (∞)</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Breath Axes:</span>
+            <span class="info-value" id="infoBreathAxes">6</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Real KPIs:</span>
+            <span class="info-value" id="infoTotalKPIs">504</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">φ (Golden Ratio):</span>
+            <span class="info-value">1.618...</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">FPS:</span>
+            <span class="info-value" id="infoFPS">—</span>
+        </div>
+        <div class="info-item">
+            <span class="info-label">Camera:</span>
+            <span class="info-value" id="infoCamera">—</span>
+        </div>
+    </div>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Loading Complete Organizational DNA...</div>
+    </div>
+
+<script src="https://unpkg.com/three@0.128.0/build/three.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:3001/api';
+
+        // Scene setup
+        const canvas = document.getElementById('canvas');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a1a);
+        scene.fog = new THREE.Fog(0x0a0a1a, 30, 80);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(25, 20, 25); // Further back to see the full expansion
+
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Enhanced lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        const pointLight1 = new THREE.PointLight(0x00ffcc, 0.8);
+        const pointLight2 = new THREE.PointLight(0xff00ff, 0.5);
+        const pointLight3 = new THREE.PointLight(0xffff00, 0.4);
+        pointLight1.position.set(15, 20, 15);
+        pointLight2.position.set(-15, 10, -15);
+        pointLight3.position.set(0, 30, 0);
+        scene.add(ambientLight, pointLight1, pointLight2, pointLight3);
+
+        // Controls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
+        controls.target.set(0, 9, 0); // Focus on middle of expanded helix
+
+        // State
+        let helixGroup = null;
+        let breathAxesGroup = null;
+        let allFacesData = [];
+        let animationRunning = true;
+        let showLabels = true;
+        let showBreathAxes = true;
+        let showHelices = true;
+
+        // Face colors (same as main visualization)
+        const FACE_COLORS = {
+            1: 0x9b59b6, 2: 0xe74c3c, 3: 0xf39c12, 4: 0x2ecc71,
+            5: 0x3498db, 6: 0x1abc9c, 7: 0xe67e22, 8: 0x95a5a6,
+            9: 0x27ae60, 10: 0xc0392b, 11: 0x8e44ad, 12: 0x34495e
+        };
+
+        // Breath axis colors
+        const BREATH_AXIS_COLORS = [
+            0xff6b6b, 0x4ecdc4, 0xffe66d, 0x95e1d3, 0xf38181, 0xaa96da
+        ];
+
+        // Breath axes configuration (harmonic pairs)
+        const BREATH_AXES = [
+            { id: 1, name: 'Resource Flow', f1: 1, f2: 11, color: BREATH_AXIS_COLORS[0] },
+            { id: 2, name: 'Substance & Story', f1: 2, f2: 7, color: BREATH_AXIS_COLORS[1] },
+            { id: 3, name: 'Being & Doing', f1: 3, f2: 8, color: BREATH_AXIS_COLORS[2] },
+            { id: 4, name: 'Form & Integrity', f1: 4, f2: 9, color: BREATH_AXIS_COLORS[3] },
+            { id: 5, name: 'Perception & Truth', f1: 5, f2: 10, color: BREATH_AXIS_COLORS[4] },
+            { id: 6, name: 'Network & Fortress', f1: 6, f2: 12, color: BREATH_AXIS_COLORS[5] }
+        ];
+
+        // Configuration
+        const CONFIG = {
+            helixRadius: 8,        // Base radius of the circle where helices are positioned
+            helixHeight: 18,       // Total height of spiral (increased for dramatic effect)
+            helixTurns: 3,         // Number of complete rotations (more turns for beauty)
+            tubeRadius: 0.2,       // Thickness of helix tubes
+            octaveHeight: 2,       // Height per octave
+            segments: 120,         // Smoothness of curves (more smooth)
+            goldenRatio: 1.618033988749895,  // φ (phi) - The Golden Ratio
+            fibonacciExpansion: true,        // Use Fibonacci spiral expansion
+            showBeyondO7: true,              // Show potential beyond 7th octave
+            maxOctaves: 12,                  // Maximum octaves (7 + 5 future for infinity)
+            expansionPower: 0.75,            // Power factor for dramatic expansion (higher = more dramatic)
+            baseRadiusStart: 0.3,            // Starting radius (very tight at O1)
+            opacityExponent: 1.5             // Opacity falloff curve (higher = more dramatic fade)
+        };
+
+        /**
+         * Calculate position for a face on the circle
+         */
+        function getFacePosition(faceId) {
+            const angle = ((faceId - 1) / 12) * Math.PI * 2;
+            return {
+                x: Math.cos(angle) * CONFIG.helixRadius,
+                z: Math.sin(angle) * CONFIG.helixRadius
+            };
+        }
+
+        /**
+         * Load all faces data
+         */
+        async function loadAllFaces() {
+            const promises = [];
+            for (let faceId = 1; faceId <= 12; faceId++) {
+                promises.push(fetch(`${API_BASE}/octave-helix/${faceId}`)
+                    .then(res => res.json())
+                    .then(data => data.success ? data.data : null)
+                );
+            }
+            
+            allFacesData = await Promise.all(promises);
+            console.log('✅ Loaded data for all 12 faces');
+        }
+
+        /**
+         * Calculate Fibonacci/Golden Ratio expansion factor for an octave
+         * Creates a dramatic nautilus shell / galaxy spiral effect
+         */
+        function getFibonacciRadius(octaveId) {
+            if (!CONFIG.fibonacciExpansion) return 0.8;
+            
+            // Start VERY small at O1, expand DRAMATICALLY by golden ratio
+            // Formula: r(n) = r₀ × φ^((n-1) × power)
+            // The power factor controls how aggressive the expansion is
+            const expansion = Math.pow(CONFIG.goldenRatio, (octaveId - 1) * CONFIG.expansionPower);
+            return CONFIG.baseRadiusStart * expansion;
+        }
+
+        /**
+         * Calculate opacity based on octave level and coherence
+         * Creates dramatic gradient: Material (O1) → Ethereal (O7) → Ghost (O8+)
+         */
+        function getOctaveOpacity(octaveId, coherence = 0.5) {
+            if (octaveId <= 7) {
+                // For real octaves: Exponential fade from solid to ethereal
+                // O1 = 100% solid (foundation must be dense)
+                // O7 = ~40-50% (radiance is lighter, more spiritual)
+                
+                // Base opacity decreases exponentially
+                const baseOpacity = Math.pow(1 - ((octaveId - 1) / 7), CONFIG.opacityExponent);
+                
+                // Blend with coherence: high coherence = more visible
+                // Formula: opacity = baseOpacity × (0.5 + 0.5 × coherence)
+                const coherenceBoost = 0.5 + (0.5 * coherence);
+                const finalOpacity = baseOpacity * coherenceBoost;
+                
+                // Ensure O1 is always very solid (min 0.85), higher octaves can fade more
+                const minOpacity = Math.max(0.3, 1 - (octaveId - 1) * 0.1);
+                
+                return Math.max(minOpacity, Math.min(1.0, finalOpacity));
+            } else {
+                // Beyond O7 - future potential (ghost spirals)
+                // Fade from 20% at O8 to 5% at O12
+                const beyondRange = CONFIG.maxOctaves - 7;
+                const beyondProgress = (octaveId - 7) / beyondRange;
+                const ghostOpacity = 0.25 * (1 - Math.pow(beyondProgress, 1.5));
+                
+                return Math.max(0.05, ghostOpacity); // Min 5% to still be visible
+            }
+        }
+
+        /**
+         * Create a helix curve for a single face with Fibonacci expansion
+         */
+        function createHelixCurve(faceId, ballHelix, currentOctave = 1) {
+            const facePos = getFacePosition(faceId);
+            const curves = []; // Array of curve segments (one per octave)
+            
+            if (!ballHelix || !ballHelix.points || ballHelix.points.length === 0) {
+                console.warn(`No helix data for face ${faceId}`);
+                return null;
+            }
+
+            const pointsPerOctave = Math.floor(ballHelix.points.length / 7);
+            
+            // Generate curve segments for each octave
+            for (let octaveId = 1; octaveId <= CONFIG.maxOctaves; octaveId++) {
+                const points = [];
+                const spiralRadius = getFibonacciRadius(octaveId);
+                
+                // Height range for this octave
+                // Extend height for future octaves to show infinite expansion
+                const heightMultiplier = octaveId <= 7 ? 1 : 1.2; // Future octaves get taller
+                const effectiveHeight = CONFIG.helixHeight * heightMultiplier;
+                const yStart = ((octaveId - 1) / 7) * effectiveHeight;
+                const yEnd = (octaveId / 7) * effectiveHeight;
+                
+                // Generate points for this octave segment
+                const segmentPoints = octaveId <= 7 ? pointsPerOctave : 20; // Fewer points for future octaves
+                
+                for (let i = 0; i <= segmentPoints; i++) {
+                    const t = i / segmentPoints;
+                    const globalT = ((octaveId - 1) + t) / 7; // Global position (0-1 for O1-O7)
+                    
+                    // Spiral angle
+                    const angle = 2 * Math.PI * CONFIG.helixTurns * globalT;
+                    
+                    // Height
+                    const y = yStart + (yEnd - yStart) * t;
+                    
+                    // Position with Fibonacci expansion
+                    const x = facePos.x + spiralRadius * Math.cos(angle);
+                    const z = facePos.z + spiralRadius * Math.sin(angle);
+                    
+                    points.push(new THREE.Vector3(x, y, z));
+                }
+                
+                if (points.length > 1) {
+                    const curve = new THREE.CatmullRomCurve3(points);
+                    
+                    // Get coherence for this octave (from helix data if available)
+                    let coherence = 0.5;
+                    if (octaveId <= 7 && ballHelix.coherenceData) {
+                        const octaveData = ballHelix.coherenceData.filter(d => d.octave === octaveId);
+                        if (octaveData.length > 0) {
+                            coherence = octaveData.reduce((sum, d) => sum + d.value, 0) / octaveData.length;
+                        }
+                    }
+                    
+                    curves.push({
+                        curve,
+                        octaveId,
+                        opacity: getOctaveOpacity(octaveId, coherence),
+                        spiralRadius,
+                        coherence
+                    });
+                }
+            }
+
+            return curves;
+        }
+
+        /**
+         * Render all face helices with Fibonacci expansion and opacity
+         */
+        function renderAllHelices() {
+            if (helixGroup) {
+                scene.remove(helixGroup);
+            }
+
+            helixGroup = new THREE.Group();
+
+            allFacesData.forEach((faceData, index) => {
+                if (!faceData) return;
+                
+                const faceId = index + 1;
+                const curveSegments = createHelixCurve(faceId, faceData.ballHelix, faceData.currentOctave);
+                
+                if (!curveSegments) return;
+
+                // Render each octave segment separately with its own opacity
+                curveSegments.forEach(segment => {
+                    const tubeGeometry = new THREE.TubeGeometry(
+                        segment.curve,
+                        Math.floor(CONFIG.segments / 7), // Segments per octave
+                        CONFIG.tubeRadius * (segment.octaveId <= 7 ? 1 : 0.7), // Thinner for future octaves
+                        8,
+                        false
+                    );
+
+                    const faceColor = FACE_COLORS[faceId] || 0xffffff;
+                    
+                    // Calculate emissive intensity - DRAMATIC gradient
+                    // O1 (Survival) = BLAZING bright (foundation is intense)
+                    // O7 (Radiance) = Glowing but softer
+                    // O8+ = Barely glowing (ghost light)
+                    let emissiveIntensity;
+                    if (segment.octaveId <= 7) {
+                        // Exponential decay from bright to soft
+                        const octaveProgress = (segment.octaveId - 1) / 6;
+                        const baseIntensity = 1.0 - (octaveProgress * 0.6); // 1.0 → 0.4
+                        emissiveIntensity = baseIntensity * (0.6 + segment.coherence * 0.4); // Boosted by coherence
+                    } else {
+                        // Ghost glow for future octaves
+                        emissiveIntensity = 0.05 + (segment.opacity * 0.2);
+                    }
+
+                    const material = new THREE.MeshPhongMaterial({
+                        color: faceColor,
+                        emissive: faceColor,
+                        emissiveIntensity: emissiveIntensity,
+                        transparent: true,
+                        opacity: segment.opacity,
+                        shininess: segment.octaveId <= 7 ? 120 : 40,
+                        side: THREE.DoubleSide
+                    });
+
+                    const tubeMesh = new THREE.Mesh(tubeGeometry, material);
+                    tubeMesh.userData = { 
+                        faceId, 
+                        faceName: faceData.faceName,
+                        octaveId: segment.octaveId,
+                        coherence: segment.coherence
+                    };
+                    helixGroup.add(tubeMesh);
+                });
+
+                // Add face label at the top of visible octaves
+                if (showLabels) {
+                    const facePos = getFacePosition(faceId);
+                    addLabel(`F${faceId}`, facePos.x, CONFIG.helixHeight + 0.5, facePos.z, FACE_COLORS[faceId]);
+                }
+            });
+
+            // Add octave markers
+            addOctaveMarkers();
+
+            scene.add(helixGroup);
+        }
+
+        /**
+         * Add octave level markers (including future octaves)
+         */
+        function addOctaveMarkers() {
+            const octaves = [
+                { id: 1, name: 'Survival', color: 0xff3333 },
+                { id: 2, name: 'Structure', color: 0xff9900 },
+                { id: 3, name: 'Relationships', color: 0xffff00 },
+                { id: 4, name: 'Creativity', color: 0x00ff66 },
+                { id: 5, name: 'Expression', color: 0x00ffcc },
+                { id: 6, name: 'Vision', color: 0x00ccff },
+                { id: 7, name: 'Radiance', color: 0xaa00ff },
+                // Future octaves (infinite possibility)
+                { id: 8, name: 'Transcendence', color: 0xff66ff },
+                { id: 9, name: 'Unity', color: 0xccccff },
+                { id: 10, name: 'Cosmic', color: 0x9999ff },
+                { id: 11, name: 'Divine', color: 0x6666ff },
+                { id: 12, name: '∞ Infinity', color: 0x3333ff }
+            ];
+
+            octaves.forEach(octave => {
+                // Calculate height - extend beyond CONFIG.helixHeight for future octaves
+                const y = ((octave.id - 1) / 6) * CONFIG.helixHeight;
+                
+                // Different styling for future octaves
+                const isFuture = octave.id > 7;
+                const opacity = isFuture ? 0.2 : 0.6;
+                const sphereSize = isFuture ? 0.06 : 0.08;
+                
+                // Ring of dots at each octave level
+                for (let i = 0; i < 12; i++) {
+                    const angle = (i / 12) * Math.PI * 2;
+                    // Expand radius for higher octaves using golden ratio
+                    const ringRadius = CONFIG.helixRadius + 1.5 + (isFuture ? getFibonacciRadius(octave.id) * 0.5 : 0);
+                    const x = Math.cos(angle) * ringRadius;
+                    const z = Math.sin(angle) * ringRadius;
+                    
+                    const geometry = new THREE.SphereGeometry(sphereSize, 8, 8);
+                    const material = new THREE.MeshBasicMaterial({
+                        color: octave.color,
+                        transparent: true,
+                        opacity: opacity
+                    });
+                    const sphere = new THREE.Mesh(geometry, material);
+                    sphere.position.set(x, y, z);
+                    helixGroup.add(sphere);
+                }
+
+                // Octave label - only show if labels are enabled
+                if (showLabels && (!isFuture || CONFIG.showBeyondO7)) {
+                    const labelText = isFuture 
+                        ? `O${octave.id}: ${octave.name} (Potential)`
+                        : `O${octave.id}: ${octave.name}`;
+                    addLabel(labelText, 0, y, CONFIG.helixRadius + 2.5, octave.color, isFuture ? 0.4 : 1.0);
+                }
+            });
+        }
+
+        /**
+         * Render breath axes (connections between harmonic pairs)
+         */
+        function renderBreathAxes() {
+            if (breathAxesGroup) {
+                scene.remove(breathAxesGroup);
+            }
+
+            if (!showBreathAxes) return;
+
+            breathAxesGroup = new THREE.Group();
+
+            // For each octave level, draw connections
+            for (let octaveId = 1; octaveId <= 7; octaveId++) {
+                const y = ((octaveId - 1) / 6) * CONFIG.helixHeight;
+
+                BREATH_AXES.forEach(axis => {
+                    const pos1 = getFacePosition(axis.f1);
+                    const pos2 = getFacePosition(axis.f2);
+
+                    // Create curve between the two faces
+                    const curve = new THREE.QuadraticBezierCurve3(
+                        new THREE.Vector3(pos1.x, y, pos1.z),
+                        new THREE.Vector3(0, y + 0.3, 0), // Control point slightly above center
+                        new THREE.Vector3(pos2.x, y, pos2.z)
+                    );
+
+                    const points = curve.getPoints(30);
+                    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                    const material = new THREE.LineBasicMaterial({
+                        color: axis.color,
+                        transparent: true,
+                        opacity: 0.4,
+                        linewidth: 2
+                    });
+
+                    const line = new THREE.Line(geometry, material);
+                    line.userData = { axisId: axis.id, axisName: axis.name, octaveId };
+                    breathAxesGroup.add(line);
+                });
+            }
+
+            scene.add(breathAxesGroup);
+        }
+
+        /**
+         * Add a text label (simple sprite)
+         */
+        function addLabel(text, x, y, z, color, opacity = 1.0) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 512;
+            canvas.height = 128;
+            
+            // Set global alpha for transparency
+            context.globalAlpha = opacity;
+            context.fillStyle = `#${color.toString(16).padStart(6, '0')}`;
+            context.font = 'bold 40px Arial';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(text, 256, 64);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            const spriteMaterial = new THREE.SpriteMaterial({ 
+                map: texture,
+                transparent: true,
+                opacity: opacity
+            });
+            const sprite = new THREE.Sprite(spriteMaterial);
+            sprite.position.set(x, y, z);
+            sprite.scale.set(3, 0.75, 1);
+
+            helixGroup.add(sprite);
+        }
+
+        // Event listeners
+        document.getElementById('resetCameraBtn').addEventListener('click', () => {
+            camera.position.set(25, 20, 25);
+            controls.target.set(0, 9, 0);
+            controls.update();
+        });
+
+        document.getElementById('pausePlayBtn').addEventListener('click', (e) => {
+            animationRunning = !animationRunning;
+            controls.autoRotate = animationRunning;
+            e.target.textContent = animationRunning ? 'Pause' : 'Play';
+            e.target.classList.toggle('active');
+        });
+
+        document.getElementById('toggleLabelsBtn').addEventListener('click', (e) => {
+            showLabels = !showLabels;
+            renderAllHelices();
+            renderBreathAxes();
+            e.target.textContent = showLabels ? 'Hide Labels' : 'Show Labels';
+        });
+
+        document.getElementById('toggleBreathBtn').addEventListener('click', (e) => {
+            showBreathAxes = !showBreathAxes;
+            renderBreathAxes();
+            e.target.textContent = showBreathAxes ? 'Hide Breath Axes' : 'Show Breath Axes';
+        });
+
+        document.getElementById('toggleHelicesBtn').addEventListener('click', (e) => {
+            showHelices = !showHelices;
+            if (helixGroup) {
+                helixGroup.visible = showHelices;
+            }
+            e.target.textContent = showHelices ? 'Hide Helices' : 'Show Helices';
+        });
+
+        // Animation loop
+        let lastTime = Date.now();
+        let frameCount = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (animationRunning) {
+                controls.update();
+            }
+
+            renderer.render(scene, camera);
+
+            // Update FPS
+            frameCount++;
+            const now = Date.now();
+            if (now - lastTime >= 1000) {
+                document.getElementById('infoFPS').textContent = frameCount;
+                frameCount = 0;
+                lastTime = now;
+            }
+
+            // Update camera info
+            const camDist = camera.position.length().toFixed(1);
+            document.getElementById('infoCamera').textContent = `${camDist}m`;
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initialize
+        async function init() {
+            await loadAllFaces();
+            renderAllHelices();
+            renderBreathAxes();
+            document.getElementById('loading').style.display = 'none';
+            animate();
+            console.log('🧬 Complete Octave Helix Visualization Ready!');
+        }
+
+        init();
+    </script>
+</body>
+</html>
+

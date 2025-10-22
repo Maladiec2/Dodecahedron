@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quannex KPI Manager - Ball & Pillars Configuration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #e7f6f2;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(0, 255, 204, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+        }
+
+        .header h1 {
+            color: #00ffcc;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 255, 204, 0.5);
+        }
+
+        .header p {
+            color: #9adfd0;
+            font-size: 1.1em;
+        }
+
+        .instructions {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .instructions h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            color: #b8c5d6;
+        }
+
+        .instructions li {
+            margin: 5px 0;
+        }
+
+        .face-selector {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .face-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #1a2b2e 0%, #2d4a4f 100%);
+            border: 2px solid rgba(0, 255, 204, 0.3);
+            border-radius: 8px;
+            color: #00ffcc;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .face-btn:hover {
+            background: linear-gradient(135deg, #2d4a4f 0%, #1a2b2e 100%);
+            border-color: #00ffcc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 204, 0.3);
+        }
+
+        .face-btn.active {
+            background: linear-gradient(135deg, #00ffcc 0%, #00d4aa 100%);
+            color: #0a0a0a;
+            border-color: #00ffcc;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.5);
+        }
+
+        .kpi-editor {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(26, 43, 46, 0.6);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .face-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border-radius: 8px;
+            border: 1px solid rgba(102, 126, 234, 0.5);
+        }
+
+        .face-header h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .octave-selector {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .octave-btn {
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            border-radius: 6px;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .octave-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .octave-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .pentagram-structure {
+            margin-top: 30px;
+        }
+
+        .ball-section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+            border-radius: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            position: relative;
+        }
+
+        .ball-section::before {
+            content: '⭐';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            background: #0a0a0a;
+            padding: 0 10px;
+        }
+
+        .ball-section h3 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .pillars-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .pillar-card {
+            padding: 20px;
+            background: rgba(0, 255, 204, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .pillar-card:hover {
+            background: rgba(0, 255, 204, 0.1);
+            border-color: rgba(0, 255, 204, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .pillar-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+        }
+
+        .pillar-icon {
+            font-size: 24px;
+        }
+
+        .pillar-title {
+            color: #00ffcc;
+            font-weight: bold;
+        }
+
+        .kpi-field {
+            margin-bottom: 15px;
+        }
+
+        .kpi-field label {
+            display: block;
+            color: #9adfd0;
+            font-size: 12px;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .kpi-field input,
+        .kpi-field select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 255, 204, 0.05);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 6px;
+            color: #e7f6f2;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .kpi-field input:focus,
+        .kpi-field select:focus {
+            outline: none;
+            background: rgba(0, 255, 204, 0.1);
+            border-color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+
+        .kpi-field input::placeholder {
+            color: rgba(154, 223, 208, 0.5);
+        }
+
+        .threshold-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .direction-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .direction-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(0, 255, 204, 0.05);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 6px;
+            color: #9adfd0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .direction-btn:hover {
+            background: rgba(0, 255, 204, 0.1);
+            border-color: #00ffcc;
+        }
+
+        .direction-btn.active {
+            background: #00ffcc;
+            color: #0a0a0a;
+            border-color: #00ffcc;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            margin-top: 40px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #00ffcc 0%, #00d4aa 100%);
+            color: #0a0a0a;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 204, 0.5);
+        }
+
+        .btn-reset {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 2px solid #ff6b6b;
+        }
+
+        .btn-reset:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .navigation a {
+            color: #00ffcc;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .navigation a:hover {
+            color: #00ffaa;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: rgba(154, 223, 208, 0.6);
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 KPI Manager</h1>
+        <p>Configure the Ball & 5 Pillars for Each Face</p>
+    </div>
+
+    <div class="instructions">
+        <h3>📖 How the Ball & Pillars Work:</h3>
+        <ul>
+            <li><strong>The Ball (⭐):</strong> The primary KPI that represents this face's headline metric</li>
+            <li><strong>The 5 Pillars (🔷):</strong> Edge KPIs that connect this face to adjacent faces in the pentagram</li>
+            <li><strong>Direction:</strong> ↑ Higher is better | ↓ Lower is better | Band = Optimal range</li>
+            <li><strong>Thresholds:</strong> Define healthy ranges (Target Min → Healthy Min → Healthy Max → Absolute Max)</li>
+            <li><strong>Octave (O1-O7):</strong> The developmental stage of consciousness for this measurement</li>
+        </ul>
+    </div>
+
+    <div class="face-selector" id="face-selector">
+        <!-- Dynamically populated -->
+    </div>
+
+    <div class="kpi-editor" id="kpi-editor">
+        <!-- Dynamically populated based on selected face -->
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn btn-save" onclick="saveConfiguration()">💾 Save All KPIs</button>
+        <button class="btn btn-reset" onclick="resetToDefaults()">🔄 Reset to Defaults</button>
+        <button class="btn btn-import" onclick="importOctaveModel()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+            📥 Import Octave Model
+        </button>
+    </div>
+
+    <div class="navigation">
+        <a href="index.html">← Back to Quannex Oracle</a> | 
+        <a href="face-manager.html">Face Manager →</a>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001/api';
+        let currentFace = 1;
+        let faceNames = {};
+        let kpiData = {};
+
+        // Initialize
+        async function init() {
+            await loadFaceNames();
+            createFaceSelector();
+            await loadKPIData();
+            renderFaceEditor(currentFace);
+        }
+
+        async function loadFaceNames() {
+            try {
+                const response = await fetch(`${API_BASE}/face_configuration`);
+                const data = await response.json();
+                if (data.success) {
+                    faceNames = data.data.faceNames || {};
+                }
+            } catch (error) {
+                console.error('Failed to load face names:', error);
+                // Use defaults
+                for (let i = 1; i <= 12; i++) {
+                    faceNames[i] = `Face ${i}`;
+                }
+            }
+        }
+
+        async function loadKPIData() {
+            try {
+                const response = await fetch(`${API_BASE}/state`);
+                const data = await response.json();
+                if (data.success) {
+                    // Extract KPI data from faces
+                    data.data.faces.forEach(face => {
+                        kpiData[face.id] = {
+                            ball: face.elementalKPIs[0] || createDefaultKPI(`${face.name} Primary`),
+                            pillars: face.elementalKPIs.slice(1, 6) || []
+                        };
+                        
+                        // Ensure we have 5 pillars
+                        while (kpiData[face.id].pillars.length < 5) {
+                            kpiData[face.id].pillars.push(createDefaultKPI(`Pillar ${kpiData[face.id].pillars.length + 1}`));
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load KPI data:', error);
+            }
+        }
+
+        function createDefaultKPI(name) {
+            return {
+                name: name,
+                direction: '↑',
+                targetMin: 0,
+                healthyMin: 0.3,
+                healthyMax: 0.8,
+                absoluteMax: 1.0,
+                value: 0.5,
+                weight: 1.0,
+                octave: 1
+            };
+        }
+
+        function createFaceSelector() {
+            const container = document.getElementById('face-selector');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= 12; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'face-btn' + (i === currentFace ? ' active' : '');
+                btn.textContent = `${i}. ${faceNames[i] || `Face ${i}`}`;
+                btn.onclick = () => selectFace(i);
+                container.appendChild(btn);
+            }
+        }
+
+        function selectFace(faceId) {
+            currentFace = faceId;
+            createFaceSelector();
+            renderFaceEditor(faceId);
+        }
+
+        async function renderFaceEditor(faceId) {
+            const editor = document.getElementById('kpi-editor');
+            const faceName = faceNames[faceId] || `Face ${faceId}`;
+            
+            // Get octave progression data
+            let octaveData = null;
+            let currentOctave = 1;
+            try {
+                const response = await fetch(`${API_BASE}/octave-progression/${faceId}`);
+                const result = await response.json();
+                if (result.success) {
+                    octaveData = result.data;
+                    currentOctave = octaveData.currentOctave || 1;
+                }
+            } catch (error) {
+                console.error('Failed to load octave data:', error);
+            }
+
+            const faceKPIs = kpiData[faceId] || {
+                ball: createDefaultKPI(`${faceName} Primary`),
+                pillars: Array(5).fill(null).map((_, i) => createDefaultKPI(`Pillar ${i + 1}`))
+            };
+
+            const octaveNames = ['Survival', 'Structure', 'Relationships', 'Creativity', 'Expression', 'Vision', 'Radiance'];
+            const octaveFocus = ['Existence', 'Stability', 'Connection', 'Possibility', 'Clarity', 'Direction', 'Service'];
+
+            editor.innerHTML = `
+                <div class="face-header">
+                    <h2>${faceName}</h2>
+                    <p style="color: #b8c5d6; margin-top: 10px;">Configure the Ball (primary metric) and 5 Pillars (edge connections)</p>
+                    <div class="octave-selector">
+                        ${[1,2,3,4,5,6,7].map(o => `
+                            <button class="octave-btn ${currentOctave === o ? 'active' : ''}" 
+                                    onclick="selectOctaveLevel(${faceId}, ${o})">
+                                O${o}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <h3 style="color: #667eea; margin-top: 15px;">
+                        Octave ${currentOctave}: ${octaveNames[currentOctave - 1]}
+                    </h3>
+                    <p class="helper-text">Focus: ${octaveFocus[currentOctave - 1]} - ${getOctaveDescription(currentOctave)}</p>
+                    
+                    ${octaveData && octaveData.octaveStatus ? `
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(102, 126, 234, 0.1); border-radius: 6px;">
+                            <p style="color: #9adfd0; margin: 0;">
+                                Coherence: ${(octaveData.octaveStatus.coherence * 100).toFixed(1)}%
+                                ${octaveData.octaveStatus.readyForNext ? 
+                                    '<span style="color: #00ff00; margin-left: 10px;">✨ Ready for next octave!</span>' : 
+                                    ''}
+                            </p>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <div class="pentagram-structure">
+                    <!-- The Ball -->
+                    <div class="ball-section">
+                        <h3>⭐ The Ball (Primary Face KPI)</h3>
+                        ${renderKPIForm(faceKPIs.ball, 'ball', faceId)}
+                    </div>
+
+                    <!-- The 5 Pillars -->
+                    <h3 style="color: #00ffcc; margin: 30px 0 20px; text-align: center;">🔷 The 5 Pillars (Edge KPIs)</h3>
+                    <div class="pillars-section">
+                        ${faceKPIs.pillars.map((pillar, index) => `
+                            <div class="pillar-card">
+                                <div class="pillar-header">
+                                    <span class="pillar-icon">🔷</span>
+                                    <span class="pillar-title">Pillar ${index + 1}</span>
+                                    <span style="color: #667eea; font-size: 12px; margin-left: 10px;">
+                                        ${['Earth', 'Water', 'Fire', 'Air', 'Ether'][index]}
+                                    </span>
+                                </div>
+                                ${renderKPIForm(pillar, `pillar-${index}`, faceId)}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderKPIForm(kpi, type, faceId) {
+            return `
+                <div class="kpi-field">
+                    <label>KPI Name</label>
+                    <input type="text" 
+                           value="${kpi.name}" 
+                           onchange="updateKPI(${faceId}, '${type}', 'name', this.value)"
+                           placeholder="Enter KPI name">
+                </div>
+
+                <div class="kpi-field">
+                    <label>Direction</label>
+                    <div class="direction-selector">
+                        <button class="direction-btn ${kpi.direction === '↑' ? 'active' : ''}" 
+                                onclick="updateKPI(${faceId}, '${type}', 'direction', '↑')">
+                            ↑ Higher Better
+                        </button>
+                        <button class="direction-btn ${kpi.direction === '↓' ? 'active' : ''}" 
+                                onclick="updateKPI(${faceId}, '${type}', 'direction', '↓')">
+                            ↓ Lower Better
+                        </button>
+                        <button class="direction-btn ${kpi.direction === 'Band' ? 'active' : ''}" 
+                                onclick="updateKPI(${faceId}, '${type}', 'direction', 'Band')">
+                            Band Range
+                        </button>
+                    </div>
+                </div>
+
+                <div class="kpi-field">
+                    <label>Thresholds (0-1 scale)</label>
+                    <div class="threshold-grid">
+                        <div>
+                            <label style="font-size: 10px; color: #ff6b6b;">Target Min</label>
+                            <input type="number" 
+                                   step="0.01" 
+                                   min="0" 
+                                   max="1" 
+                                   value="${kpi.targetMin}"
+                                   onchange="updateKPI(${faceId}, '${type}', 'targetMin', parseFloat(this.value))">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; color: #ffaa00;">Healthy Min</label>
+                            <input type="number" 
+                                   step="0.01" 
+                                   min="0" 
+                                   max="1" 
+                                   value="${kpi.healthyMin}"
+                                   onchange="updateKPI(${faceId}, '${type}', 'healthyMin', parseFloat(this.value))">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; color: #66ff66;">Healthy Max</label>
+                            <input type="number" 
+                                   step="0.01" 
+                                   min="0" 
+                                   max="1" 
+                                   value="${kpi.healthyMax}"
+                                   onchange="updateKPI(${faceId}, '${type}', 'healthyMax', parseFloat(this.value))">
+                        </div>
+                        <div>
+                            <label style="font-size: 10px; color: #00ffcc;">Absolute Max</label>
+                            <input type="number" 
+                                   step="0.01" 
+                                   min="0" 
+                                   max="1" 
+                                   value="${kpi.absoluteMax}"
+                                   onchange="updateKPI(${faceId}, '${type}', 'absoluteMax', parseFloat(this.value))">
+                        </div>
+                    </div>
+                    <p class="helper-text">Target < Healthy Min < Healthy Max < Absolute Max</p>
+                </div>
+
+                <div class="kpi-field">
+                    <label>Current Value (0-1)</label>
+                    <input type="number" 
+                           step="0.01" 
+                           min="0" 
+                           max="1" 
+                           value="${kpi.value}"
+                           onchange="updateKPI(${faceId}, '${type}', 'value', parseFloat(this.value))">
+                </div>
+
+                <div class="kpi-field">
+                    <label>Weight (importance)</label>
+                    <input type="number" 
+                           step="0.1" 
+                           min="0" 
+                           max="2" 
+                           value="${kpi.weight}"
+                           onchange="updateKPI(${faceId}, '${type}', 'weight', parseFloat(this.value))">
+                    <p class="helper-text">Higher weight = more important (typical: 1.0)</p>
+                </div>
+            `;
+        }
+
+        function updateKPI(faceId, type, property, value) {
+            if (!kpiData[faceId]) {
+                kpiData[faceId] = {
+                    ball: createDefaultKPI('Primary'),
+                    pillars: Array(5).fill(null).map(() => createDefaultKPI('Pillar'))
+                };
+            }
+
+            if (type === 'ball') {
+                kpiData[faceId].ball[property] = value;
+            } else {
+                const pillarIndex = parseInt(type.split('-')[1]);
+                kpiData[faceId].pillars[pillarIndex][property] = value;
+            }
+
+            // Re-render if direction changed (to update active state)
+            if (property === 'direction') {
+                renderFaceEditor(faceId);
+            }
+        }
+
+        async function selectOctaveLevel(faceId, octave) {
+            // Update octave level on the server
+            try {
+                const response = await fetch(`${API_BASE}/octave-progression/${faceId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ octaveLevel: octave })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    console.log('Octave level updated:', result.data);
+                }
+            } catch (error) {
+                console.error('Failed to update octave level:', error);
+            }
+            
+            // Re-render the face editor
+            renderFaceEditor(faceId);
+        }
+
+        function setFaceOctave(faceId, octave) {
+            updateKPI(faceId, 'ball', 'octave', octave);
+            renderFaceEditor(faceId);
+        }
+
+        function getOctaveDescription(octave) {
+            const descriptions = {
+                1: 'Survival - "Do we have it?"',
+                2: 'Structure - "Is it organized?"',
+                3: 'Relationships - "Are we connected?"',
+                4: 'Creativity - "Can we innovate?"',
+                5: 'Expression - "Are we authentic?"',
+                6: 'Vision - "Do we serve a greater purpose?"',
+                7: 'Radiance - "Are we a gift to the world?"'
+            };
+            return descriptions[octave] || 'Unknown';
+        }
+
+        async function saveConfiguration() {
+            try {
+                // TODO: Implement API endpoint to save KPI configuration
+                console.log('Saving KPI configuration:', kpiData);
+                alert('KPI configuration saved! (Note: Backend endpoint needs to be implemented)');
+            } catch (error) {
+                console.error('Failed to save configuration:', error);
+                alert('Failed to save configuration. See console for details.');
+            }
+        }
+
+        function resetToDefaults() {
+            if (confirm('Are you sure you want to reset all KPIs to default values?')) {
+                kpiData = {};
+                for (let i = 1; i <= 12; i++) {
+                    const faceName = faceNames[i] || `Face ${i}`;
+                    kpiData[i] = {
+                        ball: createDefaultKPI(`${faceName} Primary`),
+                        pillars: Array(5).fill(null).map((_, j) => createDefaultKPI(`Pillar ${j + 1}`))
+                    };
+                }
+                renderFaceEditor(currentFace);
+                alert('KPIs reset to defaults!');
+            }
+        }
+
+        async function importOctaveModel() {
+            if (confirm('Import the octave progression model from CSV_Refrence_Models.csv? This will update tuning constants and face progressions.')) {
+                try {
+                    const response = await fetch(`${API_BASE}/import-octave-model`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ csvPath: '../CSV_Refrence_Models.csv' })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.success) {
+                        alert(`Octave model imported successfully!\n${result.data.facesImported} faces imported.\nTuning constants updated: ${result.data.tuningConstantsUpdated}`);
+                        // Reload current face
+                        renderFaceEditor(currentFace);
+                    } else {
+                        alert('Failed to import octave model: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('Import error:', error);
+                    alert('Failed to import octave model. See console for details.');
+                }
+            }
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
+
