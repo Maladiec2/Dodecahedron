@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quannex Face Manager - Business Dimension Assignment</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #e7f6f2;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #00ffcc;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #9adfd0;
+            font-size: 16px;
+        }
+
+        .face-grid {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 2px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #172022;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 255, 204, 0.1);
+        }
+
+        .face-header {
+            background: #000;
+            color: #00ffcc;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .face-row {
+            display: contents;
+        }
+
+        .face-id {
+            background: #1a2b2e;
+            padding: 12px 20px;
+            font-weight: bold;
+            color: #00ffcc;
+            border-right: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .face-name-input {
+            background: #1a2b2e;
+            padding: 8px 16px;
+            border: none;
+            border-right: 1px solid rgba(0, 255, 204, 0.2);
+        }
+
+        .face-name-input input {
+            width: 100%;
+            background: rgba(0, 255, 204, 0.05);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 4px;
+            color: #e7f6f2;
+            font-size: 14px;
+            padding: 8px 12px;
+            transition: all 0.3s ease;
+            cursor: text;
+        }
+
+        .face-name-input input:hover {
+            background: rgba(0, 255, 204, 0.1);
+            border-color: rgba(0, 255, 204, 0.4);
+        }
+
+        .face-name-input input:focus {
+            outline: none;
+            color: #00ffcc;
+            background: rgba(0, 255, 204, 0.15);
+            border-color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+
+        .face-status {
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 12px;
+            min-width: 100px;
+        }
+
+        .status-healthy {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .status-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status-critical {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .controls {
+            max-width: 800px;
+            margin: 30px auto;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: #172022;
+            color: #c9fff0;
+            border: 1px solid rgba(0, 255, 204, 0.25);
+            border-radius: 6px;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #1f3638;
+            border-color: rgba(0, 255, 204, 0.45);
+        }
+
+        .btn.primary {
+            background: #00ffcc;
+            color: #0a0a0a;
+            border-color: #00ffcc;
+        }
+
+        .btn.primary:hover {
+            background: #00e6b8;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .navigation {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .navigation a {
+            color: #00ffcc;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        .preset-templates {
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .preset-templates h3 {
+            color: #00ffcc;
+            margin-bottom: 15px;
+        }
+
+        .template-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .template-btn {
+            background: #2a3f42;
+            color: #9adfd0;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .template-btn:hover {
+            background: #3a5f62;
+            border-color: rgba(0, 255, 204, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌟 Quannex Face Manager</h1>
+        <p>Assign Business Dimensions to Dodecahedron Faces</p>
+        <div style="margin-top: 20px; padding: 15px; background: rgba(0, 255, 204, 0.1); border-radius: 8px; max-width: 800px; margin-left: auto; margin-right: auto; border: 1px solid rgba(0, 255, 204, 0.3);">
+            <p style="margin: 0; color: #00ffcc; font-size: 14px;">
+                ✏️ <strong>How to Use:</strong> 
+                Click on any dimension name below to edit it. 
+                Use the templates for quick setup, or type your own custom departments. 
+                Click "Save Configuration" when done to update the main visualization.
+            </p>
+        </div>
+    </div>
+
+    <div class="preset-templates">
+        <h3>Quick Templates</h3>
+        <div class="template-buttons">
+            <button class="template-btn" onclick="loadTemplate('blank')" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">✨ Custom (Blank)</button>
+            <button class="template-btn" onclick="loadTemplate('startup')">Startup Capital</button>
+            <button class="template-btn" onclick="loadTemplate('corporate')">Corporate Governance</button>
+            <button class="template-btn" onclick="loadTemplate('nonprofit')">Non-Profit</button>
+            <button class="template-btn" onclick="loadTemplate('tech')">Tech Company</button>
+            <button class="template-btn" onclick="loadTemplate('default')">Default Quannex</button>
+        </div>
+    </div>
+
+    <div class="face-grid">
+        <div class="face-header">Face ID</div>
+        <div class="face-header">Business Dimension Name</div>
+        <div class="face-header">Status</div>
+
+        <div class="face-row" data-face="1">
+            <div class="face-id">Face 1</div>
+            <div class="face-name-input">
+                <input type="text" id="face-1" value="Financial Capital" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-healthy">
+                <span class="status-indicator" style="background: #2ecc71;"></span>
+                Healthy
+            </div>
+        </div>
+
+        <div class="face-row" data-face="2">
+            <div class="face-id">Face 2</div>
+            <div class="face-name-input">
+                <input type="text" id="face-2" value="Intellectual Capital" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-healthy">
+                <span class="status-indicator" style="background: #2ecc71;"></span>
+                Healthy
+            </div>
+        </div>
+
+        <div class="face-row" data-face="3">
+            <div class="face-id">Face 3</div>
+            <div class="face-name-input">
+                <input type="text" id="face-3" value="Human Capital" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-healthy">
+                <span class="status-indicator" style="background: #2ecc71;"></span>
+                Healthy
+            </div>
+        </div>
+
+        <div class="face-row" data-face="4">
+            <div class="face-id">Face 4</div>
+            <div class="face-name-input">
+                <input type="text" id="face-4" value="Structural Capital" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-healthy">
+                <span class="status-indicator" style="background: #2ecc71;"></span>
+                Healthy
+            </div>
+        </div>
+
+        <div class="face-row" data-face="5">
+            <div class="face-id">Face 5</div>
+            <div class="face-name-input">
+                <input type="text" id="face-5" value="Market Resonance" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-healthy">
+                <span class="status-indicator" style="background: #2ecc71;"></span>
+                Healthy
+            </div>
+        </div>
+
+        <div class="face-row" data-face="6">
+            <div class="face-id">Face 6</div>
+            <div class="face-name-input">
+                <input type="text" id="face-6" value="Community & Partners" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-healthy">
+                <span class="status-indicator" style="background: #2ecc71;"></span>
+                Healthy
+            </div>
+        </div>
+
+        <div class="face-row" data-face="7">
+            <div class="face-id">Face 7</div>
+            <div class="face-name-input">
+                <input type="text" id="face-7" value="Brand & Reputation" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-critical">
+                <span class="status-indicator" style="background: #e74c3c;"></span>
+                Critical
+            </div>
+        </div>
+
+        <div class="face-row" data-face="8">
+            <div class="face-id">Face 8</div>
+            <div class="face-name-input">
+                <input type="text" id="face-8" value="Core Operations" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-critical">
+                <span class="status-indicator" style="background: #e74c3c;"></span>
+                Critical
+            </div>
+        </div>
+
+        <div class="face-row" data-face="9">
+            <div class="face-id">Face 9</div>
+            <div class="face-name-input">
+                <input type="text" id="face-9" value="Regenerative Flow" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-critical">
+                <span class="status-indicator" style="background: #e74c3c;"></span>
+                Critical
+            </div>
+        </div>
+
+        <div class="face-row" data-face="10">
+            <div class="face-id">Face 10</div>
+            <div class="face-name-input">
+                <input type="text" id="face-10" value="Foundational Values" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-critical">
+                <span class="status-indicator" style="background: #e74c3c;"></span>
+                Critical
+            </div>
+        </div>
+
+        <div class="face-row" data-face="11">
+            <div class="face-id">Face 11</div>
+            <div class="face-name-input">
+                <input type="text" id="face-11" value="Funding Pipeline" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-critical">
+                <span class="status-indicator" style="background: #e74c3c;"></span>
+                Critical
+            </div>
+        </div>
+
+        <div class="face-row" data-face="12">
+            <div class="face-id">Face 12</div>
+            <div class="face-name-input">
+                <input type="text" id="face-12" value="Risk & Resilience" placeholder="Enter business dimension name">
+            </div>
+            <div class="face-status status-critical">
+                <span class="status-indicator" style="background: #e74c3c;"></span>
+                Critical
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="loadCurrentConfig()">🔄 Load Current</button>
+        <button class="btn" onclick="previewChanges()">👁️ Preview</button>
+        <button class="btn primary" onclick="saveConfiguration()">💾 Save Configuration</button>
+        <button class="btn" onclick="resetToDefault()">🔄 Reset to Default</button>
+    </div>
+
+    <div class="navigation">
+        <a href="index.html">← Back to Quannex Oracle</a>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3001/api';
+
+        // Template configurations
+        const templates = {
+            blank: {
+                1: "Department 1",
+                2: "Department 2",
+                3: "Department 3",
+                4: "Department 4",
+                5: "Department 5",
+                6: "Department 6",
+                7: "Department 7",
+                8: "Department 8",
+                9: "Department 9",
+                10: "Department 10",
+                11: "Department 11",
+                12: "Department 12"
+            },
+            startup: {
+                1: "Financial Capital",
+                2: "Intellectual Capital", 
+                3: "Human Capital",
+                4: "Structural Capital",
+                5: "Market Resonance",
+                6: "Community & Partners",
+                7: "Brand & Reputation",
+                8: "Core Operations",
+                9: "Regenerative Flow",
+                10: "Foundational Values",
+                11: "Funding Pipeline",
+                12: "Risk & Resilience"
+            },
+            corporate: {
+                1: "Financial Performance",
+                2: "Strategic Planning",
+                3: "Human Resources",
+                4: "Operations Excellence",
+                5: "Market Position",
+                6: "Stakeholder Relations",
+                7: "Brand Management",
+                8: "Core Business",
+                9: "Innovation Pipeline",
+                10: "Corporate Values",
+                11: "Investment Strategy",
+                12: "Risk Management"
+            },
+            nonprofit: {
+                1: "Financial Sustainability",
+                2: "Mission Alignment",
+                3: "Volunteer & Staff",
+                4: "Program Delivery",
+                5: "Community Impact",
+                6: "Partnerships",
+                7: "Public Trust",
+                8: "Operations",
+                9: "Resource Flow",
+                10: "Core Values",
+                11: "Funding Sources",
+                12: "Resilience"
+            },
+            tech: {
+                1: "Revenue & Growth",
+                2: "Product Innovation",
+                3: "Engineering Team",
+                4: "Technical Infrastructure",
+                5: "Market Adoption",
+                6: "Developer Community",
+                7: "Brand & Reputation",
+                8: "Core Platform",
+                9: "Data & Analytics",
+                10: "Company Culture",
+                11: "Investment & R&D",
+                12: "Security & Compliance"
+            },
+            default: {
+                1: "Vision & Strategy",
+                2: "Leadership & Governance",
+                3: "People & Culture",
+                4: "Operations & Execution",
+                5: "Financial Health",
+                6: "Customer Experience",
+                7: "Technology & Innovation",
+                8: "Communication & Transparency",
+                9: "Risk & Compliance",
+                10: "Partnerships & Ecosystem",
+                11: "Sustainability & Impact",
+                12: "Learning & Adaptation"
+            }
+        };
+
+        function loadTemplate(templateName) {
+            const template = templates[templateName];
+            if (!template) return;
+
+            for (let i = 1; i <= 12; i++) {
+                const input = document.getElementById(`face-${i}`);
+                if (input && template[i]) {
+                    input.value = template[i];
+                }
+            }
+
+            console.log(`✅ Loaded ${templateName} template`);
+        }
+
+        async function loadCurrentConfig() {
+            try {
+                const response = await fetch(`${API_BASE}/faces`);
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    result.data.forEach(face => {
+                        const input = document.getElementById(`face-${face.id}`);
+                        if (input) {
+                            input.value = face.name;
+                        }
+                        updateFaceStatus(face.id, face.healthStatus, face.faceEnergy);
+                    });
+                    console.log('✅ Loaded current configuration from backend');
+                }
+            } catch (error) {
+                console.error('❌ Failed to load current configuration:', error);
+                alert('Could not load current configuration. Make sure the backend is running.');
+            }
+        }
+
+        function updateFaceStatus(faceId, healthStatus, energy) {
+            const row = document.querySelector(`[data-face="${faceId}"]`);
+            if (!row) return;
+
+            const statusDiv = row.querySelector('.face-status');
+            const indicator = statusDiv.querySelector('.status-indicator');
+            
+            // Update status based on health
+            statusDiv.className = 'face-status';
+            if (energy >= 0.7) {
+                statusDiv.classList.add('status-healthy');
+                indicator.style.background = '#2ecc71';
+                statusDiv.innerHTML = `<span class="status-indicator" style="background: #2ecc71;"></span>Healthy`;
+            } else if (energy >= 0.4) {
+                statusDiv.classList.add('status-warning');
+                indicator.style.background = '#f39c12';
+                statusDiv.innerHTML = `<span class="status-indicator" style="background: #f39c12;"></span>Warning`;
+            } else {
+                statusDiv.classList.add('status-critical');
+                indicator.style.background = '#e74c3c';
+                statusDiv.innerHTML = `<span class="status-indicator" style="background: #e74c3c;"></span>Critical`;
+            }
+        }
+
+        async function saveConfiguration() {
+            const configuration = {};
+            
+            for (let i = 1; i <= 12; i++) {
+                const input = document.getElementById(`face-${i}`);
+                if (input && input.value.trim()) {
+                    configuration[i] = input.value.trim();
+                }
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/configure_faces`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ faces: configuration })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('✅ Configuration saved successfully');
+                    alert('✅ Face configuration saved successfully!\n\nThe 3D visualization will now use your custom business dimension names.');
+                } else {
+                    throw new Error(result.error || 'Failed to save configuration');
+                }
+            } catch (error) {
+                console.error('❌ Failed to save configuration:', error);
+                alert('❌ Failed to save configuration. Please check that the backend server is running.');
+            }
+        }
+
+        function previewChanges() {
+            const changes = [];
+            for (let i = 1; i <= 12; i++) {
+                const input = document.getElementById(`face-${i}`);
+                if (input && input.value.trim()) {
+                    changes.push(`Face ${i}: ${input.value.trim()}`);
+                }
+            }
+            
+            const preview = changes.join('\n');
+            alert(`Preview of Changes:\n\n${preview}`);
+        }
+
+        function resetToDefault() {
+            if (confirm('Are you sure you want to reset all faces to the default Quannex configuration?')) {
+                loadTemplate('default');
+            }
+        }
+
+        // Load current configuration on page load
+        window.addEventListener('load', () => {
+            console.log('🌟 Quannex Face Manager loaded');
+            loadCurrentConfig();
+        });
+    </script>
+</body>
+</html>
