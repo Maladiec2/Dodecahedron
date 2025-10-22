@@ -1,85 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dodecahedron KPI Visualizer</title>
-    <link rel="stylesheet" href="style.css" />
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-          "three/examples/jsm/controls/OrbitControls": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js"
-        }
-      }
-    </script>
-  </head>
-  <body>
-    <canvas id="scene"></canvas>
-    <div id="ui">
-      <div class="ui-header">
-        <strong>Dodecahedron Controls</strong>
-        <button id="toggle-ui" title="Hide/Show panel">Hide</button>
-      </div>
-      <div class="ui-row">
-        <label for="speed">Rotation Speed</label>
-        <input id="speed" type="range" min="0" max="0.015" step="0.0005" value="0.003" />
-      </div>
-      <div class="ui-row button-row">
-        <button id="play-pause">⏸ Pause</button>
-        <button id="refresh-data">🔄 Refresh</button>
-      </div>
-      <div class="ui-row button-row">
-        <button id="face-manager" onclick="window.open('face-manager.html', '_blank')">🎨 Face Manager</button>
-      </div>
-      <div class="ui-row button-row">
-        <button id="kpi-manager" onclick="window.open('kpi-manager.html', '_blank')">🎯 KPI Manager</button>
-      </div>
-      <hr />
-      <div id="coherence-metrics">
-        <div class="metric-header">🌟 Organizational Coherence</div>
-        <div class="metric large"><span>Global Coherence</span><strong id="m-coherence">Loading...</strong></div>
-        <div class="metric"><span>System Status</span><strong id="m-status">-</strong></div>
-        <div class="metric"><span>Pattern</span><strong id="m-pattern">-</strong></div>
-        <div class="metric-header">🎯 Action Plan</div>
-        <div class="action-plan" id="m-action">Loading recommendations...</div>
-      </div>
-      <hr />
-      <div id="spectral-metrics">
-        <div class="metric-header">🎵 Spectral Analysis</div>
-        <div class="metric"><span>Dominant Mode</span><strong id="m-dominant-mode">-</strong></div>
-        <div class="metric"><span>Modal Amplitude</span><strong id="m-modal-amplitude">-</strong></div>
-        <div class="metric"><span>Being-Action Balance</span><strong id="m-bab-score">-</strong></div>
-        <div class="metric"><span>Dissonance Index</span><strong id="m-dissonance">-</strong></div>
-        <div class="metric"><span>Systemic Pattern</span><strong id="m-systemic-pattern">-</strong></div>
-      </div>
-      <hr />
-      <div id="shadow-metrics">
-        <div class="metric-header">👁️ Shadow Analysis</div>
-        <div class="metric"><span>System Integrity</span><strong id="m-integrity">-</strong></div>
-        <div class="metric"><span>Shadow Patterns</span><strong id="m-shadow-count">-</strong></div>
-        <div class="metric"><span>Status</span><strong id="m-integrity-status">-</strong></div>
-      </div>
-      <hr />
-      <div id="breath-metrics">
-        <div class="metric-header">🌊 Breath Analysis</div>
-        <div class="metric"><span>Breath Health</span><strong id="m-breath-health">-</strong></div>
-        <div class="metric"><span>Balanced Axes</span><strong id="m-balanced-axes">-</strong></div>
-        <div class="metric"><span>Dominant Tendency</span><strong id="m-breath-tendency">-</strong></div>
-      </div>
-      <hr />
-      <div id="metrics">
-        <div class="metric-header">📊 System Metrics</div>
-        <div class="metric"><span>Vertices</span><strong id="m-verts">20</strong></div>
-        <div class="metric"><span>Edges</span><strong id="m-edges">30</strong></div>
-        <div class="metric"><span>Faces</span><strong id="m-faces">12</strong></div>
-      </div>
-      <div class="keyboard-hints">
-        <small>
-          <strong>Shortcuts:</strong> Space (play/pause), R (refresh), H (hide), +/- (speed)
-        </small>
-      </div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dodecahedron KPI Visualizer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="scene"></canvas>
+
+  <div class="panel">
+    <h3>Dodecahedron — KPI visualizer</h3>
+
+    <div class="row">
+      <label>Global color</label>
+      <input id="globalColor" type="color" value="#00ffcc" />
+      <button id="applyGlobal">Apply</button>
     </div>
-    <script type="module" src="main.js"></script>
-  </body>
+
+    <div class="row">
+      <label>Scale (edge length)</label>
+      <input id="scaleRange" type="range" min="0.3" max="2.0" step="0.01" value="1.0" />
+      <div style="width:44px;text-align:right;font-size:13px;" id="scaleVal">1.00</div>
+    </div>
+
+    <div class="row">
+      <label>Per-edge colors</label>
+      <button id="randomize">Randomize</button>
+      <button id="reset">Reset</button>
+    </div>
+
+    <div style="margin-top:8px;">
+      <label style="display:block;margin-bottom:6px;font-size:13px;">Paste comma-separated HEX (30 colors)</label>
+      <textarea id="colorList" placeholder="#ff0000,#00ff00,#0000ff,..."></textarea>
+      <div style="display:flex; gap:8px; margin-top:8px;">
+        <button id="applyList" class="primary">Apply list</button>
+        <button id="autoFill">Auto-fill sample</button>
+      </div>
+      <div class="meta">Dodecahedron has <strong>30 edges</strong>. Provide 30 colors for per-edge mapping.</div>
+    </div>
+  </div>
+
+  <!-- module script -->
+  <script type="module" src="/script.js"></script>
+</body>
 </html>
