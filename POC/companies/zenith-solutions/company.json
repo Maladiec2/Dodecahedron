@@ -1,0 +1,44 @@
+{
+  "id": "zenith-solutions",
+  "name": "Zenith Solutions",
+  "tagline": "Cloud Infrastructure Automation",
+  "stage": "Series A Growth Company",
+  "founded": "2021",
+  "employees": 45,
+  "funding": "$8M Series A",
+  "monthlyBurn": "$420K",
+  "runway": "14.8 months",
+  "revenue": "$2.1M ARR",
+  "customers": "15 enterprise",
+  "story": "Zenith Solutions has cracked the code—they have real product-market fit, paying Fortune 500 customers, and a world-class engineering team. After 3 years of grinding, they raised a solid Series A and are now scaling fast. But success brings new problems. They're signing customers faster than they can onboard them. Engineering ships 9 features per month but documentation lags behind. The team grew from 12 to 45 people in 8 months, and culture is fraying. Founders are drowning in decision-making. Classic Series A scaling pain: they've proven the product works, now they need to prove the company can scale.",
+  "octaveProfile": {
+    "dominant": "O3: Relationships",
+    "secondary": "O4: Creativity",
+    "reaching": "O5: Expression",
+    "description": "Building deep customer and partner relationships. Innovation engine running strong. Beginning to find authentic market voice. But foundational octaves (O1-O2) showing stress under growth."
+  },
+  "challenges": [
+    "Scaling strain: Grew from 12 to 45 people in 8 months",
+    "System reliability excellent (99.4%) but documentation lagging (3.2/5)",
+    "Customer onboarding: 12 feedback sessions/month but support stretched",
+    "Founder sleep improving (5.8 hrs) but self-reflection minimal (0.4/1.0)",
+    "Sustainability awareness weak: Only 55% carbon footprint awareness",
+    "Crisis response planning underdeveloped: 3.3/5 score",
+    "Legal/governance catching up: 78% complete, 72% docs drafted"
+  ],
+  "strengths": [
+    "Product excellence: 99.4% uptime, 42 velocity score, 4.3 code quality",
+    "Strong market presence: 4,200 weekly visitors, 18 media mentions",
+    "Deep relationships: 8 strategic partnerships, 4.5 stakeholder trust",
+    "Innovation engine: 11 dev progress/week, 14 R&D breakthroughs/quarter",
+    "Financial stability: $6.2M cash, healthy runway, strong funding pipeline (4.2/5)",
+    "Excellent pitch: 4.5 deck quality, 4.6 story clarity",
+    "Mission clarity: 4.4/5 purpose alignment despite growth chaos"
+  ],
+  "breathDynamics": {
+    "balanced": ["Core Operations (99.4% uptime)", "Intellectual Capital (strong innovation)", "Funding Pipeline (investor confidence high)"],
+    "overExhaling": ["Market Resonance (selling hard - 18 thought leadership hrs/week)", "Brand Building (14 content creation hrs/week)", "Network Growth (28% rate)"],
+    "underExhaling": ["Human Capital (team stretched thin)", "Structural Capital (docs lagging)", "Regenerative Flow (sustainability not prioritized)"],
+    "insight": "Classic Series A imbalance: External success (customers, funding, market presence) outpacing internal capacity (systems, documentation, team health). They're winning in the market but accumulating organizational debt. Need to pause external push and invest 6 months in foundations before next growth phase."
+  }
+}

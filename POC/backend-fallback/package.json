@@ -1,0 +1,19 @@
+{
+  "name": "quannex-coherence-engine",
+  "version": "1.0.0",
+  "description": "The Coherence Engine backend for the Quannex Dodecahedron Oracle",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["coherence", "dodecahedron", "organizational-intelligence", "spiral-governance"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}
+

@@ -1,0 +1,45 @@
+Vertex_ID,Face_1_ID,Face_2_ID,Face_3_ID,Face_1_Energy (E?),Face_2_Energy (E?),Face_3_Energy (E?),Macro V-Mean (Avg. Energy),Macro Vortex (?),Vortex Strength (?),Normalized Vortex (??),Micro V-Mean (Avg of 9 KPIs),Micro Vortex (?),Column1,Departments,,Vertex,Connected Faces,Vertex,Connected Faces
+V9,Face 1,Face 5,Face 8,0.12521865,0.310162951,0.535762546,0.323714715,0.323714715,0.273695931,0.410543896,,,0.019419093,"Financial Capital , Market Resonance , Core Operations",,V1,"1, 2, 6",V11,"3, 4, 11"
+V3,Face 1,Face 8,Face 9,0.12521865,0.535762546,0.292242644,0.31774128,0.31774128,0.273695931,0.410543896,,,0.033543731,"Financial Capital , Core Operations , Regenerative Flow",,V2,"1, 5, 6",V12,"4, 7, 11"
+V6,Face 3,Face 6,Face 10,0.377289761,0.207362687,0.304032456,0.296228301,0.296228301,0.113284716,0.169927074,,,0.039117909,"Human Capital , Community & Partners , Financial Capital",,V3,"1, 8, 9",V13,"5, 7, 8"
+V20,Face 1,Face 8,Face 6,0.12521865,0.535762546,0.207362687,0.289447961,0.289447961,0.273695931,0.410543896,,,0.033543731,"Financial Capital , Core Operations , Community & Partners",,V4,"2, 9, 10",V14,"7, 8, 12"
+V13,Face 5,Face 7,Face 8,0.310162951,0.018208945,0.535762546,0.288044814,0.288044814,0.345035734,0.517553601,,,0.00282387,"Market Resonance , Brand & Reputation , Core Operations",,V5,"2, 3, 10",V15,"7, 11, 12"
+V16,Face 8,Face 9,Face 12,0.535762546,0.292242644,0.023040299,0.283681829,0.283681829,0.341814832,0.512722247,,,0.078286331,"Core Operations , Regenerative Flow , Financial Capital",,V6,"3, 6, 10",V16,"8, 9, 12"
+V5,Face 2,Face 3,Face 10,0.163880502,0.377289761,0.304032456,0.28173424,0.28173424,0.142272839,0.213409259,,,0.030915218,"Intellectual Capital , Human Capital , Financial Capital",,V7,"3, 10, 11",V17,"9, 10, 12"
+V4,Face 2,Face 9,Face 10,0.163880502,0.292242644,0.304032456,0.253385201,0.253385201,0.093434636,0.140151954,,,0.023946436,"Intellectual Capital , Regenerative Flow , Financial Capital",,V8,"4, 5, 6",V18,"10, 11, 12"
+V19,Face 2,Face 3,Face 6,0.163880502,0.377289761,0.207362687,0.249510983,0.249510983,0.142272839,0.213409259,,,0.030915218,"Intellectual Capital , Human Capital , Community & Partners",,V9,"1, 5, 8",V19,"2, 3, 6"
+V7,Face 3,Face 10,Face 11,0.377289761,0.304032456,0.013913183,0.231745133,0.231745133,0.242251052,0.363376578,,,0.057354166,"Human Capital , Financial Capital , Financial Capital",,V10,"4, 5, 7",V20,"1, 8, 6"
+V2,Face 1,Face 5,Face 6,0.12521865,0.310162951,0.207362687,0.214248096,0.214248096,0.123296201,0.184944301,,,0.019419093,"Financial Capital , Market Resonance , Community & Partners",,,,,
+V8,Face 4,Face 5,Face 6,0.110065507,0.310162951,0.207362687,0.209197048,0.209197048,0.133398296,0.200097444,,,0.017069121,"Structural Capital , Market Resonance , Community & Partners",,,,,
+V17,Face 9,Face 10,Face 12,0.292242644,0.304032456,0.023040299,0.206438466,0.206438466,0.187328105,0.280992158,,,0.044425624,"Regenerative Flow , Financial Capital , Financial Capital",,,,,
+V14,Face 7,Face 8,Face 12,0.018208945,0.535762546,0.023040299,0.192337263,0.192337263,0.345035734,0.517553601,,,0.004877835,"Brand & Reputation , Core Operations , Financial Capital",,,,,
+V11,Face 3,Face 4,Face 11,0.377289761,0.110065507,0.013913183,0.167089484,0.167089484,0.242251052,0.363376578,,,0.020763294,"Human Capital , Structural Capital , Financial Capital",,,,,
+V1,Face 1,Face 2,Face 6,0.12521865,0.163880502,0.207362687,0.16548728,0.16548728,0.054762691,0.082144037,,,0.010260448,"Financial Capital , Intellectual Capital , Community & Partners",,,,,
+V10,Face 4,Face 5,Face 7,0.110065507,0.310162951,0.018208945,0.146145801,0.146145801,0.194636004,0.291954006,,,0.017069121,"Structural Capital , Market Resonance , Brand & Reputation",,,,,
+V18,Face 10,Face 11,Face 12,0.304032456,0.013913183,0.023040299,0.113661979,0.113661979,0.193412849,0.290119273,,,0.00211503,"Financial Capital , Financial Capital , Financial Capital",,,,,
+V12,Face 4,Face 7,Face 11,0.110065507,0.018208945,0.013913183,0.047395878,0.047395878,0.064101549,0.096152323,,,0.001002088,"Structural Capital , Brand & Reputation , Financial Capital",,,,,
+V15,Face 7,Face 11,Face 12,0.018208945,0.013913183,0.023040299,0.018387476,0.018387476,0.006084743,0.009127115,,,0.000126672,"Brand & Reputation , Financial Capital , Financial Capital",,,,,
+,,,,,,,,,,,,,,,,,,,
+V-Mean (The Ambient Temperature):,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+What it is: The average Face Energy of the three domains that meet at that vertex.,,,,,,,,,,,,,,,,,,,
+"What it tells you: This is a measure of the overall ""energetic charge"" or ""ambient temperature"" at that specific intersection. Is this a ""hot"" corner of the organization where a lot of energy is concentrated, or is it a ""cool,"" quiet one?",,,,,,,,,,,,,,,,,,,
+"Interpretation: A high V-Mean is not necessarily good or bad. It simply tells you that this is a high-energy, high-importance junction. It's a place to pay attention.",,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+Vortex Strength (?) (The Spin):,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+What it is: The average difference in energy between the three meeting faces.,,,,,,,,,,,,,,,,,,,
+"What it tells you: This is the most important metric. It measures the ""dissonant circulation"" or ""spin"" at the vertex. A low ? score (near 0) means the three meeting departments are in a state of harmonious, balanced resonance. A high ? score means they are pulling in wildly different directions, creating a turbulent ""whirlpool"" of wasted energy and conflict.",,,,,,,,,,,,,,,,,,,
+"Interpretation: A high ? score is always a red flag. It is the mathematical signature of a ""Bermuda Triangle"" in your organization—a hidden source of chaos and incoherence.",,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+"Finding the ""Hotspots"" (High ?):",,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+"Your Action: Sort the map by Vortex Strength (?) descending. The vertices at the top of this list are your organization's most critical, hidden points of conflict.",,,,,,,,,,,,,,,,,,,
+"Strategic Value: This is a revelation. The problem might not be with ""Finance"" (a Face) or the ""Finance-Ecology Relationship"" (an Edge). The problem might be at the Vertex where Finance, Core Operations, and Regenerative Flow all meet. This triadic junction might be the true source of the dissonance. The Vortex Map makes this previously invisible problem, visible. It tells you exactly which three leaders need to be in a room together to solve the problem.",,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+"Finding the ""Synergy Hubs"" (Low ?, High V-Mean):",,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+Your Action: Look for vertices with a very low Vortex Strength but a high V-Mean.,,,,,,,,,,,,,,,,,,,
+"Strategic Value: These are your ""creative hotspots."" These are the junctions where three high-energy departments are working in perfect, harmonious resonance. These are the places where miracles, synergies, and unexpected breakthroughs are happening. As a conductor, your job is to study these hubs, understand why they are so coherent, and then export their ""best practices"" and ""way of being"" to the rest of the organization.",,,,,,,,,,,,,,,,,,,

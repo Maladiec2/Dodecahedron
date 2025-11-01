@@ -1,0 +1,56 @@
+{
+  "id": "apex-industries",
+  "name": "Apex Industries",
+  "tagline": "Sustainable Manufacturing Excellence",
+  "stage": "Public Company (NASDAQ: APEX)",
+  "founded": "2008",
+  "employees": 850,
+  "revenue": "$450M annually",
+  "profitMargin": "22%",
+  "marketCap": "$2.1B",
+  "cashReserves": "$142M",
+  "story": "Apex Industries represents something rare in business: multi-dimensional mastery. Founded in 2008, they've spent 17 years systematically building excellence across every dimension. They're not just profitable—they're carbon-negative. Not just efficient—they're elegant. Not just successful—they're generous. Employee sleep averages 7.8 hours, organizational joy scores 4.7/5, and 92% report mindfulness practice adoption. They achieve 99.97% system reliability while maintaining 4.8 code quality. They have $142M in cash reserves while reinvesting heavily in R&D (14 breakthroughs per quarter). Their CEO speaks at Davos about stakeholder capitalism. Harvard writes case studies about their culture. Other companies study their playbooks. This is what Octave 6-7 looks like: conducting a symphony, not fighting fires.",
+  "octaveProfile": {
+    "dominant": "O6: Vision",
+    "secondary": "O7: Radiance",
+    "reaching": "O7+: Wisdom & Legacy",
+    "description": "Operating from clear long-term vision. Radiating positive influence across industry and ecosystem. Building for generations, not quarters. All lower octaves (O1-O5) humming in balanced harmony."
+  },
+  "challenges": [
+    "Maintaining innovation velocity at scale (challenge accepted: 14 breakthroughs/quarter)",
+    "Balancing stakeholder needs (currently succeeding across all groups)",
+    "Avoiding complacency despite 17 years of success",
+    "Succession planning for visionary leadership team",
+    "Teaching industry how to replicate their model (38 awards, constant speaking invitations)"
+  ],
+  "strengths": [
+    "Financial mastery: $450M revenue, 22% margin, $142M reserves",
+    "Operational excellence: 99.97% uptime, 52 velocity, 4.8 quality scores",
+    "Human flourishing: 7.8 hrs sleep, 8.2 energy, 4.7 joy, 92% mindfulness",
+    "Sustainability leadership: 100% carbon-negative, 92% regenerative practices",
+    "Market influence: 8,500 weekly engagement, 38 industry awards, 16 customer advocacy",
+    "Relationship mastery: 14 strategic partnerships, 4.9 stakeholder harmony",
+    "Governance excellence: 98% framework maturity, 97% ethics compliance",
+    "Innovation engine: 14 R&D breakthroughs/quarter, 28 hours innovation investment",
+    "Purpose clarity: 4.9 mission alignment, 4.9 foundational wisdom",
+    "Adaptive capacity: 96% risk management, 0.95 strategic agility, 4.9 antifragility"
+  ],
+  "breathDynamics": {
+    "perfectlyBalanced": [
+      "Financial Capital ↔ Funding Pipeline (abundant flow)",
+      "Intellectual Capital ↔ Market Resonance (innovation meets impact)",
+      "Human Capital ↔ Community & Partners (care internal = care external)",
+      "Structural Capital ↔ Brand & Reputation (excellence visible inside & out)",
+      "Core Operations ↔ Regenerative Flow (profit & planet aligned)",
+      "Foundational Values ↔ Risk & Resilience (integrity = strength)"
+    ],
+    "insight": "Apex has achieved systemic coherence across all six breath axes. Every dimension shows 0.9-1.1 breath ratios—nearly perfect balance. This is extraordinarily rare. They're not over-projecting in any direction (like Zenith) or desperately under-resourced (like Nova). Energy flows smoothly in all directions. This is what organizational mastery looks like: a self-reinforcing system where excellence in one dimension naturally supports excellence in all others."
+  },
+  "industryImpact": {
+    "thoughtLeadership": "CEO keynotes at Davos, TED, Fortune 500 conferences",
+    "awards": "38 industry recognition awards in past 3 years",
+    "caseStudies": "Harvard Business School, Wharton, Stanford cases written",
+    "benchmarking": "Companies worldwide study Apex playbooks",
+    "sustainability": "Certified B Corp, carbon-negative since 2020, circular economy leader"
+  }
+}
