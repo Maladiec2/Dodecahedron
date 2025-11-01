@@ -1,0 +1,40 @@
+{
+  "id": "nova-tech",
+  "name": "Nova Tech",
+  "tagline": "AI-Powered Marketing Platform",
+  "stage": "Seed Stage Startup",
+  "founded": "2024",
+  "employees": 5,
+  "funding": "$250K seed",
+  "monthlyBurn": "$67K",
+  "runway": "4.2 months",
+  "revenue": "$0 (beta)",
+  "story": "Nova Tech is fighting for its life. Three technical founders and two contractors built an AI marketing platform that genuinely works—but they're burning through their seed funding at an unsustainable rate. With only $28K in the bank and $67K monthly burn, they have 4 months to either raise more funding or achieve revenue. Founders are sleeping 4 hours a night, product uptime is 87.5%, and they have zero paying customers. The technology is brilliant. The execution is chaotic. The future is uncertain.",
+  "octaveProfile": {
+    "dominant": "O1: Survival",
+    "secondary": "O2: Structure",
+    "reaching": "O3: Relationships",
+    "description": "Literally fighting to exist. Building minimal structure while pursuing first customer relationships. Most energy is pure survival mode."
+  },
+  "challenges": [
+    "Critical: Only 4.2 months runway remaining ($28K cash, $67K burn)",
+    "Zero revenue: No paying customers after 6 months",
+    "Founder health crisis: 4.2 hours sleep, energy level 3.5/10",
+    "Product instability: 87.5% uptime (customers expect 99%+)",
+    "No market presence: 142 website visitors/week",
+    "Minimal documentation: Everything is in founders' heads",
+    "Legal incomplete: Only 45% registration done"
+  ],
+  "strengths": [
+    "Genuine innovation: AI technology works",
+    "Founder commitment: Working 52+ hours/week on IP",
+    "Strong mission clarity: 4.2/5 despite chaos",
+    "Some investor interest: 2 active conversations",
+    "Decent pitch deck: 3.5/5 quality"
+  ],
+  "breathDynamics": {
+    "overExhaling": ["Funding Pipeline (18 hrs/week outreach)", "IP Development (52 hrs/week coding)"],
+    "underExhaling": ["Financial Capital (hemorrhaging cash)", "Human Capital (founders exhausted)", "Market Resonance (invisible in market)"],
+    "insight": "Severe imbalance. Nova is projecting energy desperately (fundraising, building) but not receiving anything back (no revenue, no rest, no customers). Classic death spiral. Without dramatic intervention—funding or revenue—they will not survive."
+  }
+}
