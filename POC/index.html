@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌟 Quannex Coherence Engine - University Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .title {
+            font-size: 42px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00ffcc, #ff00ff, #ffff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 20px;
+        }
+
+        .global-coherence {
+            font-size: 72px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(0, 255, 204, 0.8);
+        }
+
+        .status {
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .status.healthy { background: rgba(0, 255, 102, 0.3); color: #00ff66; }
+        .status.dimming { background: rgba(255, 255, 0, 0.3); color: #ffff00; }
+        .status.critical { background: rgba(255, 102, 102, 0.3); color: #ff6666; }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .face-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .face-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .face-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .face-name {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .face-id {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .energy-display {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .energy-bar {
+            height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .energy-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .kpi-list {
+            margin-top: 15px;
+        }
+
+        .kpi-item {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .kpi-name {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .kpi-value {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+        }
+
+        .btn {
+            background: rgba(0, 255, 204, 0.2);
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #00ffcc;
+            color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 204, 0.5);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+            font-size: 24px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #00ffcc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.7;
+            font-size: 14px;
+        }
+
+        /* Company Selector Styles */
+        .company-selector {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .selector-title {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .company-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .company-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .company-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--company-color);
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .company-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--company-color);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .company-card:hover::before {
+            opacity: 1;
+        }
+
+        .company-card.active {
+            border-color: var(--company-color);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 30px var(--company-color-alpha);
+        }
+
+        .company-card.active::before {
+            opacity: 1;
+            height: 6px;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--company-color);
+        }
+
+        .company-tagline {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 12px;
+        }
+
+        .company-stage {
+            font-size: 13px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .company-octaves {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .octave-badge {
+            background: var(--company-color-alpha);
+            color: var(--company-color);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .company-description {
+            font-size: 12px;
+            margin-top: 10px;
+            opacity: 0.8;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">🌟 QUANNEX COHERENCE ENGINE</div>
+            <div class="subtitle">Organizational DNA • 12 Faces • Real-time Coherence Analysis</div>
+            <div class="global-coherence" id="globalCoherence">—</div>
+            <div class="status" id="globalStatus">Initializing...</div>
+        </div>
+
+        <!-- Company Selector -->
+        <div class="company-selector" id="companySelector">
+            <div class="selector-title">Select Organization</div>
+            <div class="company-cards" id="companyCards">
+                <!-- Company cards will be inserted here -->
+            </div>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <div>Initializing Coherence Engine...</div>
+        </div>
+
+        <div id="dashboard" class="dashboard" style="display: none;">
+            <!-- Face cards will be inserted here -->
+        </div>
+
+        <div class="controls" style="display: none;" id="controls">
+            <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <button class="btn" onclick="window.location.href='octave-dna.html'">🧬 View DNA Visualization</button>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 Quannex • Organizational Coherence Engine</p>
+            <p>University Demo • Serverless Edition</p>
+        </div>
+    </div>
+
+    <!-- Load company loader first -->
+    <script src="./js/company-loader.js"></script>
+
+    <!-- Load the serverless engine -->
+    <script src="./js/main.js"></script>
+
+    <script>
+        /**
+         * Populate company selector cards
+         */
+        function populateCompanySelector() {
+            const container = document.getElementById('companyCards');
+            const companies = window.CompanyLoader.getAvailableCompanies();
+
+            companies.forEach((company, index) => {
+                const card = document.createElement('div');
+                card.className = 'company-card';
+                card.id = `company-${company.id}`;
+                card.style.setProperty('--company-color', company.color);
+                card.style.setProperty('--company-color-alpha', company.color + '33');
+
+                // Set first company as active by default
+                if (index === 0) {
+                    card.classList.add('active');
+                }
+
+                card.innerHTML = `
+                    <div class="company-name">${company.name}</div>
+                    <div class="company-tagline">${company.tagline}</div>
+                    <div class="company-stage">${company.stage}</div>
+                    <div class="company-octaves">
+                        <span style="opacity: 0.7;">Octave Range:</span>
+                        <span class="octave-badge">${company.octaveRange}</span>
+                    </div>
+                    <div class="company-description">${company.description}</div>
+                `;
+
+                // Add click handler
+                card.addEventListener('click', () => selectCompany(company.id));
+
+                container.appendChild(card);
+            });
+        }
+
+        /**
+         * Select a company and reinitialize dashboard
+         */
+        async function selectCompany(companyId) {
+            try {
+                console.log(`🏢 Switching to company: ${companyId}`);
+
+                // Update UI to show active company
+                document.querySelectorAll('.company-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                document.getElementById(`company-${companyId}`).classList.add('active');
+
+                // Show loading state
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('controls').style.display = 'none';
+
+                // Load company and reinitialize
+                const company = await window.CompanyLoader.switchCompany(companyId);
+
+                if (company) {
+                    // Get updated state and display
+                    const state = window.Quannex.getState();
+
+                    // Hide loading, show dashboard
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'grid';
+                    document.getElementById('controls').style.display = 'block';
+
+                    displayState(state);
+
+                    console.log(`✅ Switched to ${company.name}`);
+                } else {
+                    throw new Error('Failed to load company data');
+                }
+
+            } catch (error) {
+                console.error('❌ Failed to switch company:', error);
+                alert(`Failed to load company: ${error.message}`);
+            }
+        }
+
+        /**
+         * Initialize and display the dashboard
+         */
+        async function initDashboard() {
+            try {
+                console.log('🚀 Initializing Quannex Dashboard...');
+
+                // Populate company selector
+                populateCompanySelector();
+
+                // Load first company by default
+                const companies = window.CompanyLoader.getAvailableCompanies();
+                const firstCompany = companies[0];
+
+                console.log(`📦 Loading default company: ${firstCompany.name}`);
+                const company = await window.CompanyLoader.loadCompany(firstCompany.id);
+
+                // Initialize the engine with company data
+                const state = await window.Quannex.initWithCompany(company);
+
+                console.log('✅ Engine initialized:', state);
+
+                // Hide loading, show dashboard
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'grid';
+                document.getElementById('controls').style.display = 'block';
+
+                // Display data
+                displayState(state);
+
+            } catch (error) {
+                console.error('❌ Failed to initialize:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="spinner"></div>
+                    <div>Error: ${error.message}</div>
+                    <div style="margin-top: 20px; font-size: 14px;">
+                        Please check the console for details.
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Display system state
+         */
+        function displayState(state) {
+            // Update global coherence
+            const coherence = state.globalCoherence;
+            const coherencePercent = (coherence * 100).toFixed(1);
+
+            document.getElementById('globalCoherence').textContent = `${coherencePercent}%`;
+
+            // Update global status
+            const statusEl = document.getElementById('globalStatus');
+            if (coherence >= 0.7) {
+                statusEl.textContent = '✅ HEALTHY SYSTEM';
+                statusEl.className = 'status healthy';
+            } else if (coherence >= 0.5) {
+                statusEl.textContent = '⚠️ DIMMING';
+                statusEl.className = 'status dimming';
+            } else {
+                statusEl.textContent = '🚨 CRITICAL';
+                statusEl.className = 'status critical';
+            }
+
+            // Display face cards
+            const dashboard = document.getElementById('dashboard');
+            dashboard.innerHTML = '';
+
+            state.faces.forEach(face => {
+                dashboard.appendChild(createFaceCard(face));
+            });
+        }
+
+        /**
+         * Create a face card
+         */
+        function createFaceCard(face) {
+            const card = document.createElement('div');
+            card.className = 'face-card';
+            card.style.borderColor = face.color;
+
+            const energyPercent = (face.energy * 100).toFixed(1);
+
+            card.innerHTML = `
+                <div class="face-header">
+                    <div>
+                        <div class="face-name">${face.name}</div>
+                        <div class="face-id">Face ${face.id}</div>
+                    </div>
+                    <div style="font-size: 24px;">${getHealthIcon(face.status)}</div>
+                </div>
+                <div class="energy-display" style="color: ${face.color};">${energyPercent}%</div>
+                <div class="energy-bar">
+                    <div class="energy-fill" style="width: ${energyPercent}%; background: linear-gradient(90deg, ${face.color}, ${face.color}88);"></div>
+                </div>
+                <div style="text-align: center; margin-top: 10px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 6px;">
+                    <strong>Status:</strong> ${face.status}
+                </div>
+                <div class="kpi-list" id="kpis-${face.id}">
+                    <!-- KPIs will be loaded here -->
+                </div>
+            `;
+
+            // Load KPIs for this face
+            loadFaceKPIs(face.id);
+
+            return card;
+        }
+
+        /**
+         * Load KPIs for a specific face
+         */
+        function loadFaceKPIs(faceId) {
+            const faces = window.Quannex.getFaces();
+            const face = faces.find(f => f.id === faceId);
+
+            if (!face || !face.kpis || face.kpis.length === 0) {
+                return;
+            }
+
+            const container = document.getElementById(`kpis-${faceId}`);
+            if (!container) return;
+
+            let html = '<div style="margin-top: 15px; font-size: 13px; font-weight: bold; opacity: 0.8;">Elemental KPIs:</div>';
+
+            face.kpis.forEach((kpi, index) => {
+                const elements = ['🜃 Earth', '💧 Water', '🔥 Fire', '💨 Air', '🜀 Ether'];
+                const element = elements[index] || '⚡';
+
+                html += `
+                    <div class="kpi-item">
+                        <div class="kpi-name">${element} ${kpi.name}</div>
+                        <div class="kpi-value">
+                            <span>Score: ${(kpi.normalizedScore * 100).toFixed(1)}%</span>
+                            <span>Value: ${kpi.value.toFixed(2)}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        /**
+         * Get health status icon
+         */
+        function getHealthIcon(status) {
+            const icons = {
+                'Radiant': '✨',
+                'Healthy': '✅',
+                'Dimming': '⚠️',
+                'Struggling': '🔴',
+                'Critical': '🚨'
+            };
+            return icons[status] || '●';
+        }
+
+        /**
+         * Refresh data
+         */
+        function refreshData() {
+            const state = window.Quannex.getState();
+            displayState(state);
+            console.log('🔄 Data refreshed');
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', initDashboard);
+    </script>
+</body>
+</html>
