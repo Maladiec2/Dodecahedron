@@ -412,6 +412,8 @@ class DodecahedronEngine {
     this.edges = [];
     this.vertices = [];
     this.kpis = new Map(); // id -> KPI object
+    this.breathAnalyzer = new BreathAnalyzer(); // Breath analysis
+    this.breathAnalysis = null; // Cached breath analysis
   }
 
   /**
@@ -421,8 +423,8 @@ class DodecahedronEngine {
     console.log('🌟 Initializing Quannex Coherence Engine...');
 
     // Load CSV data
-    const kpiData = await loadCSV('CSV_KPI_Database.csv');
-    const faceData = await loadCSV('CSV_Face_Models.csv');
+    const kpiData = await loadCSV('CSV_KPI_DATABASE.csv');
+    const faceData = await loadCSV('CSV_FACE_MODELS.csv');
 
     // Create KPIs
     this.createKPIs(kpiData);
@@ -538,6 +540,11 @@ class DodecahedronEngine {
     this.faces.forEach(face => {
       const energy = face.faceEnergy; // Trigger calculation
     });
+
+    // Run breath analysis
+    if (this.faces.length === 12) {
+      this.breathAnalysis = this.breathAnalyzer.analyze(this.faces);
+    }
   }
 
   /**
@@ -656,6 +663,13 @@ window.Quannex = {
       normalizedScore: kpi.normalizedScore,
       faceId: kpi.faceId
     }));
+  },
+
+  /**
+   * Get breath analysis (6 breath axes)
+   */
+  getBreathAnalysis() {
+    return quannexEngine.breathAnalysis;
   }
 };
 

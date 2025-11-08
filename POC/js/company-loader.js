@@ -12,6 +12,15 @@
  */
 const COMPANIES = [
     {
+        id: 'quannex',
+        name: 'Quannex',
+        tagline: 'Organizational DNA Visualization Platform',
+        stage: 'Pre-Seed Startup',
+        color: '#DAA520',
+        octaveRange: 'O1/O6-O7',
+        description: 'Real startup data - Aspiration-Actuality Gap embodied'
+    },
+    {
         id: 'nova-tech',
         name: 'Nova Tech',
         tagline: 'AI-Powered Marketing Platform',

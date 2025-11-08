@@ -10,6 +10,7 @@ import { Dodecahedron } from './models/Dodecahedron.js';
 import { getSampleData } from './data/sampleData.js';
 import { OctaveProgressionManager } from './models/OctaveProgressionManager.js';
 import { OctaveCSVParser } from './utils/OctaveCSVParser.js';
+import { QuannexCSVParser } from './utils/QuannexCSVParser.js';
 import { OctaveHelixVisualizer } from './models/OctaveHelixVisualizer.js';
 
 const app = express();
@@ -19,9 +20,19 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// Initialize the global dodecahedron instance
+// Initialize the global dodecahedron instance with real Quannex data
 const dodecahedron = new Dodecahedron();
-dodecahedron.initialize(getSampleData());
+
+// Try to load real Quannex data from CSV, fall back to sample data
+try {
+  console.log('📊 Loading real Quannex data from CSV files...');
+  const quannexData = QuannexCSVParser.loadQuannexData();
+  dodecahedron.initialize(quannexData);
+  console.log('✅ Successfully loaded real Quannex data!');
+} catch (error) {
+  console.warn('⚠️  Could not load Quannex data, using sample data:', error.message);
+  dodecahedron.initialize(getSampleData());
+}
 
 // Initialize the octave progression manager
 const octaveManager = new OctaveProgressionManager();
@@ -31,7 +42,7 @@ async function initializeOctaveProgressions() {
   try {
     // Try to load from CSV file
     console.log('📖 Attempting to load octave progressions from CSV...');
-    const csvData = OctaveCSVParser.loadFromFile('CSV_Refrence_Models.csv');
+    const csvData = OctaveCSVParser.loadFromFile('POC/data/CSV_REFRENCE_MODELS.csv');
     
     if (csvData && csvData.faceProgressions) {
       // Use CSV data

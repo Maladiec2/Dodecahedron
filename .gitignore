@@ -30,3 +30,6 @@ pnpm-debug.log*
 # OS files
 Thumbs.db
 
+# Windows reserved device names
+nul
+
