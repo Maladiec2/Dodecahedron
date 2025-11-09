@@ -484,7 +484,8 @@ class DodecahedronEngine {
         healthyMin: parseFloat(row.Healthy_Min),
         healthyMax: parseFloat(row.Healthy_Max),
         absoluteMax: parseFloat(row.Absolute_Max),
-        faceId: parseInt(row.Face_ID) || null
+        faceId: parseInt(row.Face_ID) || null,
+        element: row.Element || 'Earth' // Add element from CSV
       });
 
       this.kpis.set(kpi.id, kpi);
@@ -558,17 +559,41 @@ class DodecahedronEngine {
   }
 
   /**
+   * Get coherence status description
+   */
+  getCoherenceStatus(coherence) {
+    if (coherence >= 0.9) return 'Exceptional';
+    if (coherence >= 0.8) return 'Excellent';
+    if (coherence >= 0.7) return 'Healthy';
+    if (coherence >= 0.6) return 'Moderate';
+    if (coherence >= 0.5) return 'Fair';
+    if (coherence >= 0.4) return 'Concerning';
+    if (coherence >= 0.3) return 'Critical';
+    return 'Crisis';
+  }
+
+  /**
    * Get system state (for UI)
    */
   getState() {
     return {
       globalCoherence: this.getGlobalCoherence(),
+      coherenceStatus: this.getCoherenceStatus(this.getGlobalCoherence()),
       faces: this.faces.map(face => ({
         id: face.id,
         name: face.name,
-        energy: face.faceEnergy,
+        faceEnergy: face.faceEnergy, // Use faceEnergy for consistency
+        energy: face.faceEnergy, // Keep energy for backward compatibility
         status: face.healthStatus,
-        color: face.getEnergyColor()
+        color: face.getEnergyColor(),
+        elementalKPIs: face.elementalKPIs.map(kpi => ({
+          id: kpi.id,
+          name: kpi.name,
+          value: kpi.value,
+          normalizedScore: kpi.normalizedScore,
+          element: kpi.element,
+          healthStatus: kpi.healthStatus
+        }))
       })),
       timestamp: new Date().toISOString()
     };
@@ -672,6 +697,9 @@ window.Quannex = {
     return quannexEngine.breathAnalysis;
   }
 };
+
+// Also expose quannexEngine directly for advanced integrations (like 3D viz)
+window.quannexEngine = quannexEngine;
 
 console.log('🌟 Quannex Serverless Engine Loaded');
 console.log('💡 Use window.Quannex API to interact with the system');

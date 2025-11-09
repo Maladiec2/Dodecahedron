@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Dodecahedron - Organizational Geometry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000; /* Pure black to match DNA helix view */
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Header (hides when in iframe) */
+        .page-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 20px 30px;
+            backdrop-filter: blur(20px);
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+        }
+
+        .page-header.hidden {
+            display: none;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #00ffcc;
+        }
+
+        .page-subtitle {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+
+        /* Canvas Container */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #scene {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Controls Panel */
+        .controls-panel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            z-index: 200;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .controls-panel h3 {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #00ffcc;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .control-button {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 255, 204, 0.1);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 6px;
+            color: #00ffcc;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            margin-bottom: 8px;
+        }
+
+        .control-button:hover {
+            background: rgba(0, 255, 204, 0.2);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+
+        .control-button.active {
+            background: rgba(0, 255, 204, 0.3);
+            border-color: #00ffcc;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+        }
+
+        .stats-label {
+            opacity: 0.7;
+        }
+
+        .stats-value {
+            color: #00ffcc;
+            font-weight: 600;
+        }
+
+        /* Face Detail Panel */
+        .face-detail-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 500px;
+            max-width: 90vw;
+            max-height: 80vh;
+            background: rgba(0, 0, 0, 0.95);
+            border: 2px solid rgba(0, 255, 204, 0.5);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            overflow-y: auto;
+            box-shadow: 0 10px 50px rgba(0, 255, 204, 0.3);
+        }
+
+        .face-detail-panel.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .face-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .face-detail-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #00ffcc;
+            letter-spacing: 1px;
+        }
+
+        .face-detail-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .face-detail-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .face-energy-display {
+            font-size: 48px;
+            font-weight: 300;
+            text-align: center;
+            margin: 20px 0;
+            color: #00ffcc;
+        }
+
+        .face-energy-label {
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .kpi-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .kpi-name {
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .kpi-element {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .kpi-element.earth { background: rgba(139, 69, 19, 0.3); color: #d2691e; }
+        .kpi-element.water { background: rgba(30, 144, 255, 0.3); color: #1e90ff; }
+        .kpi-element.fire { background: rgba(255, 69, 0, 0.3); color: #ff4500; }
+        .kpi-element.air { background: rgba(135, 206, 250, 0.3); color: #87ceeb; }
+        .kpi-element.ether { background: rgba(138, 43, 226, 0.3); color: #8a2be2; }
+
+        .kpi-value-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .kpi-value-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .kpi-value-fill.healthy { background: linear-gradient(90deg, #00ff88, #00ffcc); }
+        .kpi-value-fill.warning { background: linear-gradient(90deg, #ffa500, #ffcc00); }
+        .kpi-value-fill.critical { background: linear-gradient(90deg, #ff4444, #ff6b6b); }
+
+        .pentagram-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(0, 255, 204, 0.2));
+            border: 1px solid rgba(0, 255, 204, 0.5);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .pentagram-button:hover {
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.4), rgba(0, 255, 204, 0.4));
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+        }
+
+        /* Legend */
+        .legend {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            z-index: 200;
+        }
+
+        .legend-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #00ffcc;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 500;
+        }
+
+        .loading-text {
+            font-size: 16px;
+            color: #00ffcc;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(0, 255, 204, 0.2);
+            border-top-color: #00ffcc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 204, 0.3);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 204, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (auto-hides in iframe) -->
+    <div class="page-header" id="pageHeader">
+        <div class="page-title">🔷 3D Dodecahedron</div>
+        <div class="page-subtitle">Interactive Organizational Geometry</div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="loading-text">INITIALIZING GEOMETRY</div>
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Canvas -->
+    <div id="canvas-container">
+        <canvas id="scene"></canvas>
+    </div>
+
+    <!-- Controls Panel -->
+    <div class="controls-panel">
+        <h3>Controls</h3>
+
+        <div class="control-group">
+            <label class="control-label">Rotation</label>
+            <button class="control-button active" id="toggleRotation">Auto-Rotate: ON</button>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Company</label>
+            <button class="control-button" id="companyQuannex">Quannex</button>
+            <button class="control-button" id="companyNova">Nova Tech</button>
+            <button class="control-button" id="companyZenith">Zenith Solutions</button>
+            <button class="control-button" id="companyApex">Apex Industries</button>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Global Stats</label>
+            <div class="stats-item">
+                <span class="stats-label">Coherence</span>
+                <span class="stats-value" id="statCoherence">--</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Status</span>
+                <span class="stats-value" id="statStatus">--</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Faces</span>
+                <span class="stats-value">12</span>
+            </div>
+            <div class="stats-item">
+                <span class="stats-label">Edges</span>
+                <span class="stats-value">30</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">Instructions</label>
+            <div style="font-size: 11px; opacity: 0.7; line-height: 1.6;">
+                • Click faces for details<br>
+                • Drag to rotate<br>
+                • Scroll to zoom<br>
+                • ESC to close panels
+            </div>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <div class="legend-title">Face Energy</div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #00ff88, #00ffcc);"></div>
+            <span>Healthy (70-100%)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #ffa500, #ffcc00);"></div>
+            <span>Warning (40-70%)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: linear-gradient(135deg, #ff4444, #ff6b6b);"></div>
+            <span>Critical (0-40%)</span>
+        </div>
+    </div>
+
+    <!-- Face Detail Panel -->
+    <div class="face-detail-panel" id="faceDetailPanel">
+        <div class="face-detail-header">
+            <div class="face-detail-title" id="faceDetailTitle">Face Name</div>
+            <button class="face-detail-close" id="closeFaceDetail">&times;</button>
+        </div>
+
+        <div class="face-energy-display" id="faceEnergyDisplay">--</div>
+        <div class="face-energy-label">FACE ENERGY</div>
+
+        <div class="kpi-grid" id="kpiGrid">
+            <!-- KPIs will be injected here -->
+        </div>
+
+        <button class="pentagram-button" id="showPentagram">⭐ View Pentagram Analysis</button>
+    </div>
+
+    <!-- Three.js Library -->
+    <script src="https://unpkg.com/three@0.128.0/build/three.js"></script>
+    <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <!-- Load breath analyzer first (as regular script, not module) -->
+    <script src="js/breath-analyzer.js"></script>
+
+    <!-- Main Quannex Engine (modules) -->
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/company-loader.js"></script>
+
+    <!-- Dodecahedron Visualization -->
+    <script src="js/dodecahedron-viz.js"></script>
+</body>
+</html>
