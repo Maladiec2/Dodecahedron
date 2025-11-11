@@ -49,6 +49,24 @@ scene.fog = new THREE.Fog(0x000000, 15, 50); // Atmospheric depth
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(4, 4, 4);
 
+// ========================================
+// MOUSE TRACKING - Simplified approach
+// ========================================
+// Note: OrbitControls prevents us from tracking mousedown events on the canvas,
+// so we use OrbitControls events + continuous mouse tracking for drag detection.
+let isUserInteracting = false;
+let interactionTimeout = null;
+let mouseStartPosition = { x: 0, y: 0 };
+let currentMousePosition = { x: 0, y: 0 };
+let isDraggingWithOrbit = false;
+const DRAG_THRESHOLD = 5; // pixels - stricter than browser default
+
+// Track mouse position continuously
+document.addEventListener('mousemove', (event) => {
+    currentMousePosition.x = event.clientX;
+    currentMousePosition.y = event.clientY;
+}, true);
+
 // Orbit Controls - Optimized for natural soccer ball-like rotation
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
@@ -59,6 +77,41 @@ controls.maxDistance = 15;
 controls.enablePan = false;
 controls.autoRotateSpeed = 1.0; // Smooth auto-rotation speed
 controls.zoomSpeed = 1.2; // Comfortable zoom speed
+
+// Track OrbitControls interactions for auto-rotation pause and drag detection
+controls.addEventListener('start', () => {
+    isUserInteracting = true;
+    isDraggingWithOrbit = true;
+
+    // Capture the starting mouse position when user starts dragging
+    mouseStartPosition.x = currentMousePosition.x;
+    mouseStartPosition.y = currentMousePosition.y;
+
+    console.log(`🎮 OrbitControls drag start at (${mouseStartPosition.x}, ${mouseStartPosition.y})`);
+
+    if (interactionTimeout) clearTimeout(interactionTimeout);
+});
+
+controls.addEventListener('end', () => {
+    isUserInteracting = false;
+
+    // Calculate total drag distance
+    const deltaX = Math.abs(currentMousePosition.x - mouseStartPosition.x);
+    const deltaY = Math.abs(currentMousePosition.y - mouseStartPosition.y);
+    const totalMovement = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    console.log(`🎮 OrbitControls drag end - Total movement: ${totalMovement.toFixed(1)}px`);
+
+    // Keep dragging flag for a brief moment to prevent click firing
+    setTimeout(() => {
+        isDraggingWithOrbit = false;
+    }, 50);
+
+    if (interactionTimeout) clearTimeout(interactionTimeout);
+    interactionTimeout = setTimeout(() => {
+        isUserInteracting = false;
+    }, 2000);
+});
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -81,8 +134,7 @@ let companyData = null;
 let faceMeshes = [];
 let edgeLines = [];
 let autoRotate = false; // Start with manual control
-let isUserInteracting = false;
-let interactionTimeout = null;
+// Note: isUserInteracting and interactionTimeout are declared earlier before OrbitControls initialization
 
 // Load Quannex engine (expects it to be globally available from main.js)
 const loadQuannexEngine = async () => {
@@ -233,15 +285,16 @@ const createDodecahedron = () => {
 
         const clickMesh = new THREE.Mesh(faceGeometry, invisibleMaterial);
 
-        // Scale up significantly to ensure no gaps, especially when zoomed in
-        clickMesh.scale.set(1.35, 1.35, 1.35);
+        // Use same scale as visible mesh - precise clicking, may have tiny gaps at edges
+        clickMesh.scale.set(1.0, 1.0, 1.0);
 
         clickMesh.userData.faceId = faceIndex + 1;
         clickMesh.userData.faceIndex = faceIndex;
         clickMesh.userData.materialIndex = faceIndex;
         clickMesh.userData.material = materials[faceIndex];
 
-        scene.add(clickMesh);
+        // Add as child of main dodecahedron so they rotate together
+        dodecahedron.add(clickMesh);
         faceMeshes.push(clickMesh);
     }
 
@@ -452,8 +505,18 @@ const resetCameraView = () => {
     animateCameraTo(defaultPosition, defaultTarget, 1000);
 };
 
-// Handle mouse move (hover effect)
+// Handle mouse move (hover effect + drag detection)
 const onMouseMove = (event) => {
+    // Track dragging for click vs drag detection
+    if (event.buttons === 1) { // Left mouse button is pressed
+        const deltaX = Math.abs(event.clientX - mouseDownPosition.x);
+        const deltaY = Math.abs(event.clientY - mouseDownPosition.y);
+
+        if (deltaX > mouseMoveThreshold || deltaY > mouseMoveThreshold) {
+            isDragging = true;
+        }
+    }
+
     const rect = canvas.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -531,19 +594,46 @@ const onMouseMove = (event) => {
 
 // Handle mouse click
 const onMouseClick = (event) => {
+    console.log(`🖱️ Canvas click at (${event.clientX}, ${event.clientY})`);
+
+    // Calculate movement from where OrbitControls drag started
+    const deltaX = Math.abs(event.clientX - mouseStartPosition.x);
+    const deltaY = Math.abs(event.clientY - mouseStartPosition.y);
+    const totalMovement = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+    console.log(`   📏 Movement from drag start: ${totalMovement.toFixed(1)}px (threshold: ${DRAG_THRESHOLD}px)`);
+    console.log(`   🎮 isDraggingWithOrbit: ${isDraggingWithOrbit}`);
+
+    // If user moved more than threshold, ignore the click (it was a drag)
+    // Note: We check movement first because the dragging flag may still be true
+    // when the click event fires, but if movement is minimal, it's a valid click
+    if (totalMovement > DRAG_THRESHOLD) {
+        console.log(`   🚫 Ignoring click - user was dragging (${totalMovement.toFixed(1)}px movement)`);
+        return;
+    }
+
+    console.log(`   ✅ Valid click - processing...`);
+    console.log(`   📊 faceMeshes.length: ${faceMeshes.length}`);
+
     // Calculate mouse position in normalized device coordinates
     const rect = canvas.getBoundingClientRect();
     mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 
+    console.log(`   🎯 Mouse NDC: (${mouse.x.toFixed(2)}, ${mouse.y.toFixed(2)})`);
+
     // Raycast to find intersections
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(faceMeshes);
+
+    console.log(`   🔍 Raycaster found ${intersects.length} intersections`);
 
     if (intersects.length > 0) {
         const clickedMesh = intersects[0].object;
         selectedFace = clickedMesh.userData.faceData;
         const faceIndex = clickedMesh.userData.faceIndex;
+
+        console.log(`   ✅ Hit face ${faceIndex + 1}: ${selectedFace?.name || 'Unknown'}`);
 
         if (selectedFace) {
             // Animate camera to focus on this face
@@ -564,19 +654,27 @@ const onMouseClick = (event) => {
             // Show face detail panel
             showFaceDetail(selectedFace);
         }
+    } else {
+        // Clicked on canvas but didn't hit any face - close the panel if open
+        console.log(`   ⚠️ No face hit - clicked empty space`);
+        const panel = document.getElementById('faceDetailPanel');
+        if (panel && panel.classList.contains('visible')) {
+            console.log(`   🔒 Closing face detail panel`);
+            closeFaceDetail();
+        }
     }
 };
 
-// Map elemental names to descriptive names for better UX
-const getDescriptiveElementName = (element) => {
-    const elementMap = {
+// Map internal element codes to business-friendly dimension names
+const getBusinessDimensionName = (element) => {
+    const dimensionMap = {
         'earth': 'Stability',
-        'water': 'Flow',
-        'fire': 'Energy',
+        'water': 'Adaptability',
+        'fire': 'Drive',
         'air': 'Communication',
         'ether': 'Vision'
     };
-    return elementMap[element.toLowerCase()] || element;
+    return dimensionMap[element.toLowerCase()] || element;
 };
 
 // Show face detail panel
@@ -600,12 +698,12 @@ const showFaceDetail = (face) => {
             const normalizedScore = kpi.normalizedScore || 0;
             const healthClass = normalizedScore >= 0.7 ? 'healthy' : normalizedScore >= 0.4 ? 'warning' : 'critical';
             const element = kpi.element ? kpi.element.toLowerCase() : 'earth';
-            const descriptiveName = getDescriptiveElementName(element);
+            const dimensionName = getBusinessDimensionName(element);
 
             kpiItem.innerHTML = `
                 <div class="kpi-item-header">
                     <span class="kpi-name">${kpi.name || 'Unknown KPI'}</span>
-                    <span class="kpi-element ${element}">${descriptiveName}</span>
+                    <span class="kpi-element ${element}">${dimensionName}</span>
                 </div>
                 <div class="kpi-value-bar">
                     <div class="kpi-value-fill ${healthClass}" style="width: ${normalizedScore * 100}%"></div>
@@ -709,36 +807,33 @@ document.getElementById('companyApex').addEventListener('click', () => switchCom
 // Close face detail
 document.getElementById('closeFaceDetail').addEventListener('click', closeFaceDetail);
 
-// Show pentagram (placeholder)
+// Dimensional analysis (will link to DNA helix view for sacred geometry)
 document.getElementById('showPentagram').addEventListener('click', () => {
-    alert('🔮 Pentagram analysis coming soon! This will show the sacred geometry breakdown of the selected face.');
+    alert('📊 Dimensional Analysis\n\nFor deeper sacred geometry insights (pentagram analysis, elemental harmonics), please visit the DNA Helix visualization tab.\n\nThe dodecahedron view focuses on business metrics and organizational health.');
 });
 
 // Mouse handlers
 canvas.addEventListener('click', onMouseClick);
 canvas.addEventListener('mousemove', onMouseMove);
 
-// Pause auto-rotation during user interaction
-canvas.addEventListener('mousedown', () => {
-    isUserInteracting = true;
-    if (interactionTimeout) clearTimeout(interactionTimeout);
-});
+// Close face panel when clicking outside of it
+document.addEventListener('click', (event) => {
+    const panel = document.getElementById('faceDetailPanel');
+    const closeButton = document.getElementById('closeFaceDetail');
 
-canvas.addEventListener('mouseup', () => {
-    isUserInteracting = false;
-    // Resume after 2 seconds of no interaction
-    if (interactionTimeout) clearTimeout(interactionTimeout);
-    interactionTimeout = setTimeout(() => {
-        isUserInteracting = false;
-    }, 2000);
-});
+    // Check if panel is visible and click is outside the panel
+    if (panel && panel.classList.contains('visible')) {
+        // Don't close if:
+        // - Click is inside the panel
+        // - Click is on the close button
+        // - Click is on the canvas (might be opening a different face)
+        const isClickOnCanvas = event.target === canvas || event.target.tagName === 'CANVAS';
 
-canvas.addEventListener('wheel', () => {
-    isUserInteracting = true;
-    if (interactionTimeout) clearTimeout(interactionTimeout);
-    interactionTimeout = setTimeout(() => {
-        isUserInteracting = false;
-    }, 2000);
+        if (!panel.contains(event.target) && event.target !== closeButton && !isClickOnCanvas) {
+            console.log('🖱️ Click outside panel detected - closing face detail');
+            closeFaceDetail();
+        }
+    }
 });
 
 // Keyboard shortcuts
@@ -774,6 +869,7 @@ const animate = () => {
     const time = Date.now() * 0.001; // Time in seconds
 
     // Auto-rotate the main dodecahedron and edges (only when not interacting)
+    // Note: faceMeshes are children of mainDodecahedron, so they rotate automatically
     if (autoRotate && !isUserInteracting) {
         if (window.mainDodecahedron) {
             window.mainDodecahedron.rotation.y += 0.003;

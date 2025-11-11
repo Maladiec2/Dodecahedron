@@ -257,11 +257,12 @@
             letter-spacing: 1px;
         }
 
-        .kpi-element.earth { background: rgba(139, 69, 19, 0.3); color: #d2691e; }
-        .kpi-element.water { background: rgba(30, 144, 255, 0.3); color: #1e90ff; }
-        .kpi-element.fire { background: rgba(255, 69, 0, 0.3); color: #ff4500; }
-        .kpi-element.air { background: rgba(135, 206, 250, 0.3); color: #87ceeb; }
-        .kpi-element.ether { background: rgba(138, 43, 226, 0.3); color: #8a2be2; }
+        /* Business dimension badges - professional color scheme */
+        .kpi-element.earth { background: rgba(120, 120, 120, 0.3); color: #999; } /* Stability - Gray */
+        .kpi-element.water { background: rgba(30, 144, 255, 0.3); color: #4a9eff; } /* Adaptability - Blue */
+        .kpi-element.fire { background: rgba(255, 120, 0, 0.3); color: #ff9944; } /* Drive - Orange */
+        .kpi-element.air { background: rgba(0, 200, 150, 0.3); color: #00d9a3; } /* Communication - Teal */
+        .kpi-element.ether { background: rgba(100, 100, 200, 0.3); color: #8888dd; } /* Vision - Purple */
 
         .kpi-value-bar {
             height: 6px;
@@ -284,8 +285,8 @@
         .pentagram-button {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(0, 255, 204, 0.2));
-            border: 1px solid rgba(0, 255, 204, 0.5);
+            background: linear-gradient(135deg, rgba(80, 80, 120, 0.2), rgba(0, 180, 180, 0.2));
+            border: 1px solid rgba(0, 180, 180, 0.5);
             border-radius: 8px;
             color: #fff;
             font-size: 13px;
@@ -298,8 +299,8 @@
         }
 
         .pentagram-button:hover {
-            background: linear-gradient(135deg, rgba(138, 43, 226, 0.4), rgba(0, 255, 204, 0.4));
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+            background: linear-gradient(135deg, rgba(80, 80, 120, 0.3), rgba(0, 180, 180, 0.3));
+            box-shadow: 0 0 20px rgba(0, 180, 180, 0.3);
         }
 
         /* Legend */
@@ -544,7 +545,7 @@
             <!-- KPIs will be injected here -->
         </div>
 
-        <button class="pentagram-button" id="showPentagram">⭐ View Pentagram Analysis</button>
+        <button class="pentagram-button" id="showPentagram">📊 Dimensional Analysis</button>
     </div>
 
     <!-- Hover Tooltip -->
