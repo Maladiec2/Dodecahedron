@@ -357,6 +357,13 @@ const getEnergyColor = (energy) => {
 
 // Update visualization with current company data
 const updateVisualization = () => {
+    // 🔧 FIX: Get fresh state from engine instead of using cached data
+    const engine = window.Quannex || window.quannexEngine;
+    if (engine) {
+        companyData = engine.getState();
+        console.log('🔄 Refreshed company data from engine:', companyData?.faces?.length || 0, 'faces');
+    }
+
     if (!companyData || !companyData.faces) {
         console.warn('⚠️ No company data available');
         return;
@@ -394,6 +401,7 @@ const updateVisualization = () => {
             // Store face data in the clickable mesh
             if (faceMeshes[index]) {
                 faceMeshes[index].userData.faceData = face;
+                console.log(`   ✅ Face ${index + 1} data stored:`, face.name, `(${face.elementalKPIs?.length || 0} KPIs)`);
             }
         }
     });
@@ -634,6 +642,7 @@ const onMouseClick = (event) => {
         const faceIndex = clickedMesh.userData.faceIndex;
 
         console.log(`   ✅ Hit face ${faceIndex + 1}: ${selectedFace?.name || 'Unknown'}`);
+        console.log(`   📦 Face data:`, selectedFace);
 
         if (selectedFace) {
             // Animate camera to focus on this face

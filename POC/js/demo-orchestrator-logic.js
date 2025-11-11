@@ -867,6 +867,32 @@ function displayCalculationResults() {
 
     // Identify nervous endpoints
     identifyNervousEndpoints();
+
+    // 🔧 FIX: Update sessionStorage immediately after calculation
+    // This allows users to recalculate and see updates in already-open 3D views
+    updateSessionStorage();
+}
+
+/**
+ * Update sessionStorage with latest data
+ */
+function updateSessionStorage() {
+    if (demoState.kpiData && demoState.kpiData.length > 0) {
+        const customCompanyData = {
+            id: 'custom',
+            name: 'Custom Analysis',
+            description: 'User-generated data from Orchestrator',
+            kpis: demoState.kpiData,
+            faceConfig: demoState.faceConfig,
+            coherenceResults: demoState.coherenceResults,
+            isCustomData: true,
+            timestamp: new Date().toISOString() // Fresh timestamp on each update
+        };
+
+        sessionStorage.setItem('customCompanyData', JSON.stringify(customCompanyData));
+        sessionStorage.setItem('selectedCompanyId', 'custom');
+        console.log('💾 Updated sessionStorage with latest data (timestamp:', customCompanyData.timestamp, ')');
+    }
 }
 
 /**

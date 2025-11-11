@@ -455,8 +455,8 @@ class DodecahedronEngine {
     // Create KPIs from company data
     this.createKPIs(company.kpis);
 
-    // Create Faces
-    this.createFaces();
+    // Create Faces (use custom face config if provided)
+    this.createFaces(company.faceConfig);
 
     // Calculate initial state
     this.recalculate();
@@ -467,49 +467,73 @@ class DodecahedronEngine {
   }
 
   /**
-   * Create KPI objects from CSV data
+   * Create KPI objects from data (supports both CSV format and UI format)
    */
   createKPIs(data) {
+    console.log(`📊 Creating ${data.length} KPIs...`);
+    let csvFormat = 0;
+    let uiFormat = 0;
+
     data.forEach(row => {
-      if (!row.KPI_ID) return;
+      // 🔧 FIX: Support both CSV format (KPI_ID) and UI format (id)
+      const kpiId = row.KPI_ID || row.id;
+      if (!kpiId) return;
+
+      // Track which format we're using
+      if (row.KPI_ID) csvFormat++;
+      if (row.id && !row.KPI_ID) uiFormat++;
 
       const kpi = new KPI({
-        id: row.KPI_ID,
-        name: row.KPI_Name || row.KPI_ID,
-        value: parseFloat(row.Value) || 0,
-        weight: parseFloat(row.Weight) || 1.0,
-        direction: row.Direction || '↑',
-        targetMin: parseFloat(row.Target_Min) || 0,
-        targetIdeal: parseFloat(row.Target_Ideal) || 100,
-        healthyMin: parseFloat(row.Healthy_Min),
-        healthyMax: parseFloat(row.Healthy_Max),
-        absoluteMax: parseFloat(row.Absolute_Max),
-        faceId: parseInt(row.Face_ID) || null,
-        element: row.Element || 'Earth' // Add element from CSV
+        // Support both formats
+        id: kpiId,
+        name: row.KPI_Name || row.name || kpiId,
+        value: parseFloat(row.Value !== undefined ? row.Value : row.value) || 0,
+        weight: parseFloat(row.Weight !== undefined ? row.Weight : row.weight) || 1.0,
+        direction: row.Direction || row.direction || '↑',
+        targetMin: parseFloat(row.Target_Min !== undefined ? row.Target_Min : row.targetMin) || 0,
+        targetIdeal: parseFloat(row.Target_Ideal !== undefined ? row.Target_Ideal : row.targetIdeal) || 100,
+        healthyMin: parseFloat(row.Healthy_Min !== undefined ? row.Healthy_Min : row.healthyMin),
+        healthyMax: parseFloat(row.Healthy_Max !== undefined ? row.Healthy_Max : row.healthyMax),
+        absoluteMax: parseFloat(row.Absolute_Max !== undefined ? row.Absolute_Max : row.absoluteMax),
+        faceId: parseInt(row.Face_ID !== undefined ? row.Face_ID : row.faceId) || null,
+        element: row.Element || row.element || 'Earth'
       });
 
       this.kpis.set(kpi.id, kpi);
     });
+
+    console.log(`✅ Created ${this.kpis.size} KPIs (CSV format: ${csvFormat}, UI format: ${uiFormat})`);
   }
 
   /**
    * Create Face objects (simplified for POC - uses sample data)
    */
-  createFaces() {
-    const faceNames = [
-      'Financial Capital',
-      'Intellectual Capital',
-      'Human Capital',
-      'Structural Capital',
-      'Market Resonance',
-      'Community & Partners',
-      'Brand & Reputation',
-      'Core Operations',
-      'Regenerative Flow',
-      'Foundational Values',
-      'Funding Pipeline',
-      'Risk & Resilience'
-    ];
+  createFaces(faceConfig = null) {
+    // 🔧 FIX: Use custom face configuration if provided, otherwise use defaults
+    let faceNames;
+
+    if (faceConfig && faceConfig.faces && Array.isArray(faceConfig.faces) && faceConfig.faces.length === 12) {
+      // Use custom face names from orchestrator
+      faceNames = faceConfig.faces.map(f => f.name);
+      console.log('✅ Using custom face configuration:', faceConfig.templateName || 'Custom');
+    } else {
+      // Fall back to default face names
+      faceNames = [
+        'Financial Capital',
+        'Intellectual Capital',
+        'Human Capital',
+        'Structural Capital',
+        'Market Resonance',
+        'Community & Partners',
+        'Brand & Reputation',
+        'Core Operations',
+        'Regenerative Flow',
+        'Foundational Values',
+        'Funding Pipeline',
+        'Risk & Resilience'
+      ];
+      console.log('ℹ️ Using default face names');
+    }
 
     faceNames.forEach((name, index) => {
       const faceId = index + 1;
