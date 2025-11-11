@@ -427,6 +427,106 @@
 
         console.log('🎨 Coherence Simulator mockup loaded');
         console.log('🚧 Full functionality coming in Week 2');
+
+        // ============================================
+        // PARENT-CHILD COMMUNICATION
+        // ============================================
+        // Track currently loaded company
+        let currentLoadedCompanyId = null;
+
+        /**
+         * Listen for company data from parent window (when embedded in iframe)
+         */
+        window.addEventListener('message', async (event) => {
+            const { type, companyId } = event.data;
+
+            if (type === 'LOAD_COMPANY') {
+                console.log(`[Simulator] 📨 Received company load request from parent: ${companyId}`);
+
+                // Check if this company is already loaded
+                if (currentLoadedCompanyId === companyId) {
+                    console.log(`[Simulator] ℹ️ Company "${companyId}" is already loaded`);
+                    return;
+                }
+
+                // Update header subtitle to show selected company
+                const companyNames = {
+                    'quannex': 'Quannex',
+                    'nova-tech': 'Nova Tech',
+                    'zenith-solutions': 'Zenith Solutions',
+                    'apex-industries': 'Apex Industries'
+                };
+                const companyName = companyNames[companyId] || companyId;
+
+                const subtitle = document.querySelector('.subtitle');
+                if (subtitle) {
+                    subtitle.textContent = `Interactive What-If Analysis • ${companyName}`;
+                }
+
+                // Mark as loaded
+                currentLoadedCompanyId = companyId;
+
+                console.log(`[Simulator] ✅ Acknowledged company selection: ${companyName}`);
+                console.log(`[Simulator] 🚧 Full simulator functionality coming soon`);
+            }
+        });
+
+        /**
+         * Check sessionStorage for company ID (fallback mechanism)
+         */
+        function checkSessionStorageSimulator() {
+            // Check for custom data from orchestrator
+            const selectedCompanyId = sessionStorage.getItem('selectedCompanyId');
+            const customDataJson = sessionStorage.getItem('customCompanyData');
+
+            if (selectedCompanyId === 'custom' && customDataJson) {
+                try {
+                    console.log(`[Simulator] 🎨 Loading CUSTOM data from orchestrator`);
+                    const customData = JSON.parse(customDataJson);
+
+                    const companyName = customData.name || 'Custom Analysis';
+
+                    // Update subtitle to show custom data
+                    const subtitle = document.querySelector('.subtitle');
+                    if (subtitle) {
+                        subtitle.textContent = `Interactive What-If Analysis • ${companyName}`;
+                    }
+
+                    // Update coming soon message
+                    const comingSoonText = document.querySelector('.coming-soon-text');
+                    if (comingSoonText) {
+                        comingSoonText.innerHTML = `
+                            The Coherence Simulator is currently being built. This will be the most powerful feature
+                            of Quannex - allowing you to test organizational changes before implementing them.
+                            <br><br>
+                            <strong>Your custom data "${companyName}" has been loaded and will be ready for simulation once this feature is complete.</strong>
+                            <br><br>
+                            Expected completion: Week 2 of development cycle
+                        `;
+                    }
+
+                    // Mark as loaded
+                    currentLoadedCompanyId = 'custom';
+
+                    console.log(`[Simulator] ✅ Acknowledged custom data: ${companyName}`);
+                    console.log(`[Simulator] 📊 Ready to simulate ${customData.kpis ? customData.kpis.length : 0} KPIs (when feature is complete)`);
+                } catch (error) {
+                    console.error('[Simulator] ❌ Failed to load custom data:', error);
+                }
+            } else if (window.self !== window.top && selectedCompanyId) {
+                // Running in iframe with regular company
+                if (selectedCompanyId && !currentLoadedCompanyId) {
+                    console.log(`[Simulator] 💾 Found company ID in sessionStorage: ${selectedCompanyId}`);
+                    // Trigger load via postMessage handler
+                    window.postMessage({ type: 'LOAD_COMPANY', companyId: selectedCompanyId }, '*');
+                }
+            }
+        }
+
+        // Check for company in sessionStorage after page loads
+        setTimeout(checkSessionStorageSimulator, 500);
+
+        console.log('[Simulator] 📡 Message listener initialized');
     </script>
 </body>
 </html>

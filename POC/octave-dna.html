@@ -1604,6 +1604,153 @@
 
         // Initialize with first company
         initVisualization();
+
+        // ============================================
+        // PARENT-CHILD COMMUNICATION
+        // ============================================
+        // Track currently loaded company to prevent double-loading
+        let currentLoadedCompanyId = null;
+
+        /**
+         * Listen for company data from parent window (when embedded in iframe)
+         */
+        window.addEventListener('message', async (event) => {
+            const { type, companyId } = event.data;
+
+            if (type === 'LOAD_COMPANY') {
+                console.log(`[DNA View] 📨 Received company load request from parent: ${companyId}`);
+
+                // Check if this company is already loaded
+                if (currentLoadedCompanyId === companyId) {
+                    console.log(`[DNA View] ℹ️ Company "${companyId}" is already loaded, skipping duplicate load`);
+                    return;
+                }
+
+                try {
+                    console.log(`[DNA View] 🔄 Loading company: ${companyId}`);
+
+                    // Show loading
+                    document.getElementById('loading').style.display = 'flex';
+
+                    // Load the specified company
+                    if (companyId && window.CompanyLoader) {
+                        const company = await window.CompanyLoader.switchCompany(companyId);
+
+                        if (company) {
+                            // Reinitialize visualization with new company data
+                            await initVisualization();
+
+                            // Update dropdown to show current company
+                            const companyNames = {
+                                'quannex': 'Quannex',
+                                'nova-tech': 'Nova Tech',
+                                'zenith-solutions': 'Zenith Solutions',
+                                'apex-industries': 'Apex Industries'
+                            };
+                            const companyName = companyNames[companyId] || companyId;
+                            document.getElementById('currentCompany').textContent = companyName;
+
+                            // Update active state in dropdown
+                            document.querySelectorAll('.company-option').forEach(opt => {
+                                opt.classList.remove('active');
+                            });
+                            const activeOption = document.getElementById(`company-option-${companyId}`);
+                            if (activeOption) {
+                                activeOption.classList.add('active');
+                            }
+
+                            // Mark as loaded
+                            currentLoadedCompanyId = companyId;
+
+                            console.log(`[DNA View] ✅ Loaded company from parent: ${company.name}`);
+                        }
+                    } else {
+                        console.warn('[DNA View] ⚠️ CompanyLoader not available');
+                    }
+
+                    // Hide loading
+                    document.getElementById('loading').style.display = 'none';
+
+                } catch (error) {
+                    console.error('[DNA View] ❌ Failed to load company from parent:', error);
+                    document.getElementById('loading').style.display = 'none';
+                }
+            }
+        });
+
+        /**
+         * Check sessionStorage for company ID (fallback mechanism)
+         */
+        async function checkSessionStorageDNA() {
+            // Check for custom data from orchestrator
+            const selectedCompanyId = sessionStorage.getItem('selectedCompanyId');
+            const customDataJson = sessionStorage.getItem('customCompanyData');
+
+            if (selectedCompanyId === 'custom' && customDataJson) {
+                try {
+                    console.log(`[DNA View] 🎨 Loading CUSTOM data from orchestrator`);
+                    const customData = JSON.parse(customDataJson);
+
+                    // Show loading
+                    document.getElementById('loading').style.display = 'flex';
+
+                    // Transform custom data to company format
+                    const company = {
+                        id: 'custom',
+                        name: customData.name || 'Custom Analysis',
+                        description: customData.description || 'User-generated data',
+                        kpis: customData.kpis || []
+                    };
+
+                    console.log(`[DNA View] 📊 Custom company has ${company.kpis.length} KPIs`);
+
+                    // Wait for dependencies
+                    let attempts = 0;
+                    while (!window.CompanyLoader && attempts < 10) {
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        attempts++;
+                    }
+
+                    // Manually load custom data into CompanyLoader
+                    if (window.CompanyLoader) {
+                        window.CompanyLoader.currentCompany = company;
+                    }
+
+                    // Reinitialize visualization
+                    await initVisualization();
+
+                    // Update dropdown to show custom
+                    document.getElementById('currentCompany').textContent = 'Custom Analysis';
+
+                    // Hide company dropdown options for custom data
+                    const dropdown = document.getElementById('companyDropdown');
+                    if (dropdown) {
+                        dropdown.style.display = 'none';
+                    }
+
+                    // Mark as loaded
+                    currentLoadedCompanyId = 'custom';
+
+                    console.log(`[DNA View] ✅ Successfully loaded custom data`);
+                    return true;
+                } catch (error) {
+                    console.error('[DNA View] ❌ Failed to load custom data:', error);
+                    document.getElementById('loading').style.display = 'none';
+                }
+            } else if (window.self !== window.top && selectedCompanyId) {
+                // Running in iframe with regular company
+                if (selectedCompanyId && !currentLoadedCompanyId) {
+                    console.log(`[DNA View] 💾 Found company ID in sessionStorage: ${selectedCompanyId}`);
+                    // Trigger load via postMessage handler
+                    window.postMessage({ type: 'LOAD_COMPANY', companyId: selectedCompanyId }, '*');
+                }
+            }
+        }
+
+        // Check for company in sessionStorage after scripts load
+        setTimeout(checkSessionStorageDNA, 1500);
+
+        console.log('[DNA View] 📡 Message listener initialized');
     </script>
 </body>
 </html>

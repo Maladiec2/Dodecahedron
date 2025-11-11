@@ -950,8 +950,194 @@
             return '#ff6666';
         }
 
+        // Track currently loaded company to prevent double-loading
+        let currentLoadedCompanyId = null;
+
+        /**
+         * Listen for company data from parent window (when embedded in iframe)
+         */
+        window.addEventListener('message', async (event) => {
+            // Security: verify origin if needed
+            // if (event.origin !== 'expected-origin') return;
+
+            const { type, companyId, companyData } = event.data;
+
+            if (type === 'LOAD_COMPANY') {
+                console.log(`📨 Received company load request from parent: ${companyId}`);
+
+                // Check if this company is already loaded
+                if (currentLoadedCompanyId === companyId) {
+                    console.log(`ℹ️ Company "${companyId}" is already loaded, skipping duplicate load`);
+                    return;
+                }
+
+                try {
+                    // Show loading
+                    document.getElementById('loading').style.display = 'flex';
+                    document.getElementById('dashboard').style.display = 'none';
+                    document.getElementById('breathSection').style.display = 'none';
+
+                    // Load the specified company
+                    if (companyId && window.CompanyLoader) {
+                        const company = await window.CompanyLoader.loadCompany(companyId);
+                        const state = await window.Quannex.initWithCompany(company);
+
+                        // Hide loading, show dashboard
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('dashboard').style.display = 'grid';
+                        document.getElementById('controls').style.display = 'block';
+
+                        // Display data
+                        displayState(state);
+
+                        // Mark as loaded
+                        currentLoadedCompanyId = companyId;
+
+                        console.log(`✅ Loaded company from parent: ${company.name}`);
+                    } else if (companyData) {
+                        // Use provided company data directly
+                        const state = await window.Quannex.initWithCompany(companyData);
+
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('dashboard').style.display = 'grid';
+                        document.getElementById('controls').style.display = 'block';
+
+                        displayState(state);
+
+                        // Mark as loaded (use ID from data if available)
+                        currentLoadedCompanyId = companyData.id || 'custom';
+
+                        console.log(`✅ Loaded company data from parent`);
+                    } else {
+                        console.warn('⚠️ CompanyLoader not available');
+                    }
+                } catch (error) {
+                    console.error('❌ Failed to load company from parent:', error);
+                }
+            }
+        });
+
+        /**
+         * Check if running in iframe
+         */
+        function isInIframe() {
+            try {
+                return window.self !== window.top;
+            } catch (e) {
+                return true;
+            }
+        }
+
+        /**
+         * Initialize based on context
+         */
+        async function init() {
+            if (isInIframe()) {
+                console.log('📺 Running in iframe - checking for company selection...');
+
+                // Check sessionStorage for company ID (fallback mechanism)
+                const selectedCompanyId = sessionStorage.getItem('selectedCompanyId');
+
+                if (selectedCompanyId) {
+                    console.log(`💾 Found company ID in sessionStorage: ${selectedCompanyId}`);
+
+                    // Check if this is custom data from the orchestrator
+                    const customDataJson = sessionStorage.getItem('customCompanyData');
+                    if (selectedCompanyId === 'custom' && customDataJson) {
+                        try {
+                            console.log(`🎨 Loading CUSTOM data from orchestrator`);
+                            const customData = JSON.parse(customDataJson);
+
+                            // Transform custom data to company format
+                            const company = {
+                                id: 'custom',
+                                name: customData.name || 'Custom Analysis',
+                                description: customData.description || 'User-generated data',
+                                kpis: customData.kpis || []
+                            };
+
+                            console.log(`📊 Custom company has ${company.kpis.length} KPIs`);
+
+                            // Initialize Quannex with custom data
+                            const state = await window.Quannex.initWithCompany(company);
+
+                            // Hide loading, show dashboard
+                            document.getElementById('loading').style.display = 'none';
+                            document.getElementById('dashboard').style.display = 'grid';
+                            document.getElementById('controls').style.display = 'block';
+
+                            // Display data
+                            displayState(state);
+
+                            // Mark as loaded
+                            currentLoadedCompanyId = 'custom';
+
+                            console.log(`✅ Successfully loaded custom data`);
+                        } catch (error) {
+                            console.error('❌ Failed to load custom data:', error);
+                            showWaitingMessage();
+                        }
+                    } else {
+                        // Regular company data - wait for CompanyLoader
+                        let attempts = 0;
+                        const maxAttempts = 10;
+
+                        while (!window.CompanyLoader && attempts < maxAttempts) {
+                            console.log(`⏳ Waiting for CompanyLoader... (attempt ${attempts + 1}/${maxAttempts})`);
+                            await new Promise(resolve => setTimeout(resolve, 200));
+                            attempts++;
+                        }
+
+                        if (window.CompanyLoader) {
+                            try {
+                                console.log(`🔄 Loading company from sessionStorage: ${selectedCompanyId}`);
+                                const company = await window.CompanyLoader.loadCompany(selectedCompanyId);
+                                const state = await window.Quannex.initWithCompany(company);
+
+                                // Hide loading, show dashboard
+                                document.getElementById('loading').style.display = 'none';
+                                document.getElementById('dashboard').style.display = 'grid';
+                                document.getElementById('controls').style.display = 'block';
+
+                                // Display data
+                                displayState(state);
+
+                                // Mark as loaded to prevent duplicate loading from postMessage
+                                currentLoadedCompanyId = selectedCompanyId;
+
+                                console.log(`✅ Successfully loaded ${company.name} from sessionStorage`);
+                            } catch (error) {
+                                console.error('❌ Failed to load from sessionStorage:', error);
+                                showWaitingMessage();
+                            }
+                        } else {
+                            console.warn('⚠️ CompanyLoader not available after waiting');
+                            showWaitingMessage();
+                        }
+                    }
+                } else {
+                    console.log('📭 No company ID in sessionStorage, waiting for postMessage...');
+                    showWaitingMessage();
+                }
+            } else {
+                console.log('🖥️ Running standalone - auto-loading default company...');
+                // Running standalone, load default company
+                await initDashboard();
+            }
+        }
+
+        /**
+         * Show waiting message in loading screen
+         */
+        function showWaitingMessage() {
+            document.getElementById('loading').innerHTML = `
+                <div class="spinner"></div>
+                <div>Waiting for company selection...</div>
+            `;
+        }
+
         // Initialize when page loads
-        window.addEventListener('load', initDashboard);
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>

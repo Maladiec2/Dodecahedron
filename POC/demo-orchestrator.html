@@ -696,6 +696,9 @@
                         <button class="btn btn-secondary" onclick="launchView('dna')">
                             🧬 DNA Helix
                         </button>
+                        <button class="btn btn-secondary" onclick="launchView('simulator')">
+                            ⚙️ Simulator
+                        </button>
                     </div>
                 </div>
 
@@ -731,6 +734,9 @@
 
     <!-- Load KPI Library first (elemental wisdom & suggestions) -->
     <script src="js/kpi-library.js"></script>
+
+    <!-- Load Data Transformation Layer (CRITICAL: Bridge between UI and Engine) -->
+    <script src="js/data-transformer.js"></script>
 
     <!-- Load Quannex Engine (optional - fallback to simple calculation if not available) -->
     <script src="js/breath-analyzer.js"></script>

@@ -386,6 +386,62 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(0, 255, 204, 0.5);
         }
+
+        /* Tooltip */
+        .face-tooltip {
+            position: fixed;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(0, 255, 204, 0.5);
+            border-radius: 8px;
+            padding: 12px 16px;
+            backdrop-filter: blur(10px);
+            z-index: 1500;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            box-shadow: 0 4px 20px rgba(0, 255, 204, 0.3);
+        }
+
+        .face-tooltip.visible {
+            opacity: 1;
+        }
+
+        .tooltip-face-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #00ffcc;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .tooltip-energy {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .tooltip-energy-value {
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .tooltip-energy-value.healthy {
+            color: #00ff88;
+        }
+
+        .tooltip-energy-value.warning {
+            color: #ffcc00;
+        }
+
+        .tooltip-energy-value.critical {
+            color: #ff4444;
+        }
+
+        .tooltip-hint {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 6px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -412,7 +468,7 @@
 
         <div class="control-group">
             <label class="control-label">Rotation</label>
-            <button class="control-button active" id="toggleRotation">Auto-Rotate: ON</button>
+            <button class="control-button" id="toggleRotation">Auto-Rotate: OFF</button>
         </div>
 
         <div class="control-group">
@@ -446,10 +502,13 @@
         <div class="control-group">
             <label class="control-label">Instructions</label>
             <div style="font-size: 11px; opacity: 0.7; line-height: 1.6;">
-                • Click faces for details<br>
-                • Drag to rotate<br>
-                • Scroll to zoom<br>
-                • ESC to close panels
+                • <strong>Hover</strong> over faces for info<br>
+                • <strong>Click</strong> faces for details<br>
+                • <strong>Drag</strong> to rotate manually<br>
+                • <strong>Scroll</strong> to zoom in/out<br>
+                • <strong>R</strong> - Reset camera view<br>
+                • <strong>Space</strong> - Toggle rotation<br>
+                • <strong>ESC</strong> - Close panels
             </div>
         </div>
     </div>
@@ -488,6 +547,15 @@
         <button class="pentagram-button" id="showPentagram">⭐ View Pentagram Analysis</button>
     </div>
 
+    <!-- Hover Tooltip -->
+    <div class="face-tooltip" id="faceTooltip">
+        <div class="tooltip-face-name" id="tooltipFaceName">Face Name</div>
+        <div class="tooltip-energy">
+            Energy: <span class="tooltip-energy-value" id="tooltipEnergyValue">--</span>
+        </div>
+        <div class="tooltip-hint">Click to view details</div>
+    </div>
+
     <!-- Three.js Library -->
     <script src="https://unpkg.com/three@0.128.0/build/three.js"></script>
     <script src="https://unpkg.com/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -501,5 +569,169 @@
 
     <!-- Dodecahedron Visualization -->
     <script src="js/dodecahedron-viz.js"></script>
+
+    <script>
+        // ============================================
+        // PARENT-CHILD COMMUNICATION
+        // ============================================
+        // Track currently loaded company to prevent double-loading
+        let currentLoadedCompanyId = null;
+
+        /**
+         * Listen for company data from parent window (when embedded in iframe)
+         */
+        window.addEventListener('message', async (event) => {
+            const { type, companyId } = event.data;
+
+            if (type === 'LOAD_COMPANY') {
+                console.log(`[3D View] 📨 Received company load request from parent: ${companyId}`);
+
+                // Check if this company is already loaded
+                if (currentLoadedCompanyId === companyId) {
+                    console.log(`[3D View] ℹ️ Company "${companyId}" is already loaded, skipping duplicate load`);
+                    return;
+                }
+
+                try {
+                    // Show loading
+                    const loading = document.getElementById('loading');
+                    if (loading) loading.style.display = 'block';
+
+                    // Load the specified company using CompanyLoader
+                    if (companyId && window.CompanyLoader) {
+                        console.log(`[3D View] 🔄 Loading company: ${companyId}`);
+                        const company = await window.CompanyLoader.loadCompany(companyId);
+
+                        // Initialize Quannex engine with company data
+                        if (window.Quannex) {
+                            await window.Quannex.initWithCompany(company);
+                        }
+
+                        // Update the visualization (this will be handled by dodecahedron-viz.js)
+                        // The viz script should expose a reinitialize or updateData function
+                        if (window.refreshVisualization) {
+                            window.refreshVisualization();
+                        }
+
+                        // Mark as loaded
+                        currentLoadedCompanyId = companyId;
+
+                        // Update stats display
+                        const state = window.Quannex ? window.Quannex.getState() : null;
+                        if (state) {
+                            const coherencePercent = (state.globalCoherence * 100).toFixed(1);
+                            document.getElementById('statCoherence').textContent = coherencePercent + '%';
+
+                            const status = state.globalCoherence >= 0.7 ? 'Healthy' :
+                                         state.globalCoherence >= 0.5 ? 'Moderate' : 'Critical';
+                            document.getElementById('statStatus').textContent = status;
+                        }
+
+                        // Hide loading
+                        if (loading) loading.style.display = 'none';
+
+                        console.log(`[3D View] ✅ Loaded company from parent: ${company.name}`);
+                    } else {
+                        console.warn('[3D View] ⚠️ CompanyLoader not available');
+                    }
+                } catch (error) {
+                    console.error('[3D View] ❌ Failed to load company from parent:', error);
+                    const loading = document.getElementById('loading');
+                    if (loading) loading.style.display = 'none';
+                }
+            }
+        });
+
+        /**
+         * Check sessionStorage for company ID (fallback mechanism)
+         */
+        async function checkSessionStorage() {
+            // Check for custom data from orchestrator
+            const selectedCompanyId = sessionStorage.getItem('selectedCompanyId');
+            const customDataJson = sessionStorage.getItem('customCompanyData');
+
+            if (selectedCompanyId === 'custom' && customDataJson) {
+                try {
+                    console.log(`[3D View] 🎨 Loading CUSTOM data from orchestrator`);
+                    const customData = JSON.parse(customDataJson);
+
+                    // Show loading
+                    const loading = document.getElementById('loading');
+                    if (loading) loading.style.display = 'block';
+
+                    // Transform custom data to company format
+                    const company = {
+                        id: 'custom',
+                        name: customData.name || 'Custom Analysis',
+                        description: customData.description || 'User-generated data',
+                        kpis: customData.kpis || []
+                    };
+
+                    console.log(`[3D View] 📊 Custom company has ${company.kpis.length} KPIs`);
+
+                    // Wait for dependencies to load
+                    let attempts = 0;
+                    while (!window.Quannex && attempts < 10) {
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        attempts++;
+                    }
+
+                    // Initialize Quannex with custom data
+                    if (window.Quannex) {
+                        await window.Quannex.initWithCompany(company);
+
+                        // Update visualization if function exists
+                        if (window.refreshVisualization) {
+                            window.refreshVisualization();
+                        }
+
+                        // Update stats
+                        const state = window.Quannex.getState();
+                        if (state) {
+                            const coherencePercent = (state.globalCoherence * 100).toFixed(1);
+                            document.getElementById('statCoherence').textContent = coherencePercent + '%';
+
+                            const status = state.globalCoherence >= 0.7 ? 'Healthy' :
+                                         state.globalCoherence >= 0.5 ? 'Moderate' : 'Critical';
+                            document.getElementById('statStatus').textContent = status;
+                        }
+
+                        // Hide company selector buttons since this is custom data
+                        const companyButtons = document.querySelectorAll('.control-group button[id^="company"]');
+                        if (companyButtons.length > 0) {
+                            companyButtons.forEach(btn => btn.style.display = 'none');
+                        }
+                        const companyLabel = document.querySelector('.control-group .control-label');
+                        if (companyLabel && companyLabel.textContent === 'Company') {
+                            companyLabel.textContent = 'Custom Analysis';
+                        }
+                    }
+
+                    // Mark as loaded
+                    currentLoadedCompanyId = 'custom';
+
+                    // Hide loading
+                    if (loading) loading.style.display = 'none';
+
+                    console.log(`[3D View] ✅ Successfully loaded custom data`);
+                    return true;
+                } catch (error) {
+                    console.error('[3D View] ❌ Failed to load custom data:', error);
+                }
+            } else if (window.self !== window.top && selectedCompanyId) {
+                // Running in iframe with regular company
+                if (selectedCompanyId && !currentLoadedCompanyId) {
+                    console.log(`[3D View] 💾 Found company ID in sessionStorage: ${selectedCompanyId}`);
+                    // Trigger load via postMessage handler
+                    window.postMessage({ type: 'LOAD_COMPANY', companyId: selectedCompanyId }, '*');
+                }
+            }
+        }
+
+        // Check for company in sessionStorage after a short delay (allow scripts to load)
+        setTimeout(checkSessionStorage, 1000);
+
+        console.log('[3D View] 📡 Message listener initialized');
+    </script>
 </body>
 </html>

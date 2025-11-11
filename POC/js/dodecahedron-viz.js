@@ -49,13 +49,16 @@ scene.fog = new THREE.Fog(0x000000, 15, 50); // Atmospheric depth
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(4, 4, 4);
 
-// Orbit Controls
+// Orbit Controls - Optimized for natural soccer ball-like rotation
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.08;
+controls.dampingFactor = 0.05; // Reduced for more responsive feel
+controls.rotateSpeed = 1.2; // Increased for easier rotation
 controls.minDistance = 2;
 controls.maxDistance = 15;
 controls.enablePan = false;
+controls.autoRotateSpeed = 1.0; // Smooth auto-rotation speed
+controls.zoomSpeed = 1.2; // Comfortable zoom speed
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -77,30 +80,36 @@ let currentCompany = 'quannex';
 let companyData = null;
 let faceMeshes = [];
 let edgeLines = [];
-let autoRotate = true;
+let autoRotate = false; // Start with manual control
+let isUserInteracting = false;
+let interactionTimeout = null;
 
 // Load Quannex engine (expects it to be globally available from main.js)
 const loadQuannexEngine = async () => {
     try {
-        // Wait for quannexEngine and CompanyLoader to be available
+        // Wait for Quannex (capital Q - the correct API) or quannexEngine (legacy)
         let attempts = 0;
-        while ((!window.quannexEngine || !window.CompanyLoader) && attempts < 50) {
+        while ((!window.Quannex && !window.quannexEngine) && attempts < 50) {
             await new Promise(resolve => setTimeout(resolve, 100));
             attempts++;
         }
 
-        if (!window.quannexEngine) {
+        // Use Quannex if available (new API), fallback to quannexEngine (legacy)
+        const engine = window.Quannex || window.quannexEngine;
+
+        if (!engine) {
             throw new Error('Quannex engine not available after timeout');
         }
 
-        if (!window.CompanyLoader) {
-            throw new Error('Company loader not available after timeout');
+        // Store reference to whichever engine is available
+        window.quannexEngine = engine;
+
+        // If CompanyLoader available, load default company
+        if (window.CompanyLoader) {
+            await window.CompanyLoader.loadCompany('quannex');
         }
 
-        // Load default company (Quannex)
-        await window.CompanyLoader.loadCompany('quannex');
-
-        companyData = window.quannexEngine.getState();
+        companyData = engine.getState();
         console.log('✅ Quannex Engine loaded:', companyData);
         return true;
     } catch (error) {
@@ -116,14 +125,20 @@ const switchCompany = async (companyId) => {
             throw new Error('Company loader not available');
         }
 
+        console.log(`🔄 Switching to company: ${companyId}`);
+
         await window.CompanyLoader.switchCompany(companyId);
-        companyData = window.quannexEngine.getState();
-        currentCompany = companyId;
+
+        // Get fresh state from whichever engine is available
+        const engine = window.Quannex || window.quannexEngine;
+        if (engine) {
+            companyData = engine.getState();
+        }
 
         updateVisualization();
         updateStats();
 
-        console.log(`✅ Switched to ${companyId}`);
+        console.log(`✅ Switched to ${companyId} - ${companyData?.faces?.length || 0} faces loaded`);
     } catch (error) {
         console.error(`❌ Error switching to ${companyId}:`, error);
     }
@@ -141,99 +156,112 @@ const createDodecahedron = () => {
     faceMeshes = [];
     edgeLines = [];
 
-    // Create base dodecahedron to extract face geometry
-    const baseGeometry = new THREE.DodecahedronGeometry(2);
-    const positions = baseGeometry.attributes.position.array;
-    const indices = baseGeometry.index ? baseGeometry.index.array : null;
+    const radius = 2;
 
-    // Dodecahedron has 12 pentagonal faces
-    // Each face has 5 vertices (triangulated as 3 triangles in Three.js)
-    const facesCount = 12;
-    const trianglesPerFace = 3; // Each pentagon is triangulated into 3 triangles
-    const triangleCount = indices ? indices.length / 3 : positions.length / 9;
+    // Use a single dodecahedron but assign material index per face
+    const baseGeometry = new THREE.DodecahedronGeometry(radius);
+    const position = baseGeometry.attributes.position;
+    const index = baseGeometry.index;
 
-    // Group triangles into faces
-    const faceGroups = [];
-
-    // Map of face centers to group triangles
-    const faceMap = new Map();
-
-    for (let i = 0; i < triangleCount; i++) {
-        const i0 = indices ? indices[i * 3] : i * 3;
-        const i1 = indices ? indices[i * 3 + 1] : i * 3 + 1;
-        const i2 = indices ? indices[i * 3 + 2] : i * 3 + 2;
-
-        const v0 = new THREE.Vector3(positions[i0 * 3], positions[i0 * 3 + 1], positions[i0 * 3 + 2]);
-        const v1 = new THREE.Vector3(positions[i1 * 3], positions[i1 * 3 + 1], positions[i1 * 3 + 2]);
-        const v2 = new THREE.Vector3(positions[i2 * 3], positions[i2 * 3 + 1], positions[i2 * 3 + 2]);
-
-        // Calculate triangle center
-        const center = new THREE.Vector3()
-            .add(v0)
-            .add(v1)
-            .add(v2)
-            .divideScalar(3);
-
-        // Find or create face group based on proximity to center
-        const centerKey = `${center.x.toFixed(1)}_${center.y.toFixed(1)}_${center.z.toFixed(1)}`;
-
-        if (!faceMap.has(centerKey)) {
-            faceMap.set(centerKey, []);
-        }
-        faceMap.get(centerKey).push({ v0, v1, v2, center });
-    }
-
-    // Create mesh for each face
-    let faceIndex = 0;
-    faceMap.forEach((triangles, key) => {
-        if (faceIndex >= facesCount) return;
-
-        const faceGeometry = new THREE.BufferGeometry();
-        const vertices = [];
-
-        triangles.forEach(tri => {
-            vertices.push(tri.v0.x, tri.v0.y, tri.v0.z);
-            vertices.push(tri.v1.x, tri.v1.y, tri.v1.z);
-            vertices.push(tri.v2.x, tri.v2.y, tri.v2.z);
-        });
-
-        faceGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3));
-        faceGeometry.computeVertexNormals();
-
-        // Create material with default color (fully opaque for visibility)
-        const faceMaterial = new THREE.MeshPhongMaterial({
+    // Create 12 materials (one per face)
+    const materials = [];
+    for (let i = 0; i < 12; i++) {
+        materials.push(new THREE.MeshPhongMaterial({
             color: 0x00ffcc,
             emissive: 0x002222,
             emissiveIntensity: 0.3,
             shininess: 40,
-            transparent: false, // Changed to fully opaque
+            transparent: false,
             opacity: 1.0,
+            side: THREE.DoubleSide
+        }));
+    }
+
+    // Assign material groups (each pentagonal face = 3 triangles)
+    baseGeometry.clearGroups();
+    for (let i = 0; i < 12; i++) {
+        const start = i * 9; // 3 triangles × 3 vertices
+        const count = 9;
+        baseGeometry.addGroup(start, count, i);
+    }
+
+    // Create the main mesh with multiple materials
+    const dodecahedron = new THREE.Mesh(baseGeometry, materials);
+    scene.add(dodecahedron);
+
+    // Store reference for raycasting - we'll detect which material was hit
+    // Create invisible face meshes for click detection
+    for (let faceIndex = 0; faceIndex < 12; faceIndex++) {
+        // Extract vertices for this face (3 triangles = 9 vertices)
+        const start = faceIndex * 9;
+        const faceVertices = [];
+
+        // Check if geometry has index buffer
+        if (index) {
+            // Indexed geometry - use indices to access vertices
+            for (let i = 0; i < 9; i++) {
+                const idx = index.getX(start + i);
+                faceVertices.push(
+                    position.getX(idx),
+                    position.getY(idx),
+                    position.getZ(idx)
+                );
+            }
+        } else {
+            // Non-indexed geometry - access vertices directly
+            for (let i = 0; i < 9; i++) {
+                const vertexIndex = start + i;
+                faceVertices.push(
+                    position.getX(vertexIndex),
+                    position.getY(vertexIndex),
+                    position.getZ(vertexIndex)
+                );
+            }
+        }
+
+        // Create a geometry for this face
+        const faceGeometry = new THREE.BufferGeometry();
+        faceGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(faceVertices), 3));
+        faceGeometry.setIndex([0,1,2, 3,4,5, 6,7,8]); // Three triangles
+        faceGeometry.computeVertexNormals();
+
+        // Create an invisible mesh just for raycasting
+        const invisibleMaterial = new THREE.MeshBasicMaterial({
+            visible: false,
             side: THREE.DoubleSide
         });
 
-        const faceMesh = new THREE.Mesh(faceGeometry, faceMaterial);
-        faceMesh.userData.faceId = faceIndex + 1; // Face IDs are 1-12
-        faceMesh.userData.faceIndex = faceIndex;
+        const clickMesh = new THREE.Mesh(faceGeometry, invisibleMaterial);
 
-        scene.add(faceMesh);
-        faceMeshes.push(faceMesh);
+        // Scale up significantly to ensure no gaps, especially when zoomed in
+        clickMesh.scale.set(1.35, 1.35, 1.35);
 
-        faceIndex++;
-    });
+        clickMesh.userData.faceId = faceIndex + 1;
+        clickMesh.userData.faceIndex = faceIndex;
+        clickMesh.userData.materialIndex = faceIndex;
+        clickMesh.userData.material = materials[faceIndex];
 
-    // Create edges with enhanced visibility
+        scene.add(clickMesh);
+        faceMeshes.push(clickMesh);
+    }
+
+    // Store the main dodecahedron for updates
+    window.mainDodecahedron = dodecahedron;
+    window.dodecahedronMaterials = materials;
+
+    // Create edges
     const edgesGeometry = new THREE.EdgesGeometry(baseGeometry);
     const edgesMaterial = new THREE.LineBasicMaterial({
         color: 0x00ffcc,
         linewidth: 2,
         transparent: true,
-        opacity: 0.4 // Subtle edges that enhance depth with fog
+        opacity: 0.4
     });
     const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
     scene.add(edges);
     edgeLines.push(edges);
 
-    console.log(`✅ Created dodecahedron with ${faceMeshes.length} faces`);
+    console.log(`✅ Created dodecahedron with ${materials.length} materials and ${faceMeshes.length} clickable faces`);
 };
 
 // ========================================
@@ -281,16 +309,23 @@ const updateVisualization = () => {
         return;
     }
 
-    // Update each face color based on energy
-    faceMeshes.forEach((mesh, index) => {
-        if (index < companyData.faces.length) {
-            const face = companyData.faces[index];
+    // Get the materials array
+    const materials = window.dodecahedronMaterials;
+    if (!materials) {
+        console.warn('⚠️ Materials not available yet');
+        return;
+    }
+
+    // Update each material's color based on face energy
+    companyData.faces.forEach((face, index) => {
+        if (index < materials.length) {
             const energy = face.faceEnergy || 0;
             const color = getEnergyColor(energy);
 
-            mesh.material.color = color;
+            // Update material properties
+            materials[index].color = color;
 
-            // Add emissive glow - stronger for critical faces, minimum for ALL faces
+            // Add emissive glow - stronger for critical faces
             let emissiveIntensity;
             if (energy < 0.1) {
                 emissiveIntensity = 0.6; // Very low energy = strong glow (visible warning)
@@ -300,15 +335,20 @@ const updateVisualization = () => {
                 emissiveIntensity = 0.3; // Healthy = moderate glow
             }
 
-            mesh.material.emissive = color.clone().multiplyScalar(emissiveIntensity);
-            mesh.material.emissiveIntensity = emissiveIntensity;
+            materials[index].emissive = color.clone().multiplyScalar(0.3);
+            materials[index].emissiveIntensity = emissiveIntensity;
 
-            // Store face data for click handler
-            mesh.userData.faceData = face;
+            // Store face data in the clickable mesh
+            if (faceMeshes[index]) {
+                faceMeshes[index].userData.faceData = face;
+            }
         }
     });
 
-    console.log('✅ Visualization updated');
+    // Force material updates
+    materials.forEach(mat => mat.needsUpdate = true);
+
+    console.log('✅ Visualization updated with', companyData.faces.length, 'face colors');
 };
 
 // ========================================
@@ -318,6 +358,176 @@ const updateVisualization = () => {
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let selectedFace = null;
+let hoveredFace = null;
+let isCameraAnimating = false;
+
+// ========================================
+// CAMERA ANIMATION
+// ========================================
+
+/**
+ * Smooth camera animation to target position
+ * Uses easeInOutCubic for natural motion
+ */
+const animateCameraTo = (targetPosition, lookAtTarget, duration = 1200) => {
+    const startPosition = camera.position.clone();
+    const startTarget = controls.target.clone();
+    const startTime = Date.now();
+
+    isCameraAnimating = true;
+
+    const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Smooth easing (ease-in-out cubic)
+        const eased = progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        // Interpolate camera position and target
+        camera.position.lerpVectors(startPosition, targetPosition, eased);
+        controls.target.lerpVectors(startTarget, lookAtTarget, eased);
+        controls.update();
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        } else {
+            isCameraAnimating = false;
+        }
+    };
+
+    animate();
+};
+
+/**
+ * Calculate optimal camera position for viewing a face
+ * Zooms camera closer while maintaining rotation center at origin
+ */
+const getCameraPositionForFace = (faceIndex) => {
+    // Get face position from the clickable mesh
+    const clickMesh = faceMeshes[faceIndex];
+    if (!clickMesh) return null;
+
+    // Calculate face center from geometry
+    const geometry = clickMesh.geometry;
+    const position = geometry.attributes.position;
+
+    // Get average position of all vertices (face center)
+    let centerX = 0, centerY = 0, centerZ = 0;
+    const vertexCount = position.count;
+
+    for (let i = 0; i < vertexCount; i++) {
+        centerX += position.getX(i);
+        centerY += position.getY(i);
+        centerZ += position.getZ(i);
+    }
+
+    centerX /= vertexCount;
+    centerY /= vertexCount;
+    centerZ /= vertexCount;
+
+    const faceCenter = new THREE.Vector3(centerX, centerY, centerZ);
+
+    // Calculate direction from origin to face
+    const direction = faceCenter.clone().normalize();
+
+    // Position camera closer along this direction, but not too close
+    const cameraDistance = 4.5; // Closer for better view
+    const cameraPos = direction.clone().multiplyScalar(cameraDistance);
+
+    // Keep rotation center at origin for consistent rotation feel
+    return {
+        position: cameraPos,
+        lookAt: new THREE.Vector3(0, 0, 0) // Always rotate around center
+    };
+};
+
+/**
+ * Reset camera to default view
+ */
+const resetCameraView = () => {
+    const defaultPosition = new THREE.Vector3(4, 4, 4);
+    const defaultTarget = new THREE.Vector3(0, 0, 0);
+    animateCameraTo(defaultPosition, defaultTarget, 1000);
+};
+
+// Handle mouse move (hover effect)
+const onMouseMove = (event) => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(faceMeshes);
+
+    const tooltip = document.getElementById('faceTooltip');
+    const tooltipFaceName = document.getElementById('tooltipFaceName');
+    const tooltipEnergyValue = document.getElementById('tooltipEnergyValue');
+
+    // Reset previous hover - brighten the material slightly
+    if (hoveredFace && hoveredFace !== selectedFace) {
+        const material = hoveredFace.userData.material;
+        if (material) {
+            // Reset to normal brightness
+            material.emissiveIntensity = material.userData.baseIntensity || 0.3;
+        }
+    }
+
+    // Apply hover effect
+    if (intersects.length > 0) {
+        const hoveredMesh = intersects[0].object;
+        hoveredFace = hoveredMesh;
+
+        const material = hoveredMesh.userData.material;
+        if (material) {
+            // Store base intensity if not already stored
+            if (!material.userData.baseIntensity) {
+                material.userData.baseIntensity = material.emissiveIntensity;
+            }
+            // Brighten on hover
+            material.emissiveIntensity = Math.min(material.userData.baseIntensity * 1.5, 1.0);
+        }
+
+        // Show tooltip with face data
+        const faceData = hoveredMesh.userData.faceData;
+        if (faceData && tooltip && tooltipFaceName && tooltipEnergyValue) {
+            tooltipFaceName.textContent = faceData.name || `Face ${hoveredMesh.userData.faceId}`;
+
+            const energy = faceData.faceEnergy || 0;
+            const energyPercent = Math.round(energy * 100);
+            tooltipEnergyValue.textContent = `${energyPercent}%`;
+
+            // Set energy value color class
+            tooltipEnergyValue.className = 'tooltip-energy-value';
+            if (energy >= 0.7) {
+                tooltipEnergyValue.classList.add('healthy');
+            } else if (energy >= 0.4) {
+                tooltipEnergyValue.classList.add('warning');
+            } else {
+                tooltipEnergyValue.classList.add('critical');
+            }
+
+            // Position tooltip near mouse
+            const tooltipOffset = 20;
+            tooltip.style.left = (event.clientX + tooltipOffset) + 'px';
+            tooltip.style.top = (event.clientY + tooltipOffset) + 'px';
+
+            // Show tooltip
+            tooltip.classList.add('visible');
+        }
+
+        canvas.style.cursor = 'pointer';
+    } else {
+        hoveredFace = null;
+        canvas.style.cursor = 'default';
+
+        // Hide tooltip
+        if (tooltip) {
+            tooltip.classList.remove('visible');
+        }
+    }
+};
 
 // Handle mouse click
 const onMouseClick = (event) => {
@@ -333,8 +543,25 @@ const onMouseClick = (event) => {
     if (intersects.length > 0) {
         const clickedMesh = intersects[0].object;
         selectedFace = clickedMesh.userData.faceData;
+        const faceIndex = clickedMesh.userData.faceIndex;
 
         if (selectedFace) {
+            // Animate camera to focus on this face
+            const cameraTarget = getCameraPositionForFace(faceIndex);
+            if (cameraTarget) {
+                // Temporarily disable auto-rotation during camera animation
+                const wasAutoRotating = autoRotate;
+                autoRotate = false;
+
+                animateCameraTo(cameraTarget.position, cameraTarget.lookAt, 1200);
+
+                // Re-enable auto-rotation after animation completes (if it was on)
+                setTimeout(() => {
+                    autoRotate = wasAutoRotating;
+                }, 1200);
+            }
+
+            // Show face detail panel
             showFaceDetail(selectedFace);
         }
     }
@@ -400,6 +627,19 @@ const closeFaceDetail = () => {
     const panel = document.getElementById('faceDetailPanel');
     panel.classList.remove('visible');
     selectedFace = null;
+
+    // Also hide tooltip when closing panel
+    const tooltip = document.getElementById('faceTooltip');
+    if (tooltip) {
+        tooltip.classList.remove('visible');
+    }
+
+    // Smoothly return to default view for better UX
+    // Check if camera is close (zoomed in from clicking a face)
+    const currentDistance = camera.position.length();
+    if (currentDistance < 5) {
+        resetCameraView();
+    }
 };
 
 // ========================================
@@ -413,10 +653,44 @@ const updateStats = () => {
     }
 
     const coherence = companyData.globalCoherence || 0;
-    const status = companyData.coherenceStatus || 'Unknown';
+    const coherencePercent = Math.round(coherence * 100);
 
-    document.getElementById('statCoherence').textContent = `${Math.round(coherence * 100)}%`;
-    document.getElementById('statStatus').textContent = status;
+    // Calculate status with color
+    let status, statusColor;
+    if (coherence >= 0.7) {
+        status = 'Healthy ✅';
+        statusColor = '#00ff88';
+    } else if (coherence >= 0.5) {
+        status = 'Moderate ⚠️';
+        statusColor = '#ffcc00';
+    } else if (coherence >= 0.3) {
+        status = 'Concerning 🔴';
+        statusColor = '#ff6666';
+    } else {
+        status = 'Critical 🚨';
+        statusColor = '#ff0000';
+    }
+
+    document.getElementById('statCoherence').textContent = `${coherencePercent}%`;
+    const statusEl = document.getElementById('statStatus');
+    statusEl.textContent = status;
+    statusEl.style.color = statusColor;
+
+    // Count faces by health
+    if (companyData.faces) {
+        const healthy = companyData.faces.filter(f => (f.faceEnergy || 0) >= 0.7).length;
+        const moderate = companyData.faces.filter(f => {
+            const energy = f.faceEnergy || 0;
+            return energy >= 0.4 && energy < 0.7;
+        }).length;
+        const critical = companyData.faces.filter(f => (f.faceEnergy || 0) < 0.4).length;
+
+        // Update face count stats (if elements exist)
+        const statFacesEl = document.getElementById('statFaces');
+        if (statFacesEl) {
+            statFacesEl.textContent = `12 (🟢${healthy} 🟡${moderate} 🔴${critical})`;
+        }
+    }
 };
 
 // Toggle rotation
@@ -440,13 +714,53 @@ document.getElementById('showPentagram').addEventListener('click', () => {
     alert('🔮 Pentagram analysis coming soon! This will show the sacred geometry breakdown of the selected face.');
 });
 
-// Mouse click handler
+// Mouse handlers
 canvas.addEventListener('click', onMouseClick);
+canvas.addEventListener('mousemove', onMouseMove);
+
+// Pause auto-rotation during user interaction
+canvas.addEventListener('mousedown', () => {
+    isUserInteracting = true;
+    if (interactionTimeout) clearTimeout(interactionTimeout);
+});
+
+canvas.addEventListener('mouseup', () => {
+    isUserInteracting = false;
+    // Resume after 2 seconds of no interaction
+    if (interactionTimeout) clearTimeout(interactionTimeout);
+    interactionTimeout = setTimeout(() => {
+        isUserInteracting = false;
+    }, 2000);
+});
+
+canvas.addEventListener('wheel', () => {
+    isUserInteracting = true;
+    if (interactionTimeout) clearTimeout(interactionTimeout);
+    interactionTimeout = setTimeout(() => {
+        isUserInteracting = false;
+    }, 2000);
+});
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeFaceDetail();
+    }
+
+    // 'R' key - Reset camera view
+    if (e.key === 'r' || e.key === 'R') {
+        resetCameraView();
+    }
+
+    // 'Space' - Toggle auto-rotation
+    if (e.key === ' ' && e.target === document.body) {
+        e.preventDefault(); // Prevent page scroll
+        autoRotate = !autoRotate;
+        const toggleBtn = document.getElementById('toggleRotation');
+        if (toggleBtn) {
+            toggleBtn.textContent = `Auto-Rotate: ${autoRotate ? 'ON' : 'OFF'}`;
+            toggleBtn.classList.toggle('active', autoRotate);
+        }
     }
 });
 
@@ -457,13 +771,37 @@ document.addEventListener('keydown', (e) => {
 const animate = () => {
     requestAnimationFrame(animate);
 
-    // Auto-rotate
-    if (autoRotate) {
-        faceMeshes.forEach(mesh => {
-            mesh.rotation.y += 0.003;
-        });
+    const time = Date.now() * 0.001; // Time in seconds
+
+    // Auto-rotate the main dodecahedron and edges (only when not interacting)
+    if (autoRotate && !isUserInteracting) {
+        if (window.mainDodecahedron) {
+            window.mainDodecahedron.rotation.y += 0.003;
+        }
         edgeLines.forEach(line => {
             line.rotation.y += 0.003;
+        });
+    }
+
+    // Pulse critical faces for attention
+    const materials = window.dodecahedronMaterials;
+    if (materials && faceMeshes) {
+        faceMeshes.forEach((mesh, index) => {
+            const faceData = mesh.userData.faceData;
+            if (faceData && materials[index]) {
+                const energy = faceData.faceEnergy || 0;
+
+                // Pulse critical faces (below 40%)
+                if (energy < 0.4) {
+                    const pulse = Math.sin(time * 2) * 0.2 + 0.8; // Oscillates 0.6-1.0
+                    materials[index].emissiveIntensity = 0.5 * pulse;
+                }
+                // Very slow pulse for very low energy (below 10%)
+                else if (energy < 0.1) {
+                    const slowPulse = Math.sin(time * 1) * 0.3 + 0.7; // Slow oscillation
+                    materials[index].emissiveIntensity = 0.6 * slowPulse;
+                }
+            }
         });
     }
 
@@ -514,7 +852,7 @@ const init = async () => {
 // Start initialization
 init();
 
-// Export for debugging
+// Export for debugging and external access
 window.dodecahedronViz = {
     scene,
     camera,
@@ -522,6 +860,13 @@ window.dodecahedronViz = {
     companyData,
     switchCompany,
     updateVisualization
+};
+
+// Export refreshVisualization globally (used by parent window communication)
+window.refreshVisualization = () => {
+    updateVisualization();
+    updateStats();
+    console.log('✅ Visualization refreshed');
 };
 
 } // End of initDodecahedron() function

@@ -149,7 +149,7 @@ function loadKPIMapper(mode) {
 }
 
 /**
- * Generate Quick Mode HTML (12 KPIs) - ENHANCED with units and suggestions
+ * Generate Quick Mode HTML (12 KPIs) - ENHANCED with better layout
  */
 function generateQuickModeHTML() {
     const units = window.KPILibrary ? window.KPILibrary.getUnitTypes() : [];
@@ -169,7 +169,8 @@ function generateQuickModeHTML() {
                     Face ${face.id}: ${face.name}
                 </div>
 
-                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 10px;">
+                <!-- Main KPI input row -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; margin-bottom: 12px;">
                     <div>
                         <label style="font-size: 11px; color: rgba(255, 255, 255, 0.6); display: block; margin-bottom: 5px;">
                             KPI Name
@@ -182,6 +183,7 @@ function generateQuickModeHTML() {
                             data-face-id="${face.id}"
                             data-field="kpiName"
                             onchange="autofillKPISuggestion(this, ${face.id})"
+                            oninput="this.setAttribute('data-current-value', this.value)"
                         />
                         <datalist id="${datalistId}">
                             ${suggestions.map(s => `<option value="${s.name}" data-unit="${s.unit}" data-min="${s.targetMin}" data-ideal="${s.targetIdeal}">${s.description}</option>`).join('')}
@@ -189,7 +191,7 @@ function generateQuickModeHTML() {
                     </div>
                     <div>
                         <label style="font-size: 11px; color: rgba(255, 255, 255, 0.6); display: block; margin-bottom: 5px;">
-                            Value
+                            Current Value
                         </label>
                         <input
                             type="number"
@@ -198,6 +200,7 @@ function generateQuickModeHTML() {
                             data-face-id="${face.id}"
                             data-field="value"
                             step="any"
+                            oninput="calculateLiveNormalization(${face.id})"
                         />
                     </div>
                     <div>
@@ -213,27 +216,13 @@ function generateQuickModeHTML() {
                             ${units.map(u => `<option value="${u.value}">${u.symbol || u.label}</option>`).join('')}
                         </select>
                     </div>
-                    <div>
-                        <label style="font-size: 11px; color: rgba(255, 255, 255, 0.6); display: block; margin-bottom: 5px;">
-                            Direction
-                        </label>
-                        <select
-                            class="face-input"
-                            data-face-id="${face.id}"
-                            data-field="direction"
-                            style="cursor: pointer; font-size: 12px;"
-                        >
-                            <option value="↑">↑ Higher</option>
-                            <option value="↓">↓ Lower</option>
-                            <option value="Band">⊟ Sweet spot</option>
-                        </select>
-                    </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <!-- Target ranges row -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
                     <div>
                         <label style="font-size: 11px; color: rgba(255, 255, 255, 0.6); display: block; margin-bottom: 5px;">
-                            Target Minimum
+                            Target Min
                         </label>
                         <input
                             type="number"
@@ -242,6 +231,7 @@ function generateQuickModeHTML() {
                             data-face-id="${face.id}"
                             data-field="targetMin"
                             step="any"
+                            oninput="calculateLiveNormalization(${face.id})"
                         />
                     </div>
                     <div>
@@ -255,8 +245,32 @@ function generateQuickModeHTML() {
                             data-face-id="${face.id}"
                             data-field="targetIdeal"
                             step="any"
+                            oninput="calculateLiveNormalization(${face.id})"
                         />
                     </div>
+                    <div>
+                        <label style="font-size: 11px; color: rgba(255, 255, 255, 0.6); display: block; margin-bottom: 5px;">
+                            Direction
+                        </label>
+                        <select
+                            class="face-input"
+                            data-face-id="${face.id}"
+                            data-field="direction"
+                            style="cursor: pointer; font-size: 12px;"
+                            onchange="calculateLiveNormalization(${face.id})"
+                        >
+                            <option value="↑">↑ Higher</option>
+                            <option value="↓">↓ Lower</option>
+                            <option value="Band">⊟ Sweet spot</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Live normalization preview -->
+                <div id="normalization-preview-${face.id}" style="margin-top: 12px; padding: 8px; background: rgba(0, 0, 0, 0.2); border-radius: 6px; font-size: 11px; color: rgba(255, 255, 255, 0.7); display: none;">
+                    <span style="color: rgba(0, 255, 204, 0.8);">→ Normalized:</span>
+                    <span id="norm-value-${face.id}" style="font-weight: 600; color: #00ffcc;">--</span>
+                    <span style="opacity: 0.6;">(This value goes to calculation)</span>
                 </div>
             </div>
         `;
@@ -402,12 +416,27 @@ function completeStep2() {
  * Autofill KPI suggestion (Quick Mode)
  */
 function autofillKPISuggestion(inputElement, faceId) {
-    const kpiName = inputElement.value;
+    const kpiName = inputElement.value.trim();
     const datalistOptions = inputElement.list?.options;
 
-    if (!datalistOptions) return;
+    console.log(`🔧 Autofill triggered for Face ${faceId}, KPI name: "${kpiName}"`);
+
+    if (!kpiName) {
+        console.log(`   ⚠️ No KPI name entered`);
+        return;
+    }
+
+    if (!datalistOptions) {
+        console.log(`   ⚠️ No datalist options found`);
+        return;
+    }
+
+    // Ensure the input value is set (sometimes datalist doesn't persist)
+    inputElement.value = kpiName;
+    inputElement.setAttribute('value', kpiName);
 
     // Find matching option
+    let matched = false;
     for (let option of datalistOptions) {
         if (option.value === kpiName) {
             // Autofill unit, min, and ideal if available
@@ -427,10 +456,18 @@ function autofillKPISuggestion(inputElement, faceId) {
                 }
             });
 
+            matched = true;
             console.log(`✅ Autofilled KPI: ${kpiName}`);
             break;
         }
     }
+
+    if (!matched) {
+        console.log(`   ℹ️ No matching suggestion found (custom KPI: "${kpiName}")`);
+    }
+
+    // Trigger live normalization after autofill
+    setTimeout(() => calculateLiveNormalization(faceId), 100);
 }
 
 /**
@@ -469,10 +506,79 @@ function autofillElementalKPI(inputElement, faceId, element) {
 }
 
 /**
+ * Calculate live normalization for a KPI (Quick Mode)
+ */
+function calculateLiveNormalization(faceId) {
+    // Get all inputs for this face
+    const inputs = document.querySelectorAll(`[data-face-id="${faceId}"]`);
+    const kpiData = {};
+
+    inputs.forEach(input => {
+        const field = input.getAttribute('data-field');
+        kpiData[field] = input.value;
+    });
+
+    // Get values
+    const value = parseFloat(kpiData.value);
+    const targetMin = parseFloat(kpiData.targetMin);
+    const targetIdeal = parseFloat(kpiData.targetIdeal);
+    const direction = kpiData.direction || '↑';
+
+    // Show/hide preview
+    const previewDiv = document.getElementById(`normalization-preview-${faceId}`);
+    const normValueSpan = document.getElementById(`norm-value-${faceId}`);
+
+    // Only show if we have all required values
+    if (isNaN(value) || isNaN(targetMin) || isNaN(targetIdeal)) {
+        previewDiv.style.display = 'none';
+        return;
+    }
+
+    // Calculate normalized score based on direction
+    let normalized = 0;
+
+    if (direction === '↑') {
+        // Higher is better
+        normalized = (value - targetMin) / (targetIdeal - targetMin);
+    } else if (direction === '↓') {
+        // Lower is better
+        normalized = (targetMin - value) / (targetMin - targetIdeal);
+    } else if (direction === 'Band') {
+        // Sweet spot (band target)
+        const midpoint = (targetMin + targetIdeal) / 2;
+        const range = Math.abs(targetIdeal - targetMin) / 2;
+        const distance = Math.abs(value - midpoint);
+        normalized = Math.max(0, 1 - (distance / range));
+    }
+
+    // Clamp between 0 and 1
+    normalized = Math.max(0, Math.min(1, normalized));
+
+    // Display
+    const percentage = (normalized * 100).toFixed(1);
+    normValueSpan.textContent = `${percentage}%`;
+
+    // Color code
+    if (normalized >= 0.7) {
+        normValueSpan.style.color = '#00ff88';
+    } else if (normalized >= 0.4) {
+        normValueSpan.style.color = '#ffcc00';
+    } else {
+        normValueSpan.style.color = '#ff6666';
+    }
+
+    previewDiv.style.display = 'block';
+}
+
+/**
  * Collect KPI data from form - ENHANCED with units and default to 0 for empty values
  */
 function collectKPIData() {
     const kpis = [];
+
+    console.log('📊 Collecting KPI data...');
+    console.log('   Mode:', demoState.kpiMode);
+    console.log('   Faces:', demoState.faceConfig.faces.length);
 
     if (demoState.kpiMode === 'quick') {
         // Collect 12 KPIs (one per face)
@@ -482,12 +588,21 @@ function collectKPIData() {
 
             inputs.forEach(input => {
                 const field = input.getAttribute('data-field');
-                kpiData[field] = input.value;
+                // Check both value and data-current-value (in case of datalist issues)
+                const currentValue = input.getAttribute('data-current-value') || input.value;
+                kpiData[field] = field === 'kpiName' ? currentValue.trim() : input.value;
+
+                // Debug: Show what we're capturing
+                if (field === 'kpiName') {
+                    console.log(`      🔍 Input value: "${input.value}", data-current-value: "${input.getAttribute('data-current-value')}"`);
+                }
             });
 
+            console.log(`   Face ${face.id} (${face.name}):`, kpiData);
+
             // Only require kpiName - value defaults to 0 if empty
-            if (kpiData.kpiName) {
-                kpis.push({
+            if (kpiData.kpiName && kpiData.kpiName.length > 0) {
+                const kpiEntry = {
                     faceId: face.id,
                     faceName: face.name,
                     id: `F${face.id}_K1`,
@@ -498,7 +613,11 @@ function collectKPIData() {
                     targetMin: parseFloat(kpiData.targetMin) || 0,
                     targetIdeal: parseFloat(kpiData.targetIdeal) || 100,
                     element: 'Earth' // Default for quick mode
-                });
+                };
+                kpis.push(kpiEntry);
+                console.log(`      ✅ Added KPI:`, kpiEntry);
+            } else {
+                console.log(`      ⚠️ Skipped (no KPI name entered for this face)`);
             }
         });
     } else {
@@ -517,7 +636,7 @@ function collectKPIData() {
 
                 // Only require kpiName - value defaults to 0 if empty
                 if (kpiData.kpiName) {
-                    kpis.push({
+                    const kpiEntry = {
                         faceId: face.id,
                         faceName: face.name,
                         id: `F${face.id}_K${eIndex + 1}`,
@@ -528,12 +647,15 @@ function collectKPIData() {
                         targetMin: parseFloat(kpiData.targetMin) || 0,
                         targetIdeal: parseFloat(kpiData.targetIdeal) || 100,
                         element: element
-                    });
+                    };
+                    kpis.push(kpiEntry);
+                    console.log(`      ✅ Added ${element} KPI:`, kpiEntry);
                 }
             });
         });
     }
 
+    console.log(`📊 Total KPIs collected: ${kpis.length}`);
     return kpis;
 }
 
@@ -547,20 +669,81 @@ async function runCalculation() {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
-        // Build company data structure
-        const companyData = {
-            name: demoState.faceConfig.templateName,
-            kpis: demoState.kpiData
-        };
+        console.log('🔬 Running calculation...');
 
+        // ========================================
+        // 🔄 TRANSFORMATION LAYER
+        // ========================================
+        // Transform UI data to Engine format using DataTransformer
+        let companyData;
+
+        if (typeof window.DataTransformer !== 'undefined') {
+            console.log('   🔄 Using Data Transformation Layer');
+
+            // Prepare data for transformation
+            const demoData = {
+                faceConfig: demoState.faceConfig,
+                kpiMode: demoState.kpiMode,
+                kpiData: demoState.kpiData
+            };
+
+            // Validate before transforming
+            const validation = window.DataTransformer.validate(demoData);
+            console.log('   📋 Validation:', validation);
+
+            if (!validation.valid) {
+                throw new Error(`Data validation failed: ${validation.errors.join(', ')}`);
+            }
+
+            if (validation.warnings.length > 0) {
+                console.warn('   ⚠️ Warnings:', validation.warnings);
+            }
+
+            // Transform to engine format
+            companyData = window.DataTransformer.transform(demoData);
+            console.log('   ✅ Data transformed successfully');
+        } else {
+            console.warn('   ⚠️ DataTransformer not loaded - using raw format');
+
+            // Fallback: Use raw format (may cause issues)
+            companyData = {
+                name: demoState.faceConfig.templateName,
+                kpis: demoState.kpiData
+            };
+        }
+
+        console.log('   Company name:', companyData.name);
+        console.log('   KPIs count:', companyData.kpis.length);
+        console.log('   Sample KPI:', companyData.kpis[0]);
+
+        // ========================================
+        // 🧮 CALCULATION ENGINE
+        // ========================================
         // Check if Quannex engine is loaded
         if (typeof window.quannexEngine !== 'undefined') {
+            console.log('   ✅ Using Quannex Engine');
+
             // Use real engine
             await window.quannexEngine.initializeWithCompany(companyData);
-            demoState.coherenceResults = window.quannexEngine.getState();
+            const engineState = window.quannexEngine.getState();
+
+            console.log('   ✅ Engine calculation complete');
+
+            // Transform results back to UI format
+            if (typeof window.DataTransformer !== 'undefined') {
+                demoState.coherenceResults = window.DataTransformer.transformResults(engineState);
+            } else {
+                demoState.coherenceResults = engineState;
+            }
+
+            console.log('   ✅ Results ready for display:', demoState.coherenceResults);
         } else {
-            // Fallback: Simple calculation
+            console.log('   ⚠️ Quannex Engine not loaded - using fallback calculation');
+
+            // Fallback: Simple calculation (works with UI format)
             demoState.coherenceResults = calculateSimpleCoherence(demoState.kpiData);
+
+            console.log('   ✅ Fallback calculation completed:', demoState.coherenceResults);
         }
 
         // Display results
@@ -569,8 +752,10 @@ async function runCalculation() {
         hideLoading();
     } catch (error) {
         console.error('❌ Calculation failed:', error);
+        console.error('   Error details:', error.message);
+        console.error('   Stack:', error.stack);
         hideLoading();
-        alert('Calculation failed. Please check console for details.');
+        alert(`Calculation failed: ${error.message}\n\nPlease check console for details.`);
     }
 }
 
@@ -578,6 +763,9 @@ async function runCalculation() {
  * Simple coherence calculation (fallback)
  */
 function calculateSimpleCoherence(kpis) {
+    console.log('🧮 Starting simple coherence calculation...');
+    console.log('   Input KPIs:', kpis.length);
+
     const faceEnergies = {};
 
     // Group KPIs by face
@@ -591,9 +779,26 @@ function calculateSimpleCoherence(kpis) {
             };
         }
 
-        // Normalize KPI
-        const normalized = (kpi.value - kpi.targetMin) / (kpi.targetIdeal - kpi.targetMin);
+        // Normalize KPI based on direction
+        let normalized = 0;
+
+        if (kpi.direction === '↑') {
+            // Higher is better
+            normalized = (kpi.value - kpi.targetMin) / (kpi.targetIdeal - kpi.targetMin);
+        } else if (kpi.direction === '↓') {
+            // Lower is better
+            normalized = (kpi.targetMin - kpi.value) / (kpi.targetMin - kpi.targetIdeal);
+        } else if (kpi.direction === 'Band') {
+            // Sweet spot (band target)
+            const midpoint = (kpi.targetMin + kpi.targetIdeal) / 2;
+            const range = Math.abs(kpi.targetIdeal - kpi.targetMin) / 2;
+            const distance = Math.abs(kpi.value - midpoint);
+            normalized = Math.max(0, 1 - (distance / range));
+        }
+
         const score = Math.max(0, Math.min(1, normalized));
+
+        console.log(`   KPI: ${kpi.name} = ${kpi.value} → ${(score * 100).toFixed(1)}%`);
 
         faceEnergies[kpi.faceId].kpis.push({
             ...kpi,
@@ -603,13 +808,25 @@ function calculateSimpleCoherence(kpis) {
 
     // Calculate face energies
     Object.values(faceEnergies).forEach(face => {
-        const avgScore = face.kpis.reduce((sum, kpi) => sum + kpi.normalizedScore, 0) / face.kpis.length;
-        face.energy = avgScore;
+        if (face.kpis.length > 0) {
+            const avgScore = face.kpis.reduce((sum, kpi) => sum + kpi.normalizedScore, 0) / face.kpis.length;
+            face.energy = avgScore;
+            console.log(`   Face ${face.id} (${face.name}): ${face.kpis.length} KPIs → ${(face.energy * 100).toFixed(1)}%`);
+        } else {
+            face.energy = 0;
+            console.log(`   Face ${face.id} (${face.name}): No KPIs → 0%`);
+        }
     });
 
     // Calculate global coherence
     const faces = Object.values(faceEnergies);
-    const globalCoherence = faces.reduce((sum, face) => sum + face.energy, 0) / faces.length;
+    const globalCoherence = faces.length > 0
+        ? faces.reduce((sum, face) => sum + face.energy, 0) / faces.length
+        : 0;
+
+    console.log(`🧮 Calculation complete:`);
+    console.log(`   Global Coherence: ${(globalCoherence * 100).toFixed(1)}%`);
+    console.log(`   Status: ${getCoherenceStatus(globalCoherence)}`);
 
     return {
         globalCoherence: globalCoherence,
@@ -737,15 +954,38 @@ function identifyNervousEndpoints() {
 }
 
 /**
- * Launch visualization view
+ * Launch visualization view with custom data
  */
 function launchView(viewName) {
     const viewUrls = {
         'dodecahedron': 'dodecahedron-3d.html',
         'calculations': 'index.html',
         'breath': 'index.html#breath',
-        'dna': 'octave-dna.html'
+        'dna': 'octave-dna.html',
+        'simulator': 'simulator.html'
     };
+
+    // Store custom data in sessionStorage for the visualization to pick up
+    if (demoState.kpiData && demoState.kpiData.length > 0) {
+        const customCompanyData = {
+            id: 'custom',
+            name: 'Custom Analysis',
+            description: 'User-generated data from Orchestrator',
+            kpis: demoState.kpiData,
+            faceConfig: demoState.faceConfig,
+            coherenceResults: demoState.coherenceResults,
+            isCustomData: true,
+            timestamp: new Date().toISOString()
+        };
+
+        // Store in sessionStorage
+        sessionStorage.setItem('customCompanyData', JSON.stringify(customCompanyData));
+        sessionStorage.setItem('selectedCompanyId', 'custom');
+
+        console.log('📦 Stored custom data for visualization:', customCompanyData);
+    } else {
+        console.warn('⚠️ No KPI data available to pass to visualization');
+    }
 
     const url = viewUrls[viewName];
     if (url) {
@@ -829,6 +1069,7 @@ window.startOver = startOver;
 window.showHelp = showHelp;
 window.autofillKPISuggestion = autofillKPISuggestion;
 window.autofillElementalKPI = autofillElementalKPI;
+window.calculateLiveNormalization = calculateLiveNormalization;
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', initializeDemo);
