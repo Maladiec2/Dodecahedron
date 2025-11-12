@@ -1,12 +1,12 @@
 # 🌟 Quannex - The Living Geometric Oracle
 
+## ✨ DEMO  -  https://maladiec2.github.io/Dodecahedron/POC/demo.html
+
 **A revolutionary organizational intelligence system that transforms complex business data into a living, breathing 3D visualization of coherence and harmony.**
 
 ## 🎯 Vision
 
 Quannex is more than a dashboard—it's a **living geometric oracle** that reveals the hidden patterns of organizational health through the sacred geometry of a dodecahedron. Each face, edge, and vertex carries meaning, creating a multi-sensory experience that allows leaders to intuitively understand their organization's coherence and discover the highest-leverage actions for transformation.
-
-## ✨ What We've Built
 
 ### 🏗️ **Complete Architecture (100% Functional)**
 
