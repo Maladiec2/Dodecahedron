@@ -53,6 +53,7 @@ class DataTransformer {
         const companyData = {
             name: demoData.faceConfig.templateName || 'Demo Company',
             kpis: transformedKPIs,
+            faceConfig: demoData.faceConfig, // ✅ Pass face configuration for custom names
             mode: demoData.kpiMode,
             timestamp: new Date().toISOString()
         };

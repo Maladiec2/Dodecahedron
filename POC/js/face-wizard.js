@@ -60,6 +60,24 @@ const FACE_TEMPLATES = {
         ]
     },
 
+    project: {
+        name: "Project Management",
+        faces: [
+            { id: 1, name: "Scope & Requirements", icon: "📋" },
+            { id: 2, name: "Timeline & Milestones", icon: "⏱️" },
+            { id: 3, name: "Budget & Resources", icon: "💰" },
+            { id: 4, name: "Team Performance", icon: "👥" },
+            { id: 5, name: "Stakeholder Engagement", icon: "🗣️" },
+            { id: 6, name: "Quality Standards", icon: "⭐" },
+            { id: 7, name: "Risk Management", icon: "⚠️" },
+            { id: 8, name: "Change Control", icon: "🔄" },
+            { id: 9, name: "Dependencies & Integration", icon: "🔗" },
+            { id: 10, name: "Technical Delivery", icon: "🔧" },
+            { id: 11, name: "Knowledge Transfer", icon: "📖" },
+            { id: 12, name: "Value Realization", icon: "🎁" }
+        ]
+    },
+
     custom: {
         name: "Custom",
         faces: [

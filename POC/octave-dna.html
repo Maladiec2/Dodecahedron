@@ -790,6 +790,7 @@
     <script src="./js/breath-analyzer.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/pentagram-overlay.js"></script>
+    <script src="./js/face-to-breath-mapper.js"></script>
     <script>
         // ============================================
         // IFRAME DETECTION: Hide header if embedded
@@ -849,8 +850,8 @@
             maxOctaves: 7
         };
 
-        // DNA Helices with face mappings
-        const DNA_HELICES = [
+        // DNA Helices - Default configuration (will be dynamically updated for custom companies)
+        let DNA_HELICES = [
             {
                 id: 1,
                 name: 'Resource Flow',
@@ -900,6 +901,85 @@
                 names: ['Community & Partners', 'Risk & Resilience']
             }
         ];
+
+        // Helix colors (reusable)
+        const HELIX_COLORS = [0xff6b6b, 0x4ecdc4, 0xffe66d, 0x95e1d3, 0xf38181, 0xaa96da];
+
+        /**
+         * Update DNA helices configuration based on company
+         */
+        function updateDNAHelicesConfig(company, facesData) {
+            if (!window.FaceToBreathMapper) {
+                console.warn('⚠️ FaceToBreathMapper not loaded, using default config');
+                return;
+            }
+
+            // Get intelligent breath axis mapping
+            const breathConfig = window.FaceToBreathMapper.getBreathAxisConfig(company, facesData);
+
+            console.log('🧬 Breath axis configuration:', breathConfig);
+
+            if (breathConfig.mode === 'custom' && breathConfig.summary) {
+                console.log(`   Mapping confidence: ${breathConfig.summary.highConfidence} high, ${breathConfig.summary.mediumConfidence} medium, ${breathConfig.summary.lowConfidence} low`);
+            }
+
+            // Update DNA_HELICES with mapped configuration
+            DNA_HELICES = breathConfig.axes.map((axis, index) => ({
+                id: axis.axisId,
+                name: axis.axisName,
+                color: HELIX_COLORS[index % HELIX_COLORS.length],
+                angle: (index * Math.PI * 2) / 6,
+                faces: [axis.inhaleFace.id, axis.exhaleFace.id],
+                names: [axis.inhaleFace.name, axis.exhaleFace.name],
+                confidence: axis.confidence,
+                method: axis.method
+            }));
+
+            console.log('✅ DNA helices configuration updated:', DNA_HELICES.length, 'axes');
+
+            // Update legend with mapped face names
+            updateLegend();
+        }
+
+        /**
+         * Update legend to show current breath axis mappings
+         */
+        function updateLegend() {
+            const legendContainer = document.querySelector('.legend');
+            if (!legendContainer) return;
+
+            // Keep title, regenerate items
+            const legendHtml = `
+                <div class="legend-title">Six Breath Axes</div>
+                ${DNA_HELICES.map((helix, index) => {
+                    const colorHex = '#' + helix.color.toString(16).padStart(6, '0');
+                    const confidenceBadge = helix.confidence ?
+                        `<span style="font-size: 9px; opacity: 0.6;">${helix.confidence === 'high' ? '●●●' : helix.confidence === 'medium' ? '●●○' : '●○○'}</span>` : '';
+
+                    return `
+                        <div class="helix-item" style="border-color: ${colorHex};" data-helix="${helix.id}">
+                            <div class="helix-name" style="color: ${colorHex};">
+                                ${helix.name} ${confidenceBadge}
+                            </div>
+                            <div class="helix-faces">
+                                ${helix.names[0]} → ${helix.names[1]}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            `;
+
+            legendContainer.innerHTML = legendHtml;
+
+            // Re-attach click handlers
+            document.querySelectorAll('.helix-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const helixId = parseInt(item.dataset.helix);
+                    const helix = DNA_HELICES.find(h => h.id === helixId);
+                    if (helix) selectHelix(helix);
+                });
+            });
+        }
 
         // State
         let animationRunning = true;
@@ -1581,6 +1661,9 @@
                     facesData = window.Quannex.getFaces();
                     console.log('✅ Quannex engine initialized with', company.name);
                     console.log('📊 Loaded', facesData.length, 'faces');
+
+                    // 🔧 Update DNA helix configuration with intelligent mapping
+                    updateDNAHelicesConfig(company, facesData);
                 }
 
                 renderDNA();
@@ -1699,10 +1782,15 @@
                         id: 'custom',
                         name: customData.name || 'Custom Analysis',
                         description: customData.description || 'User-generated data',
-                        kpis: customData.kpis || []
+                        kpis: customData.kpis || [],
+                        faceConfig: customData.faceConfig // 🔧 Include faceConfig for custom face names
                     };
 
                     console.log(`[DNA View] 📊 Custom company has ${company.kpis.length} KPIs`);
+                    console.log(`[DNA View] 📋 Face config:`, customData.faceConfig ? customData.faceConfig.templateName : 'Not provided');
+
+                    // Initialize timestamp tracking for auto-refresh
+                    lastKnownTimestamp = customData.timestamp;
 
                     // Wait for dependencies
                     let attempts = 0;
@@ -1716,7 +1804,7 @@
                         window.CompanyLoader.currentCompany = company;
                     }
 
-                    // Reinitialize visualization
+                    // Reinitialize visualization (which will call updateDNAHelicesConfig)
                     await initVisualization();
 
                     // Update dropdown to show custom
@@ -1751,6 +1839,122 @@
         setTimeout(checkSessionStorageDNA, 1500);
 
         console.log('[DNA View] 📡 Message listener initialized');
+
+        // ============================================
+        // AUTO-REFRESH: Detect Data Updates
+        // ============================================
+        let lastKnownTimestamp = null;
+
+        /**
+         * Check for updates in sessionStorage (custom data recalculation)
+         */
+        function checkForUpdates() {
+            const customDataJson = sessionStorage.getItem('customCompanyData');
+            const selectedCompanyId = sessionStorage.getItem('selectedCompanyId');
+
+            // Only check if we're viewing custom data
+            if (selectedCompanyId !== 'custom' || !customDataJson) {
+                return;
+            }
+
+            try {
+                const customData = JSON.parse(customDataJson);
+                const newTimestamp = customData.timestamp;
+
+                // First time check - just store the timestamp
+                if (!lastKnownTimestamp) {
+                    lastKnownTimestamp = newTimestamp;
+                    return;
+                }
+
+                // Timestamp changed? Data was updated!
+                if (newTimestamp && newTimestamp !== lastKnownTimestamp) {
+                    console.log('[DNA View] 🔄 Detected data update! Reloading...');
+                    console.log(`   Old timestamp: ${lastKnownTimestamp}`);
+                    console.log(`   New timestamp: ${newTimestamp}`);
+
+                    lastKnownTimestamp = newTimestamp;
+
+                    // Reload visualization with updated data
+                    reloadCustomData(customData);
+                }
+            } catch (error) {
+                console.error('[DNA View] ❌ Error checking for updates:', error);
+            }
+        }
+
+        /**
+         * Reload visualization with updated custom data
+         */
+        async function reloadCustomData(customData) {
+            try {
+                console.log('[DNA View] 🔄 Reloading custom data...');
+
+                // Show loading
+                document.getElementById('loading').style.display = 'flex';
+
+                // Transform custom data to company format
+                const company = {
+                    id: 'custom',
+                    name: customData.name || 'Custom Analysis',
+                    description: customData.description || 'User-generated data',
+                    kpis: customData.kpis || [],
+                    faceConfig: customData.faceConfig
+                };
+
+                console.log(`[DNA View] 📊 Custom company has ${company.kpis.length} KPIs`);
+
+                // Update CompanyLoader
+                if (window.CompanyLoader) {
+                    window.CompanyLoader.currentCompany = company;
+                }
+
+                // Clear existing DNA group
+                if (dnaGroup) {
+                    scene.remove(dnaGroup);
+                    dnaGroup = null;
+                }
+
+                // Reinitialize Quannex engine
+                if (window.Quannex && company) {
+                    await window.Quannex.initWithCompany(company);
+                    facesData = window.Quannex.getFaces();
+                    console.log('[DNA View] ✅ Quannex engine reinitialized');
+                    console.log('[DNA View] 📊 Loaded', facesData.length, 'faces');
+
+                    // 🔧 Update DNA helix configuration with intelligent mapping
+                    updateDNAHelicesConfig(company, facesData);
+                }
+
+                // Re-render DNA
+                renderDNA();
+
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+
+                console.log('[DNA View] ✅ Reload complete!');
+            } catch (error) {
+                console.error('[DNA View] ❌ Failed to reload custom data:', error);
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        /**
+         * Check when tab becomes visible (instant update on tab switch)
+         */
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                console.log('[DNA View] 👀 Tab became visible - checking for updates...');
+                checkForUpdates();
+            }
+        });
+
+        /**
+         * Poll for updates every 2 seconds
+         */
+        setInterval(checkForUpdates, 2000);
+
+        console.log('[DNA View] ✅ Auto-refresh system initialized');
     </script>
 </body>
 </html>

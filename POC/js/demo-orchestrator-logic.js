@@ -991,27 +991,8 @@ function launchView(viewName) {
         'simulator': 'simulator.html'
     };
 
-    // Store custom data in sessionStorage for the visualization to pick up
-    if (demoState.kpiData && demoState.kpiData.length > 0) {
-        const customCompanyData = {
-            id: 'custom',
-            name: 'Custom Analysis',
-            description: 'User-generated data from Orchestrator',
-            kpis: demoState.kpiData,
-            faceConfig: demoState.faceConfig,
-            coherenceResults: demoState.coherenceResults,
-            isCustomData: true,
-            timestamp: new Date().toISOString()
-        };
-
-        // Store in sessionStorage
-        sessionStorage.setItem('customCompanyData', JSON.stringify(customCompanyData));
-        sessionStorage.setItem('selectedCompanyId', 'custom');
-
-        console.log('📦 Stored custom data for visualization:', customCompanyData);
-    } else {
-        console.warn('⚠️ No KPI data available to pass to visualization');
-    }
+    // 🔧 Always update sessionStorage before launching (ensure fresh data)
+    updateSessionStorage();
 
     const url = viewUrls[viewName];
     if (url) {

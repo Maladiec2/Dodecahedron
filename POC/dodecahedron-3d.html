@@ -739,7 +739,46 @@
         // Check for company in sessionStorage after a short delay (allow scripts to load)
         setTimeout(checkSessionStorage, 1000);
 
+        // 🔧 FIX: Poll sessionStorage for updates (when user recalculates in orchestrator)
+        let lastKnownTimestamp = null;
+
+        function checkForUpdates() {
+            const customDataJson = sessionStorage.getItem('customCompanyData');
+            if (!customDataJson) return;
+
+            try {
+                const customData = JSON.parse(customDataJson);
+                const newTimestamp = customData.timestamp;
+
+                // If timestamp changed, data was updated - reload!
+                if (lastKnownTimestamp && newTimestamp !== lastKnownTimestamp) {
+                    console.log('[3D View] 🔄 Detected data update! Reloading...');
+                    console.log('   Old timestamp:', lastKnownTimestamp);
+                    console.log('   New timestamp:', newTimestamp);
+
+                    // Reload the visualization
+                    checkSessionStorage();
+                }
+
+                lastKnownTimestamp = newTimestamp;
+            } catch (error) {
+                console.error('[3D View] ❌ Error checking for updates:', error);
+            }
+        }
+
+        // Check for updates when user switches back to this tab
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                console.log('[3D View] 👀 Tab became visible - checking for updates...');
+                checkForUpdates();
+            }
+        });
+
+        // Also poll every 2 seconds (lightweight check)
+        setInterval(checkForUpdates, 2000);
+
         console.log('[3D View] 📡 Message listener initialized');
+        console.log('[3D View] 🔄 Auto-refresh enabled - will detect recalculations');
     </script>
 </body>
 </html>

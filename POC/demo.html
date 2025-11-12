@@ -737,6 +737,9 @@
             <button class="switch-company-btn" id="switchCompanyBtn" onclick="showCompanySelector()" style="display: none;">
                 🔄 Switch Company
             </button>
+            <button class="switch-company-btn" onclick="returnToWelcome()" style="margin-left: 10px;">
+                🏠 Home
+            </button>
         </div>
         <div class="view-tabs">
             <button class="view-tab active" data-view="dashboard" onclick="switchView('dashboard')">
@@ -1129,13 +1132,51 @@
         function initPage() {
             // Check if there's already a company selected (e.g., after page refresh)
             const selectedCompanyId = sessionStorage.getItem('selectedCompanyId');
-            if (selectedCompanyId) {
+
+            // Check if we should show welcome screen (don't auto-hide if coming back home)
+            const forceWelcome = sessionStorage.getItem('showWelcome') === 'true';
+
+            if (selectedCompanyId && !forceWelcome) {
                 // Hide welcome screen if company is already selected
                 document.getElementById('welcomeScreen').classList.add('hidden');
                 // Update header to show current company
                 updateCompanyDisplay(selectedCompanyId);
                 console.log(`📋 Resuming session with company: ${selectedCompanyId}`);
+            } else {
+                // Clear the flag if it was set
+                sessionStorage.removeItem('showWelcome');
             }
+        }
+
+        /**
+         * Return to welcome screen
+         */
+        function returnToWelcome() {
+            console.log('🏠 Returning to welcome screen');
+
+            // Clear current company selection
+            sessionStorage.removeItem('selectedCompanyId');
+            sessionStorage.removeItem('customCompanyData');
+
+            // Show welcome screen
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+
+            // Hide company display
+            document.getElementById('currentCompanyDisplay').style.display = 'none';
+            document.getElementById('switchCompanyBtn').style.display = 'none';
+
+            // Clear iframes
+            const dashboardFrame = document.getElementById('dashboardFrame');
+            const geometryFrame = document.getElementById('geometryFrame');
+            const dnaFrame = document.getElementById('dnaFrame');
+            const simulatorFrame = document.getElementById('simulatorFrame');
+
+            if (dashboardFrame) dashboardFrame.src = 'about:blank';
+            if (geometryFrame) geometryFrame.src = 'about:blank';
+            if (dnaFrame) dnaFrame.src = 'about:blank';
+            if (simulatorFrame) simulatorFrame.src = 'about:blank';
+
+            console.log('✅ Returned to welcome screen');
         }
 
         // Run initialization

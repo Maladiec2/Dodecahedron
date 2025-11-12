@@ -200,6 +200,343 @@ const KPI_SUGGESTIONS = {
         ]
     },
 
+    // Project Management Template
+    'Scope & Requirements': {
+        Earth: [
+            { name: 'Requirements Documented', unit: 'percentage', targetMin: 60, targetIdeal: 100, description: '% of requirements captured' },
+            { name: 'Baseline Stability', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Scope baseline firmness' },
+            { name: 'Acceptance Criteria Defined', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: '% with clear criteria' }
+        ],
+        Water: [
+            { name: 'Requirements Volatility', unit: 'percentage', targetMin: 50, targetIdeal: 5, description: 'Change rate (lower is better)' },
+            { name: 'Stakeholder Feedback Rate', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Continuous input quality' },
+            { name: 'Requirement Evolution', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Healthy refinement' }
+        ],
+        Fire: [
+            { name: 'Requirements Quality', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Clarity and completeness' },
+            { name: 'Scope Creep Impact', unit: 'percentage', targetMin: 50, targetIdeal: 0, description: 'Unauthorized changes' },
+            { name: 'Value Alignment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Requirements-value fit' }
+        ],
+        Air: [
+            { name: 'Requirements Review Cycle', unit: 'days', targetMin: 30, targetIdeal: 7, description: 'Review frequency' },
+            { name: 'Traceability', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: 'Requirement to deliverable link' },
+            { name: 'Communication Clarity', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Shared understanding' }
+        ],
+        Ether: [
+            { name: 'Strategic Alignment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Business objective fit' },
+            { name: 'Vision Clarity', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'End goal understanding' },
+            { name: 'Purpose-Driven Scope', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Why behind what' }
+        ]
+    },
+
+    'Timeline & Milestones': {
+        Earth: [
+            { name: 'Schedule Baseline', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Plan stability' },
+            { name: 'Milestone Count', unit: 'count', targetMin: 0, targetIdeal: 12, description: 'Key checkpoints defined' },
+            { name: 'Buffer Allocation', unit: 'percentage', targetMin: 0, targetIdeal: 20, description: 'Schedule contingency' }
+        ],
+        Water: [
+            { name: 'Schedule Adherence', unit: 'percentage', targetMin: 50, targetIdeal: 95, description: 'On-time delivery rate' },
+            { name: 'Timeline Adjustments', unit: 'count', targetMin: 10, targetIdeal: 2, description: 'Baseline changes' },
+            { name: 'Velocity Trend', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Delivery speed trend' }
+        ],
+        Fire: [
+            { name: 'Critical Path Health', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Critical tasks on track' },
+            { name: 'Milestone Achievement Rate', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: 'Milestones hit' },
+            { name: 'Delivery Efficiency', unit: 'percentage', targetMin: 60, targetIdeal: 95, description: 'Planned vs actual' }
+        ],
+        Air: [
+            { name: 'Fast-tracking Capability', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Ability to accelerate' },
+            { name: 'Schedule Communication', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Timeline transparency' },
+            { name: 'Lead Time', unit: 'days', targetMin: 90, targetIdeal: 30, description: 'Planning horizon' }
+        ],
+        Ether: [
+            { name: 'Timeline Realism', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Achievable goals' },
+            { name: 'Long-term Vision', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Beyond current project' },
+            { name: 'Time Value Optimization', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Value delivery timing' }
+        ]
+    },
+
+    'Budget & Resources': {
+        Earth: [
+            { name: 'Budget Allocated', unit: 'currency_usd', targetMin: 0, targetIdeal: 1000000, description: 'Total project budget' },
+            { name: 'Resource Availability', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: 'Resources secured' },
+            { name: 'Reserve Fund', unit: 'percentage', targetMin: 0, targetIdeal: 15, description: 'Contingency buffer' }
+        ],
+        Water: [
+            { name: 'Budget Variance', unit: 'percentage', targetMin: 30, targetIdeal: 5, description: 'Planned vs actual spend' },
+            { name: 'Burn Rate', unit: 'currency_usd', targetMin: 100000, targetIdeal: 50000, description: 'Monthly spend rate' },
+            { name: 'Resource Utilization', unit: 'percentage', targetMin: 40, targetIdeal: 85, description: 'Productive capacity' }
+        ],
+        Fire: [
+            { name: 'Cost Performance Index (CPI)', unit: 'ratio', targetMin: 0.8, targetIdeal: 1.2, description: 'Cost efficiency' },
+            { name: 'ROI Projection', unit: 'percentage', targetMin: 0, targetIdeal: 200, description: 'Expected return' },
+            { name: 'Value per Dollar', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Budget effectiveness' }
+        ],
+        Air: [
+            { name: 'Budget Approval Speed', unit: 'days', targetMin: 30, targetIdeal: 3, description: 'Financial decision speed' },
+            { name: 'Resource Allocation Agility', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Reallocation ease' },
+            { name: 'Procurement Velocity', unit: 'days', targetMin: 60, targetIdeal: 14, description: 'Purchase cycle time' }
+        ],
+        Ether: [
+            { name: 'Strategic Investment Alignment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Budget-strategy fit' },
+            { name: 'Financial Stewardship', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Responsible spending' },
+            { name: 'Long-term Value Focus', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Beyond immediate costs' }
+        ]
+    },
+
+    'Team Performance': {
+        Earth: [
+            { name: 'Team Size', unit: 'count', targetMin: 1, targetIdeal: 10, description: 'Core team members' },
+            { name: 'Team Stability', unit: 'percentage', targetMin: 60, targetIdeal: 95, description: 'Team retention' },
+            { name: 'Skills Coverage', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: 'Required skills present' }
+        ],
+        Water: [
+            { name: 'Team Morale', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Team satisfaction' },
+            { name: 'Collaboration Quality', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Teamwork effectiveness' },
+            { name: 'Capacity Flexibility', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Adaptability' }
+        ],
+        Fire: [
+            { name: 'Team Productivity', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Output per person' },
+            { name: 'Velocity', unit: 'number', targetMin: 0, targetIdeal: 50, description: 'Story points per sprint' },
+            { name: 'Quality of Output', unit: 'percentage', targetMin: 70, targetIdeal: 98, description: 'Defect-free delivery' }
+        ],
+        Air: [
+            { name: 'Communication Effectiveness', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Information flow' },
+            { name: 'Decision Speed', unit: 'days', targetMin: 14, targetIdeal: 1, description: 'Time to decision' },
+            { name: 'Response Time', unit: 'hours', targetMin: 48, targetIdeal: 4, description: 'Issue response speed' }
+        ],
+        Ether: [
+            { name: 'Purpose Alignment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Shared mission' },
+            { name: 'Team Empowerment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Autonomy and trust' },
+            { name: 'Growth Mindset', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Learning culture' }
+        ]
+    },
+
+    'Stakeholder Engagement': {
+        Earth: [
+            { name: 'Stakeholder Count', unit: 'count', targetMin: 1, targetIdeal: 20, description: 'Key stakeholders identified' },
+            { name: 'Engagement Plan', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Plan completeness' },
+            { name: 'Communication Channels', unit: 'count', targetMin: 1, targetIdeal: 5, description: 'Active channels' }
+        ],
+        Water: [
+            { name: 'Stakeholder Satisfaction', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Overall satisfaction' },
+            { name: 'Engagement Frequency', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Regular interaction' },
+            { name: 'Feedback Integration', unit: 'percentage', targetMin: 30, targetIdeal: 80, description: 'Feedback acted upon' }
+        ],
+        Fire: [
+            { name: 'Influence Impact', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Stakeholder advocacy' },
+            { name: 'Support Level', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Active support' },
+            { name: 'Conflict Resolution', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Issue management' }
+        ],
+        Air: [
+            { name: 'Communication Speed', unit: 'hours', targetMin: 72, targetIdeal: 8, description: 'Update frequency' },
+            { name: 'Information Transparency', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Openness level' },
+            { name: 'Meeting Efficiency', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Productive meetings' }
+        ],
+        Ether: [
+            { name: 'Trust Level', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Stakeholder trust' },
+            { name: 'Value Alignment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Shared values' },
+            { name: 'Long-term Partnership', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Beyond project' }
+        ]
+    },
+
+    'Quality Standards': {
+        Earth: [
+            { name: 'Quality Plan Documented', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: 'Plan completeness' },
+            { name: 'Standards Defined', unit: 'count', targetMin: 0, targetIdeal: 10, description: 'Quality criteria count' },
+            { name: 'Testing Infrastructure', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Test capability' }
+        ],
+        Water: [
+            { name: 'Quality Trend', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Improving quality' },
+            { name: 'Defect Discovery Rate', unit: 'percentage', targetMin: 10, targetIdeal: 95, description: 'Bugs found pre-release' },
+            { name: 'Customer Satisfaction', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Quality perception' }
+        ],
+        Fire: [
+            { name: 'Defect Density', unit: 'number', targetMin: 50, targetIdeal: 2, description: 'Defects per 1000 LOC' },
+            { name: 'First-time Pass Rate', unit: 'percentage', targetMin: 50, targetIdeal: 95, description: 'Right first time' },
+            { name: 'Quality Metrics Met', unit: 'percentage', targetMin: 60, targetIdeal: 100, description: 'Standards achieved' }
+        ],
+        Air: [
+            { name: 'Test Cycle Time', unit: 'days', targetMin: 14, targetIdeal: 2, description: 'Testing speed' },
+            { name: 'Issue Resolution Time', unit: 'days', targetMin: 30, targetIdeal: 3, description: 'Defect fix speed' },
+            { name: 'Quality Feedback Loop', unit: 'days', targetMin: 14, targetIdeal: 1, description: 'Quality to action' }
+        ],
+        Ether: [
+            { name: 'Quality Culture', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Quality mindset' },
+            { name: 'Excellence Pursuit', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Continuous improvement' },
+            { name: 'Craft Pride', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Pride in work' }
+        ]
+    },
+
+    'Risk Management': {
+        Earth: [
+            { name: 'Identified Risks', unit: 'count', targetMin: 0, targetIdeal: 20, description: 'Known risks logged' },
+            { name: 'Risk Register Completeness', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: 'Documentation level' },
+            { name: 'Mitigation Plans', unit: 'percentage', targetMin: 40, targetIdeal: 100, description: 'Risks with plans' }
+        ],
+        Water: [
+            { name: 'Risk Velocity', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Risk identification rate' },
+            { name: 'Risk Trend', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Improving or worsening' },
+            { name: 'Issue Conversion Rate', unit: 'percentage', targetMin: 50, targetIdeal: 5, description: 'Risks becoming issues' }
+        ],
+        Fire: [
+            { name: 'Risk Exposure', unit: 'currency_usd', targetMin: 1000000, targetIdeal: 10000, description: 'Total risk value' },
+            { name: 'Mitigation Effectiveness', unit: 'percentage', targetMin: 30, targetIdeal: 90, description: 'Risk reduction' },
+            { name: 'Contingency Utilization', unit: 'percentage', targetMin: 100, targetIdeal: 20, description: 'Reserve usage' }
+        ],
+        Air: [
+            { name: 'Risk Response Time', unit: 'days', targetMin: 30, targetIdeal: 3, description: 'Issue response speed' },
+            { name: 'Risk Communication', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Transparency level' },
+            { name: 'Early Warning System', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Proactive detection' }
+        ],
+        Ether: [
+            { name: 'Risk Culture', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Risk awareness mindset' },
+            { name: 'Strategic Risk Alignment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Risk appetite fit' },
+            { name: 'Resilience Mindset', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Antifragility' }
+        ]
+    },
+
+    'Change Control': {
+        Earth: [
+            { name: 'Change Process Defined', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: 'Process documentation' },
+            { name: 'Change Board Established', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Governance structure' },
+            { name: 'Baseline Documents', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: 'Baselines set' }
+        ],
+        Water: [
+            { name: 'Change Request Rate', unit: 'count', targetMin: 50, targetIdeal: 5, description: 'Monthly change requests' },
+            { name: 'Change Approval Rate', unit: 'percentage', targetMin: 10, targetIdeal: 60, description: 'Approved changes' },
+            { name: 'Adaptability', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Change responsiveness' }
+        ],
+        Fire: [
+            { name: 'Change Impact Assessment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Impact analysis quality' },
+            { name: 'Approved Change Value', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Value of changes' },
+            { name: 'Change Implementation Success', unit: 'percentage', targetMin: 50, targetIdeal: 95, description: 'Successful changes' }
+        ],
+        Air: [
+            { name: 'Change Decision Speed', unit: 'days', targetMin: 30, targetIdeal: 5, description: 'Approval cycle time' },
+            { name: 'Change Communication', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Notification effectiveness' },
+            { name: 'Process Agility', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Flexible process' }
+        ],
+        Ether: [
+            { name: 'Change Philosophy', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Positive change mindset' },
+            { name: 'Strategic Change Alignment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Changes support vision' },
+            { name: 'Continuous Improvement', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Evolution culture' }
+        ]
+    },
+
+    'Dependencies & Integration': {
+        Earth: [
+            { name: 'Dependencies Mapped', unit: 'percentage', targetMin: 40, targetIdeal: 100, description: 'Known dependencies' },
+            { name: 'Integration Points', unit: 'count', targetMin: 0, targetIdeal: 10, description: 'Connection points' },
+            { name: 'Interface Documentation', unit: 'percentage', targetMin: 50, targetIdeal: 100, description: 'Documented interfaces' }
+        ],
+        Water: [
+            { name: 'Dependency Health', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'External health' },
+            { name: 'Integration Stability', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Connection reliability' },
+            { name: 'Cross-team Collaboration', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Team coordination' }
+        ],
+        Fire: [
+            { name: 'Integration Success Rate', unit: 'percentage', targetMin: 50, targetIdeal: 98, description: 'Successful integrations' },
+            { name: 'Dependency Impact', unit: 'score', targetMin: 10, targetIdeal: 2, description: 'Blocking frequency' },
+            { name: 'Synergy Achievement', unit: 'score', targetMin: 0, targetIdeal: 10, description: '1+1=3 effect' }
+        ],
+        Air: [
+            { name: 'Integration Speed', unit: 'days', targetMin: 30, targetIdeal: 5, description: 'Connection time' },
+            { name: 'Cross-functional Flow', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Information flow' },
+            { name: 'Dependency Resolution Time', unit: 'days', targetMin: 30, targetIdeal: 3, description: 'Issue resolution' }
+        ],
+        Ether: [
+            { name: 'Systems Thinking', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Holistic perspective' },
+            { name: 'Partnership Mindset', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Collaborative culture' },
+            { name: 'Ecosystem Awareness', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Broader context' }
+        ]
+    },
+
+    'Technical Delivery': {
+        Earth: [
+            { name: 'Technical Architecture', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Architecture quality' },
+            { name: 'Infrastructure Capacity', unit: 'percentage', targetMin: 50, targetIdeal: 150, description: 'Available capacity' },
+            { name: 'Technical Debt', unit: 'days', targetMin: 90, targetIdeal: 10, description: 'Debt in person-days' }
+        ],
+        Water: [
+            { name: 'Deployment Frequency', unit: 'count', targetMin: 1, targetIdeal: 30, description: 'Deployments per month' },
+            { name: 'Feature Delivery Rate', unit: 'count', targetMin: 1, targetIdeal: 20, description: 'Features per sprint' },
+            { name: 'Technical Adaptability', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Tech flexibility' }
+        ],
+        Fire: [
+            { name: 'System Performance', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Speed & efficiency' },
+            { name: 'Uptime', unit: 'percentage', targetMin: 95, targetIdeal: 99.99, description: 'System availability' },
+            { name: 'Code Quality Score', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Code excellence' }
+        ],
+        Air: [
+            { name: 'Build Time', unit: 'minutes', targetMin: 60, targetIdeal: 5, description: 'CI/CD speed' },
+            { name: 'Lead Time for Changes', unit: 'days', targetMin: 30, targetIdeal: 1, description: 'Code to production' },
+            { name: 'Mean Time to Recovery', unit: 'hours', targetMin: 24, targetIdeal: 1, description: 'Incident recovery' }
+        ],
+        Ether: [
+            { name: 'Technical Vision', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Tech strategy clarity' },
+            { name: 'Innovation Culture', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Technical creativity' },
+            { name: 'Craftsmanship Pride', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Engineering excellence' }
+        ]
+    },
+
+    'Knowledge Transfer': {
+        Earth: [
+            { name: 'Documentation Coverage', unit: 'percentage', targetMin: 40, targetIdeal: 90, description: '% of project documented' },
+            { name: 'Knowledge Base Articles', unit: 'count', targetMin: 0, targetIdeal: 50, description: 'Documented knowledge' },
+            { name: 'Training Materials', unit: 'count', targetMin: 0, targetIdeal: 10, description: 'Training resources' }
+        ],
+        Water: [
+            { name: 'Knowledge Sharing Frequency', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Regular sharing' },
+            { name: 'Learning Culture', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Growth mindset' },
+            { name: 'Cross-training Level', unit: 'percentage', targetMin: 20, targetIdeal: 80, description: 'Skill redundancy' }
+        ],
+        Fire: [
+            { name: 'Knowledge Retention', unit: 'percentage', targetMin: 40, targetIdeal: 95, description: 'Knowledge preserved' },
+            { name: 'Training Effectiveness', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Learning impact' },
+            { name: 'Expertise Distribution', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Spread of knowledge' }
+        ],
+        Air: [
+            { name: 'Documentation Speed', unit: 'days', targetMin: 30, targetIdeal: 1, description: 'Capture to document' },
+            { name: 'Knowledge Accessibility', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Easy to find' },
+            { name: 'Communication Channels', unit: 'count', targetMin: 1, targetIdeal: 5, description: 'Knowledge pathways' }
+        ],
+        Ether: [
+            { name: 'Wisdom Cultivation', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Deep understanding' },
+            { name: 'Legacy Building', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Future-focused' },
+            { name: 'Learning Organization', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Organizational learning' }
+        ]
+    },
+
+    'Value Realization': {
+        Earth: [
+            { name: 'Benefits Identified', unit: 'count', targetMin: 1, targetIdeal: 10, description: 'Expected benefits' },
+            { name: 'Success Metrics Defined', unit: 'count', targetMin: 1, targetIdeal: 8, description: 'Value measures' },
+            { name: 'Baseline Measurements', unit: 'percentage', targetMin: 40, targetIdeal: 100, description: 'Before metrics' }
+        ],
+        Water: [
+            { name: 'Value Delivery Rate', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Incremental value' },
+            { name: 'Benefits Tracking', unit: 'percentage', targetMin: 30, targetIdeal: 100, description: 'Monitored benefits' },
+            { name: 'Stakeholder Value Perception', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Perceived value' }
+        ],
+        Fire: [
+            { name: 'ROI Achieved', unit: 'percentage', targetMin: 0, targetIdeal: 200, description: 'Return on investment' },
+            { name: 'Benefits Realized', unit: 'percentage', targetMin: 30, targetIdeal: 120, description: 'vs planned benefits' },
+            { name: 'Business Impact', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Organizational impact' }
+        ],
+        Air: [
+            { name: 'Time to Value', unit: 'months', targetMin: 24, targetIdeal: 3, description: 'Benefits realization time' },
+            { name: 'Value Communication', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Value storytelling' },
+            { name: 'Early Wins', unit: 'count', targetMin: 0, targetIdeal: 5, description: 'Quick value delivered' }
+        ],
+        Ether: [
+            { name: 'Purpose Fulfillment', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Mission achievement' },
+            { name: 'Transformational Impact', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Meaningful change' },
+            { name: 'Legacy Value', unit: 'score', targetMin: 0, targetIdeal: 10, description: 'Lasting contribution' }
+        ]
+    },
+
     // Generic fallback for any face
     'Generic': {
         Earth: [
