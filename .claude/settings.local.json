@@ -21,7 +21,8 @@
       "Bash(npx:*)",
       "Bash(timeout:*)",
       "Bash(find:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(git log:*)"
     ],
     "deny": [],
     "ask": []

@@ -2,9 +2,53 @@
 
 **A revolutionary organizational intelligence system that transforms complex business data into a living, breathing 3D visualization of coherence and harmony.**
 
+---
+
+## 📚 QUICK NAVIGATION
+
+**New here?** Start with these:
+
+- **[📖 GETTING STARTED](GETTING_STARTED.md)** - Quick start guide (GitHub Pages ready!)
+- **[📊 PROJECT STATUS](PROJECT_STATUS.md)** - What's working, what's next
+- **[🎯 DEMO ROADMAP](DEMO_ROADMAP.md)** - 3-week development plan
+- **[⚡ IMMEDIATE PRIORITY](IMMEDIATE_PRIORITY.md)** - Math validation checklist
+
+**POC Demo Files** (100% browser-based, no backend needed):
+- **[POC/DEMO.html](POC/DEMO.html)** - Main demo entry point
+- **[POC/DEMO_GUIDE.md](POC/DEMO_GUIDE.md)** - Full POC walkthrough
+- **[POC/FILE_STRUCTURE_MAP.md](POC/FILE_STRUCTURE_MAP.md)** - Code organization
+- **[POC/MATH_REFERENCE.md](POC/MATH_REFERENCE.md)** - Complete formulas
+
+**Latest Updates:**
+- **[SESSION_HANDOFF.md](SESSION_HANDOFF.md)** - Most recent session (Jan 11, 2025)
+
+---
+
 ## 🎯 Vision
 
 Quannex is more than a dashboard—it's a **living geometric oracle** that reveals the hidden patterns of organizational health through the sacred geometry of a dodecahedron. Each face, edge, and vertex carries meaning, creating a multi-sensory experience that allows leaders to intuitively understand their organization's coherence and discover the highest-leverage actions for transformation.
+
+---
+
+## ⚡ TWO WAYS TO USE QUANNEX
+
+### **Option 1: POC Demo (Recommended for Getting Started)** ✨
+- **Perfect for:** Quick demos, GitHub Pages deployment, presentations
+- **Requirements:** Just a web browser
+- **Backend needed:** No - runs 100% in browser
+- **Start here:** [GETTING_STARTED.md](GETTING_STARTED.md)
+- **Location:** [POC/](POC/) folder
+
+### **Option 2: Full Backend System (Future/Advanced)**
+- **Perfect for:** Production use, API integration, advanced features
+- **Requirements:** Node.js, backend server
+- **Backend needed:** Yes - Express.js server
+- **Features:** Spectral analysis, shadow analysis, database storage
+- **Location:** [backend/](backend/) folder (not needed for POC)
+
+**Most users should start with Option 1 (POC Demo).**
+
+---
 
 ## ✨ What We've Built
 
@@ -34,30 +78,35 @@ Quannex is more than a dashboard—it's a **living geometric oracle** that revea
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
+### **Quick Start (POC Demo)** ⚡
 
-### Installation
+The fastest way to see Quannex in action:
 
-1. **Clone and Setup**
-   ```bash
-   git clone <your-repo>
-   cd dodecahedron-code
-   npm install
-   ```
+1. Navigate to the `POC/` folder
+2. Open `DEMO.html` in your browser
+3. That's it! The demo runs 100% in your browser.
 
-2. **Install Backend Dependencies**
+**For complete setup instructions:** See [GETTING_STARTED.md](GETTING_STARTED.md)
+
+**Demo companies included:**
+- **Quannex** (Survival mode: 45% coherence) - Startup struggling
+- **Nova Tech** (Growth stage: 65% coherence) - Building momentum
+- **Apex Industries** (Mature: 80% coherence) - Established
+- **Zenith Solutions** (Radiant: 95% coherence) - The ideal
+
+---
+
+### **Full Backend Setup (Advanced)** 🔧
+
+For production use with API and advanced features:
+
+1. **Install Dependencies**
    ```bash
    cd backend
    npm install
    ```
 
-### Running the System
-
-#### **Method 1: Manual Startup (Recommended for Development)**
-
-1. **Start the Backend (Terminal 1)**
+2. **Start the Backend**
    ```bash
    cd backend
    node server.js
@@ -70,17 +119,12 @@ Quannex is more than a dashboard—it's a **living geometric oracle** that revea
    🎯 Initial Global Coherence: XX.X%
    ```
 
-2. **Start the Frontend (Terminal 2)**
-   ```bash
-   npm run dev
-   ```
-   Open your browser to the provided localhost URL (usually http://localhost:5173)
+3. **Access the API**
+   - API Base: `http://localhost:3001/api`
+   - Health Check: `http://localhost:3001/api/health`
+   - See API endpoints section below for full list
 
-#### **Method 2: Production Build**
-   ```bash
-   npm run build
-   npm run preview
-   ```
+**Note:** The POC demo does NOT require the backend. This is only for advanced/production use.
 
 ### 🎮 **How to Use**
 

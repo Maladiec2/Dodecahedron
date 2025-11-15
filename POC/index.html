@@ -54,6 +54,14 @@
             font-weight: bold;
             margin: 20px 0;
             text-shadow: 0 0 30px rgba(0, 255, 204, 0.8);
+            animation: pulse 2s ease-in-out infinite;
+            cursor: help;
+            position: relative;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 30px rgba(0, 255, 204, 0.8); }
+            50% { transform: scale(1.02); text-shadow: 0 0 50px rgba(0, 255, 204, 1); }
         }
 
         .status {
@@ -76,17 +84,38 @@
         }
 
         .face-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            padding: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .face-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: currentColor;
+            opacity: 0.5;
             transition: all 0.3s ease;
         }
 
         .face-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border-color: currentColor;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .face-card:hover::before {
+            height: 4px;
+            opacity: 1;
         }
 
         .face-header {
@@ -323,14 +352,61 @@
             font-style: italic;
         }
 
+        /* Tooltip Styles */
+        .tooltip {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: 115%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after,
+        .tooltip:hover::before {
+            opacity: 1;
+        }
+
         /* Breath Analysis Styles */
         .breath-section {
             margin-bottom: 30px;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 255, 204, 0.05) 0%, rgba(255, 0, 255, 0.05) 100%);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 2px solid rgba(0, 255, 204, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
 
         .section-header {
@@ -518,7 +594,8 @@
         <div class="header">
             <div class="title">🌟 QUANNEX COHERENCE ENGINE</div>
             <div class="subtitle">Organizational DNA • 12 Faces • Real-time Coherence Analysis</div>
-            <div class="global-coherence" id="globalCoherence">—</div>
+            <div class="global-coherence tooltip" id="globalCoherence"
+                 data-tooltip="Average energy across all 12 organizational faces - Higher is better!">—</div>
             <div class="status" id="globalStatus">Initializing...</div>
         </div>
 
@@ -557,6 +634,8 @@
 
         <div class="controls" style="display: none;" id="controls">
             <button class="btn" onclick="refreshData()">🔄 Refresh Data</button>
+            <button class="btn" onclick="window.location.href='calculations.html'">🔬 Calculations View</button>
+            <button class="btn" onclick="window.location.href='breath-analysis.html'">🌊 Breath Analysis View</button>
             <button class="btn" onclick="window.location.href='octave-dna.html'">🧬 View DNA Visualization</button>
         </div>
 
@@ -638,6 +717,9 @@
             try {
                 console.log(`🏢 Switching to company: ${companyId}`);
 
+                // ✅ Store selected company in sessionStorage for navigation to other pages
+                sessionStorage.setItem('selectedCompanyId', companyId);
+
                 // Update UI to show active company
                 document.querySelectorAll('.company-card').forEach(card => {
                     card.classList.remove('active');
@@ -688,6 +770,9 @@
                 // Load first company by default
                 const companies = window.CompanyLoader.getAvailableCompanies();
                 const firstCompany = companies[0];
+
+                // ✅ Store in sessionStorage for navigation to other pages
+                sessionStorage.setItem('selectedCompanyId', firstCompany.id);
 
                 console.log(`📦 Loading default company: ${firstCompany.name}`);
                 const company = await window.CompanyLoader.loadCompany(firstCompany.id);
@@ -765,12 +850,13 @@
             card.innerHTML = `
                 <div class="face-header">
                     <div>
-                        <div class="face-name">${face.name}</div>
+                        <div class="face-name tooltip" data-tooltip="Organizational domain - one of 12 pentagonal faces">${face.name}</div>
                         <div class="face-id">Face ${face.id}</div>
                     </div>
                     <div style="font-size: 24px;">${getHealthIcon(face.status)}</div>
                 </div>
-                <div class="energy-display" style="color: ${face.color};">${energyPercent}%</div>
+                <div class="energy-display tooltip" style="color: ${face.color};"
+                     data-tooltip="Face energy: Base KPI average + harmonic resonance boost (up to 30%)">${energyPercent}%</div>
                 <div class="energy-bar">
                     <div class="energy-fill" style="width: ${energyPercent}%; background: linear-gradient(90deg, ${face.color}, ${face.color}88);"></div>
                 </div>
@@ -805,14 +891,20 @@
             let html = '<div style="margin-top: 15px; font-size: 13px; font-weight: bold; opacity: 0.8;">Elemental KPIs:</div>';
 
             face.kpis.forEach((kpi, index) => {
-                const elements = ['🜃 Earth', '💧 Water', '🔥 Fire', '💨 Air', '🜀 Ether'];
-                const element = elements[index] || '⚡';
+                const elements = [
+                    {icon: '🜃', name: 'Earth', tooltip: 'Earth - Grounding, stability, material resources'},
+                    {icon: '💧', name: 'Water', tooltip: 'Water - Flow, adaptability, emotional intelligence'},
+                    {icon: '🔥', name: 'Fire', tooltip: 'Fire - Energy, passion, transformation'},
+                    {icon: '💨', name: 'Air', tooltip: 'Air - Communication, intellect, movement'},
+                    {icon: '🜀', name: 'Ether', tooltip: 'Ether - Space, potential, integration'}
+                ];
+                const element = elements[index] || {icon: '⚡', name: 'Element', tooltip: 'Elemental KPI'};
 
                 html += `
                     <div class="kpi-item">
-                        <div class="kpi-name">${element} ${kpi.name}</div>
+                        <div class="kpi-name tooltip" data-tooltip="${element.tooltip}">${element.icon} ${kpi.name}</div>
                         <div class="kpi-value">
-                            <span>Score: ${(kpi.normalizedScore * 100).toFixed(1)}%</span>
+                            <span class="tooltip" data-tooltip="Normalized score (0-100%) based on KPI direction">Score: ${(kpi.normalizedScore * 100).toFixed(1)}%</span>
                             <span>Value: ${kpi.value.toFixed(2)}</span>
                         </div>
                     </div>
@@ -852,12 +944,26 @@
             const breathAnalysis = window.Quannex.getBreathAnalysis();
 
             if (!breathAnalysis) {
-                console.warn('No breath analysis available');
+                console.warn('⚠️ No breath analysis available - breath analyzer may not be loaded');
+                // Hide breath section if no data
+                document.getElementById('breathSection').style.display = 'none';
                 return;
             }
 
+            console.log('🌊 Displaying breath analysis:', breathAnalysis);
+
             // Show breath section
             document.getElementById('breathSection').style.display = 'block';
+
+            // Check if we should auto-scroll to breath section (hash navigation)
+            if (window.location.hash === '#breath') {
+                setTimeout(() => {
+                    document.getElementById('breathSection').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 500); // Delay to ensure section is rendered
+            }
 
             // Display overall breath health
             const overallContainer = document.getElementById('breathOverall');
@@ -866,7 +972,8 @@
             const statusClass = overall.status.toLowerCase().replace(' ', '-');
 
             overallContainer.innerHTML = `
-                <div class="breath-overall-score" style="color: ${getBreathHealthColor(overall.breathHealth)}">
+                <div class="breath-overall-score tooltip" style="color: ${getBreathHealthColor(overall.breathHealth)}"
+                     data-tooltip="Overall breath health across 6 harmonic axes (Reception ↔ Projection balance)">
                     ${overall.breathHealthPercentage.toFixed(1)}%
                 </div>
                 <div class="breath-overall-status breath-status-${overall.dominantTendency}">
@@ -874,9 +981,9 @@
                 </div>
                 <div class="breath-overall-message">${overall.message}</div>
                 <div style="font-size: 13px; margin-top: 15px; opacity: 0.8;">
-                    ${overall.balancedAxes} of 6 axes balanced •
-                    ${overall.overExhalingCount} over-exhaling •
-                    ${overall.overInhalingCount} over-inhaling
+                    <span class="tooltip" data-tooltip="Breath ratio between 0.8-1.2 (balanced breathing)">${overall.balancedAxes} of 6 axes balanced</span> •
+                    <span class="tooltip" data-tooltip="Ratio > 1.2 - Doing too much, burnout risk">${overall.overExhalingCount} over-exhaling</span> •
+                    <span class="tooltip" data-tooltip="Ratio < 0.8 - Not expressing enough, stagnation risk">${overall.overInhalingCount} over-inhaling</span>
                 </div>
             `;
 
@@ -904,25 +1011,26 @@
 
             card.innerHTML = `
                 <div class="breath-axis-header">
-                    <div class="breath-axis-name">${axis.emoji} ${axis.axis}</div>
+                    <div class="breath-axis-name tooltip" data-tooltip="One of 6 harmonic breath axes connecting opposite dodecahedron faces">${axis.emoji} ${axis.axis}</div>
                 </div>
                 <div class="breath-axis-story">${axis.story}</div>
 
                 <div class="breath-axis-energies">
                     <div class="breath-energy">
-                        <div class="breath-energy-label">← Reception (Inhale)</div>
+                        <div class="breath-energy-label tooltip" data-tooltip="Reception / Inhale: Being, receiving, gathering energy">← Reception (Inhale)</div>
                         <div class="breath-energy-value">${(axis.receptionEnergy * 100).toFixed(1)}%</div>
                     </div>
                     <div class="breath-arrow">⟷</div>
                     <div class="breath-energy">
-                        <div class="breath-energy-label">Projection (Exhale) →</div>
+                        <div class="breath-energy-label tooltip" data-tooltip="Projection / Exhale: Doing, expressing, releasing energy">Projection (Exhale) →</div>
                         <div class="breath-energy-value">${(axis.projectionEnergy * 100).toFixed(1)}%</div>
                     </div>
                 </div>
 
                 <div class="breath-ratio-container">
                     <div class="breath-ratio-label">Breath Ratio</div>
-                    <div class="breath-ratio-value" style="color: ${ratioColor}">
+                    <div class="breath-ratio-value tooltip" style="color: ${ratioColor}"
+                         data-tooltip="Projection / Reception ratio - Balanced: 0.8-1.2 | > 1.2: Over-exhaling | < 0.8: Over-inhaling">
                         ${axis.breathRatio.toFixed(2)}
                     </div>
                     <div class="breath-status-badge breath-status-${statusClass}">
@@ -1069,10 +1177,16 @@
                             // Display data
                             displayState(state);
 
+                            // Force breath analysis refresh after a brief delay (ensure breath analyzer is loaded)
+                            setTimeout(() => {
+                                console.log('🔄 Force refreshing breath analysis for custom data...');
+                                displayBreathAnalysis();
+                            }, 300);
+
                             // Mark as loaded
                             currentLoadedCompanyId = 'custom';
 
-                            console.log(`✅ Successfully loaded custom data`);
+                            console.log(`✅ Successfully loaded custom data with ${company.kpis.length} KPIs`);
                         } catch (error) {
                             console.error('❌ Failed to load custom data:', error);
                             showWaitingMessage();
@@ -1120,9 +1234,57 @@
                     showWaitingMessage();
                 }
             } else {
-                console.log('🖥️ Running standalone - auto-loading default company...');
-                // Running standalone, load default company
-                await initDashboard();
+                // Running standalone - check for custom data first
+                const selectedCompanyId = sessionStorage.getItem('selectedCompanyId');
+                const customDataJson = sessionStorage.getItem('customCompanyData');
+
+                if (selectedCompanyId === 'custom' && customDataJson) {
+                    console.log('🎨 Standalone mode - found custom data in sessionStorage!');
+
+                    try {
+                        const customData = JSON.parse(customDataJson);
+
+                        // Transform custom data to company format
+                        const company = {
+                            id: 'custom',
+                            name: customData.name || 'Custom Analysis',
+                            description: customData.description || 'User-generated data',
+                            kpis: customData.kpis || []
+                        };
+
+                        console.log(`📊 Loading custom company with ${company.kpis.length} KPIs`);
+
+                        // Initialize Quannex with custom data
+                        const state = await window.Quannex.initWithCompany(company);
+
+                        // Hide loading, show dashboard
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('dashboard').style.display = 'grid';
+                        document.getElementById('controls').style.display = 'block';
+
+                        // Hide company selector (since we're showing custom data)
+                        document.getElementById('companySelector').style.display = 'none';
+
+                        // Display data
+                        displayState(state);
+
+                        // Force breath analysis refresh
+                        setTimeout(() => {
+                            console.log('🔄 Force refreshing breath analysis for custom data...');
+                            displayBreathAnalysis();
+                        }, 300);
+
+                        console.log(`✅ Successfully loaded custom data in standalone mode`);
+                    } catch (error) {
+                        console.error('❌ Failed to load custom data:', error);
+                        // Fall back to default
+                        await initDashboard();
+                    }
+                } else {
+                    console.log('🖥️ Running standalone - auto-loading default company...');
+                    // Running standalone, load default company
+                    await initDashboard();
+                }
             }
         }
 
