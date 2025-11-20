@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔬 Quannex Calculations - Face Energy Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+        }
+
+        .title {
+            font-size: 48px;
+            font-weight: 300;
+            background: linear-gradient(135deg, #00ffcc, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 30px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .global-coherence {
+            font-size: 80px;
+            font-weight: 300;
+            margin: 20px 0;
+            text-shadow: 0 0 40px rgba(0, 255, 204, 0.6);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                text-shadow: 0 0 40px rgba(0, 255, 204, 0.6);
+            }
+
+            50% {
+                transform: scale(1.02);
+                text-shadow: 0 0 60px rgba(0, 255, 204, 1);
+            }
+        }
+
+        .status {
+            font-size: 16px;
+            padding: 10px 25px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 15px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .status.healthy {
+            background: rgba(0, 255, 102, 0.2);
+            color: #00ff66;
+            border: 1px solid rgba(0, 255, 102, 0.5);
+        }
+
+        .status.dimming {
+            background: rgba(255, 255, 0, 0.2);
+            color: #ffff00;
+            border: 1px solid rgba(255, 255, 0, 0.5);
+        }
+
+        .status.critical {
+            background: rgba(255, 102, 102, 0.2);
+            color: #ff6666;
+            border: 1px solid rgba(255, 102, 102, 0.5);
+        }
+
+        .company-name {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 10px;
+        }
+
+        /* Navigation */
+        .nav-bar {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 255, 204, 0.1);
+            border-color: #00ffcc;
+            color: #00ffcc;
+        }
+
+        /* Face Cards Section */
+        .faces-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 300;
+            margin-bottom: 25px;
+            color: #00ffcc;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .face-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .face-card:hover {
+            border-color: rgba(0, 255, 204, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 255, 204, 0.2);
+        }
+
+        .face-card-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .face-card-header:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .face-card.expanded .face-card-header {
+            background: rgba(0, 255, 204, 0.1);
+            border-left-color: currentColor;
+        }
+
+        .face-header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .face-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 255, 204, 0.2);
+            color: #00ffcc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .face-info {
+            flex: 1;
+        }
+
+        .face-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .face-id {
+            font-size: 12px;
+            opacity: 0.6;
+            letter-spacing: 1px;
+        }
+
+        .face-header-right {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .energy-display {
+            text-align: center;
+        }
+
+        .energy-value {
+            font-size: 32px;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        .energy-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            opacity: 0.6;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .health-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .health-radiant {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+        }
+
+        .health-healthy {
+            background: rgba(0, 255, 102, 0.2);
+            color: #00ff66;
+        }
+
+        .health-dimming {
+            background: rgba(255, 255, 0, 0.2);
+            color: #ffff00;
+        }
+
+        .health-struggling {
+            background: rgba(255, 102, 0, 0.2);
+            color: #ff6600;
+        }
+
+        .health-critical {
+            background: rgba(255, 102, 102, 0.2);
+            color: #ff6666;
+        }
+
+        .expand-icon {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+            opacity: 0.5;
+        }
+
+        .face-card.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        .face-card-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .face-card.expanded .face-card-body {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .face-card-content {
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .energy-bar-container {
+            margin-bottom: 25px;
+        }
+
+        .energy-bar-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .energy-bar {
+            height: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .energy-fill {
+            height: 100%;
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .energy-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .kpi-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .kpi-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 255, 204, 0.3);
+        }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .kpi-icon {
+            font-size: 18px;
+        }
+
+        .kpi-name {
+            font-size: 13px;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .kpi-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .kpi-score {
+            color: #00ffcc;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            opacity: 0.7;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+            font-size: 24px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(0, 255, 204, 0.2);
+            border-top: 3px solid #00ffcc;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            opacity: 0.5;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            cursor: help;
+            border-bottom: 1px dotted rgba(255, 255, 255, 0.3);
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: normal;
+            max-width: 280px;
+            width: max-content;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            border: 1px solid rgba(0, 255, 204, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            line-height: 1.4;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        /* Summary Stats */
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 300;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="title">🔬 CALCULATIONS</div>
+            <div class="subtitle">Face Energy Analysis • KPI Breakdown • Harmonic Resonance</div>
+            <div class="company-name" id="companyName">Loading...</div>
+            <div class="global-coherence" id="globalCoherence">—</div>
+            <div class="status" id="globalStatus">Initializing...</div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <a href="demo-orchestrator.html" class="nav-btn">← Back to Orchestrator</a>
+            <a href="breath-analysis.html" class="nav-btn">🌊 View Breath Analysis</a>
+            <a href="dodecahedron-3d-enhanced.html" class="nav-btn">🔷 View 3D Model</a>
+            <a href="octave-dna.html" class="nav-btn">🧬 View DNA Helix</a>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="summary-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="activeFaces">—</div>
+                <div class="stat-label">
+                    <span class="tooltip"
+                        data-tooltip="The 12 pentagonal faces of the dodecahedron - Each represents a key organizational domain">
+                        Active Faces
+                    </span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalKPIs">—</div>
+                <div class="stat-label">
+                    <span class="tooltip"
+                        data-tooltip="Total Key Performance Indicators - 12 in Quick Mode, 60 in Full Mode (5 per face)">
+                        Total KPIs
+                    </span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="nervousCount">—</div>
+                <div class="stat-label">
+                    <span class="tooltip"
+                        data-tooltip="Faces with energy below 40% - Critical weak points requiring immediate attention">
+                        Nervous Endpoints
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <div>Loading calculation data...</div>
+        </div>
+
+        <!-- Face Cards -->
+        <div class="faces-section" id="facesSection" style="display: none;">
+            <div class="section-title">12 Organizational Faces</div>
+            <div id="faceCards">
+                <!-- Face cards will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2025 Quannex • Coherence Engine • Calculations View</p>
+        </div>
+    </div>
+
+    <!-- Load dependencies -->
+    <script src="./js/company-loader.js"></script>
+    <script src="./js/breath-analyzer.js"></script>
+    <script src="./js/spectral-analyzer-global.js"></script>
+    <script src="./js/main.js"></script>
+
+    <script>
+        // Track loaded company to prevent duplicates
+        let currentLoadedCompanyId = null;
+
+        /**
+         * Initialize the page
+         */
+        async function init() {
+            try {
+                console.log('🔬 Initializing Calculations page...');
+
+                // Check sessionStorage for company data
+                const selectedCompanyId = sessionStorage.getItem('selectedCompanyId');
+                const customDataJson = sessionStorage.getItem('customCompanyData');
+
+                if (selectedCompanyId === 'custom' && customDataJson) {
+                    console.log('🎨 Loading custom data from orchestrator');
+
+                    const customData = JSON.parse(customDataJson);
+                    const company = {
+                        id: 'custom',
+                        name: customData.name || 'Custom Analysis',
+                        description: customData.description || 'User-generated data',
+                        kpis: customData.kpis || [],
+                        faceConfig: customData.faceConfig  // ✅ Pass custom face names
+                    };
+
+                    console.log(`📊 Custom company has ${company.kpis.length} KPIs`);
+
+                    // Initialize engine
+                    const state = await window.Quannex.initWithCompany(company);
+
+                    // Display data
+                    displayCalculations(state, company);
+
+                    currentLoadedCompanyId = 'custom';
+                    console.log('✅ Successfully loaded custom data');
+
+                } else if (selectedCompanyId && window.CompanyLoader) {
+                    console.log(`📦 Loading company: ${selectedCompanyId}`);
+
+                    const company = await window.CompanyLoader.loadCompany(selectedCompanyId);
+                    const state = await window.Quannex.initWithCompany(company);
+
+                    displayCalculations(state, company);
+
+                    currentLoadedCompanyId = selectedCompanyId;
+                    console.log(`✅ Successfully loaded ${company.name}`);
+
+                } else {
+                    // No sessionStorage data - load default company
+                    console.log('📭 No sessionStorage data, loading default company...');
+
+                    // Wait for CompanyLoader to be available
+                    let attempts = 0;
+                    while (!window.CompanyLoader && attempts < 10) {
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        attempts++;
+                    }
+
+                    if (window.CompanyLoader) {
+                        const companies = window.CompanyLoader.getAvailableCompanies();
+                        const defaultCompany = companies[0];
+
+                        console.log(`📦 Loading default company: ${defaultCompany.name}`);
+                        const company = await window.CompanyLoader.loadCompany(defaultCompany.id);
+                        const state = await window.Quannex.initWithCompany(company);
+
+                        displayCalculations(state, company);
+                        currentLoadedCompanyId = defaultCompany.id;
+                        console.log(`✅ Successfully loaded ${company.name}`);
+                    } else {
+                        throw new Error('No company data found and CompanyLoader not available');
+                    }
+                }
+
+            } catch (error) {
+                console.error('❌ Failed to initialize:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="spinner"></div>
+                    <div>Error: ${error.message}</div>
+                    <div style="margin-top: 20px; font-size: 14px; opacity: 0.7;">
+                        Please return to the Demo Orchestrator and complete the setup.
+                    </div>
+                `;
+            }
+        }
+
+        /**
+         * Display calculations and face data
+         */
+        function displayCalculations(state, company) {
+            // Hide loading
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('facesSection').style.display = 'block';
+
+            // Update header
+            document.getElementById('companyName').textContent = company.name || 'Custom Analysis';
+
+            const coherence = state.globalCoherence;
+            const coherencePercent = (coherence * 100).toFixed(1);
+            document.getElementById('globalCoherence').textContent = `${coherencePercent}%`;
+
+            // Update status
+            const statusEl = document.getElementById('globalStatus');
+            if (coherence >= 0.7) {
+                statusEl.textContent = '✅ HEALTHY SYSTEM';
+                statusEl.className = 'status healthy';
+            } else if (coherence >= 0.5) {
+                statusEl.textContent = '⚠️ DIMMING';
+                statusEl.className = 'status dimming';
+            } else {
+                statusEl.textContent = '🚨 CRITICAL';
+                statusEl.className = 'status critical';
+            }
+
+            // Update summary stats
+            document.getElementById('activeFaces').textContent = state.faces.length;
+            document.getElementById('totalKPIs').textContent = company.kpis.length;
+
+            // Count nervous endpoints (faces with energy < 40%)
+            const nervousCount = state.faces.filter(f => f.energy < 0.4).length;
+            document.getElementById('nervousCount').textContent = nervousCount;
+
+            // Render face cards
+            const container = document.getElementById('faceCards');
+            container.innerHTML = '';
+
+            state.faces.forEach(face => {
+                container.appendChild(createFaceCard(face));
+            });
+        }
+
+        /**
+         * Create a collapsible face card
+         */
+        function createFaceCard(face) {
+            const card = document.createElement('div');
+            card.className = 'face-card';
+            card.id = `face-card-${face.id}`;
+
+            const energyPercent = (face.energy * 100).toFixed(1);
+            const healthClass = `health-${face.status.toLowerCase()}`;
+            const healthIcon = getHealthIcon(face.status);
+
+            // Generate KPI HTML
+            let kpisHTML = '';
+            const faceKPIs = face.elementalKPIs || face.kpis || [];  // ✅ Support both formats
+            const isFullMode = faceKPIs.length === 5;  // ✅ Detect mode: 5 KPIs = Full Mode, 1 KPI = Quick Mode
+
+            if (faceKPIs.length > 0) {
+                const elements = [
+                    { icon: '🜃', name: 'Earth', tooltip: 'Earth - Grounding, stability, material resources' },
+                    { icon: '💧', name: 'Water', tooltip: 'Water - Flow, adaptability, emotional intelligence' },
+                    { icon: '🔥', name: 'Fire', tooltip: 'Fire - Energy, passion, transformation' },
+                    { icon: '💨', name: 'Air', tooltip: 'Air - Communication, intellect, movement' },
+                    { icon: '🜀', name: 'Ether', tooltip: 'Ether - Space, potential, integration' }
+                ];
+
+                faceKPIs.forEach((kpi, index) => {
+                    // In full mode, show elemental icons; in quick mode, show generic metric icon
+                    const element = isFullMode
+                        ? (elements[index] || { icon: '⚡', name: 'Element', tooltip: 'Elemental KPI' })
+                        : { icon: '📊', name: 'Primary KPI', tooltip: 'Primary metric for this face' };
+
+                    kpisHTML += `
+                        <div class="kpi-item">
+                            <div class="kpi-header">
+                                <span class="kpi-icon">${element.icon}</span>
+                                <span class="kpi-name tooltip" data-tooltip="${element.tooltip}">${kpi.name}</span>
+                            </div>
+                            <div class="kpi-values">
+                                <span class="kpi-score">Score: ${(kpi.normalizedScore * 100).toFixed(1)}%</span>
+                                <span class="kpi-value">Value: ${kpi.value.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            card.innerHTML = `
+                <div class="face-card-header" onclick="toggleFaceCard('face-card-${face.id}')" style="color: ${face.color}">
+                    <div class="face-header-left">
+                        <div class="face-number">F${face.id}</div>
+                        <div class="face-info">
+                            <div class="face-name">${face.name}</div>
+                            <div class="face-id">Face ${face.id} • ${faceKPIs.length} KPIs</div>
+                        </div>
+                    </div>
+                    <div class="face-header-right">
+                        <div class="energy-display">
+                            <div class="energy-value" style="color: ${face.color}">${energyPercent}%</div>
+                            <div class="energy-label">Energy</div>
+                        </div>
+                        <div class="health-badge ${healthClass}">${healthIcon} ${face.status}</div>
+                        <div class="expand-icon">▼</div>
+                    </div>
+                </div>
+                <div class="face-card-body">
+                    <div class="face-card-content">
+                        <div class="energy-bar-container">
+                            <div class="energy-bar-label">Energy Level</div>
+                            <div class="energy-bar">
+                                <div class="energy-fill" style="width: ${energyPercent}%; background: linear-gradient(90deg, ${face.color}, ${face.color}88);"></div>
+                            </div>
+                        </div>
+                        ${faceKPIs.length > 0 ? `
+                            <div style="margin-bottom: 15px; font-size: 14px; font-weight: 600; opacity: 0.8;">
+                                ${isFullMode ? 'Elemental KPIs' : 'Primary Metric'}
+                            </div>
+                            <div class="kpi-grid">
+                                ${kpisHTML}
+                            </div>
+                        ` : '<div style="text-align: center; opacity: 0.5; padding: 20px;">No KPIs defined for this face</div>'}
+                    </div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        /**
+         * Toggle face card expansion
+         */
+        function toggleFaceCard(cardId) {
+            const card = document.getElementById(cardId);
+            card.classList.toggle('expanded');
+        }
+
+        /**
+         * Get health status icon
+         */
+        function getHealthIcon(status) {
+            const icons = {
+                'Radiant': '✨',
+                'Healthy': '✅',
+                'Dimming': '⚠️',
+                'Struggling': '🔴',
+                'Critical': '🚨'
+            };
+            return icons[status] || '●';
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', init);
+    </script>
+</body>
+
+</html>

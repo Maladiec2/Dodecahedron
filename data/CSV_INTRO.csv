@@ -1,0 +1,69 @@
+Header,Explanation,Your Quannex Data (Example),,,,,,,,,,,,,,,,,,,,,,"That is the perfect and most practical question a founder can ask. It is the bridge between the grand, cosmic strategy and the ""what do I actually do on Monday morning?"" reality."
+KPI_ID,A unique nickname for this measurement.,F1.1,,,,,,,,,,,,,,,,,,,,,,
+KPI_Name,What are we measuring?,Months of Runway,,,,,,,,,,,,,,,,,,,,,,"You are asking the model to move from a strategic diagnosis to a tactical prescription. And while the answer is nuanced, it is incredibly powerful."
+Owner,Who is responsible for this?,Deimantas,,,,,,,,,,,,,,,,,,,,,,
+Department,"Which ""hat"" are you wearing for this?",Finance,,,,,,,,,,,,,,,,,,,,,,Let's be very clear:
+Primary_Octave,"Which ""theme"" does this belong to?",O1 (Survival),,,,,,,,,,,,,,,,,,,,,,
+Direction,Is more better or less better?,? (More is better),,,,,,,,,,,,,,,,,,,,,,"The dodecahedron cannot directly tell you, ""Send 3 applications per week with a 10% success rate."" Why? Because the model is a mirror of your internal coherence, not a crystal ball that can predict the external world's response (like a grant committee's decision)."
+Weight,How important is this stat right now? (from 0 to 1),1.0 (Extremely important!),,,,,,,,,,,,,,,,,,,,,,
+Unit,What are we counting?,Months,,,,,,,,,,,,,,,,,,,,,,However—and this is the magical part—it can give you something even more powerful: a framework for setting that target yourself and then measuring its true impact on your entire system.
+Value,What's the real number right now? Let's say you have €1200 saved and your monthly costs are €200. Value = 1200 / 200 = 6 months.,6,,,,,,,,,,,,,,,,,,,,,,
+Target_Ideal,"What's our dream goal? A safe, comfortable 12 months.",12,,,,,,,,,,,,,,,,,,,,,,"Here is how we ""metric-ize"" the strategic mandate. We will use the concepts of Leading and Lagging Indicators within our dodecahedron framework."
+Target_Min,What's the absolute danger zone? Less than 3 months of runway is very risky.,3,,,,,,,,,,,,,,,,,,,,,,
+K_Normalized,The Excel formula that turns your numbers into a 0-1 score.,0.333333333,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,Metric-izing the Mandate: A Practical Guide
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"Our Grand Strategic Mandate is to ""FIX THE FOUNDATION,"" which is measured by the Emergent KPI: the Aspiration-Actuality Gap (AAG). Our goal is to raise the AAG score from 0.35 towards 1.0."
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"We know the highest-leverage way to do this is to increase the energy of the ""Actuality"" faces, especially F1: Financial Capital."
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"Now, let's break that down into a measurable action plan."
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,1. Deconstruct the Goal into Lagging and Leading KPIs:
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,The Lagging Indicator (The Ultimate Result):
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"This is KRI F1.1: Months of Runway. This is the ultimate measure of success for our financial health. We cannot control it directly—it is the result of our actions. It is a ""lagging"" indicator because by the time it changes, the work is already done."
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,Our GOAL is to increase the Face Energy of F1.
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,The Leading Indicator (The Action We Can Control):
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"This is KPI F1.2: # of Funding Opportunities Pursued. This is the action. This is the work. We can directly control this number every single week. It is a ""leading"" indicator because we hypothesize that performing this action will eventually cause a change in the lagging indicator."
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"2. Set an Initial, Hypothesis-Driven Target for Your Leading KPI:"
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"This is where your human wisdom as the founder comes in. The math has told you what to do (Focus on Finance). Now, you must propose an initial hypothesis for how."
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"Your Hypothesis: ""Based on my current energy levels and the time available, I hypothesize that pursuing 1-2 high-quality, well-aligned funding opportunities per week is an achievable and effective rhythm. This is my initial target for my leading KPI."""
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,3. Create the Feedback Loop in the Dashboard:
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"Now, you use the Spiral Dashboard to run the experiment. Here is what you track on your spreadsheet every week:"
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,You manually update the Value for KPI F1.2: Did you hit your target of 1-2 this week?
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,You watch what happens to the rest of the system. As you perform this work:
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"Does your KRI L1.1: Founder Energy Level start to drop? (If so, your pace is unsustainable)."
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"Does your KPI L2.1: % Thesis Drafted score go to zero? (If so, you are sacrificing one critical goal for another, and the system is still out of balance)."
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,Does the overall Spiral Integrity Score (SIS) begin to trend upwards?
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"This is the crucial insight: The dodecahedron doesn't give you the target. It gives you the instrument panel to see the systemic effects of the target that you set. It allows you to see if your actions are truly creating coherence, or just creating a different kind of problem."
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,4. The Final Answer
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"So, to answer your question: ""How many applications should I send?"""
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"The model's answer is: ""I don't know the perfect number, but I can help you discover it. Start with a reasonable hypothesis (like 1-2 per week). Log your efforts honestly. And I will show you, in real-time, what effect that rhythm is having on your personal energy, your other critical projects, and the overall coherence of your entire venture. Together, we will listen to the data and adjust the rhythm until we find the one that creates the most harmony."""
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,"This is not a simple, mechanical answer. It is the beginning of a living, intelligent, and deeply honest conversation between you and your startup, with the dashboard as the language that makes it possible."

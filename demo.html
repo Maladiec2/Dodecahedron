@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quannex Dodecahedron Engine Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* Navigation Controls (Hidden by default, shown via postMessage) */
+        #demo-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: opacity 0.3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #demo-controls.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 255, 204, 0.2);
+            border-color: #00ffcc;
+        }
+
+        .nav-btn.active {
+            background: #00ffcc;
+            color: #000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main Container Frame -->
+    <iframe id="main-frame" src="demo-orchestrator.html"></iframe>
+
+    <!-- Hidden Frames for Preloading (Performance Optimization) -->
+    <div style="display:none;">
+        <iframe id="dodecahedron" src="dodecahedron-3d-enhanced.html"></iframe>
+        <iframe id="calculations" src="index.html"></iframe>
+        <iframe id="breath" src="breath-analysis.html"></iframe>
+        <iframe id="dna" src="octave-dna.html"></iframe>
+        <iframe id="simulator" src="simulator.html"></iframe>
+    </div>
+
+    <script>
+        const mainFrame = document.getElementById('main-frame');
+        const hiddenFrames = {
+            dodecahedron: document.getElementById('dodecahedron'),
+            calculations: document.getElementById('calculations'),
+            breath: document.getElementById('breath'),
+            dna: document.getElementById('dna'),
+            simulator: document.getElementById('simulator')
+        };
+
+        // Listen for view change requests from the orchestrator
+        window.addEventListener('message', (event) => {
+            const { type, view, companyId, faceConfig } = event.data;
+
+            if (type === 'SWITCH_VIEW') {
+                console.log(`🔄 Switching to view: ${view}`);
+
+                // 1. Update source of main frame
+                if (view === 'orchestrator') {
+                    mainFrame.src = 'demo-orchestrator.html';
+                } else {
+                    // Map view names to filenames
+                    const viewMap = {
+                        'dodecahedron': 'dodecahedron-3d-enhanced.html',
+                        'calculations': 'index.html',
+                        'breath': 'breath-analysis.html',
+                        'dna': 'octave-dna.html',
+                        'simulator': 'simulator.html'
+                    };
+
+                    if (viewMap[view]) {
+                        mainFrame.src = viewMap[view];
+                    }
+                }
+            }
+
+            // Relay data updates to all sub-frames (if they are preloaded)
+            if (type === 'UPDATE_DATA' || type === 'LOAD_COMPANY') {
+                Object.values(hiddenFrames).forEach(frame => {
+                    frame.contentWindow.postMessage(event.data, '*');
+                });
+            }
+        });
+
+        // Handle "Return to Welcome" logic
+        function returnToWelcome() {
+            console.log('🏠 Returning to orchestrator...');
+            mainFrame.src = 'demo-orchestrator.html';
+
+            // Reload hidden frames to clear state
+            Object.values(hiddenFrames).forEach(frame => {
+                frame.src = frame.src;
+            });
+        }
+
+        // Expose for debugging
+        window.returnToWelcome = returnToWelcome;
+    </script>
+</body>
+
+</html>
+
+1209| const dashboardFrame = document.getElementById('calculations');
+1210| const geometryFrame = document.getElementById('dodecahedron');
+1211| const dnaFrame = document.getElementById('dna');
+1212| const simulatorFrame = document.getElementById('simulator');
+1213| const breathFrame = document.getElementById('breath');
+1214|
+1215| if (dashboardFrame) dashboardFrame.src = dashboardFrame.src; // Reload to clear state
+1216| if (geometryFrame) geometryFrame.src = geometryFrame.src;
+1217| if (dnaFrame) dnaFrame.src = dnaFrame.src;
+1218| if (simulatorFrame) simulatorFrame.src = simulatorFrame.src;
+1219| if (breathFrame) breathFrame.src = breathFrame.src;
+1220|
+1221| console.log('✅ Returned to welcome screen');
+1222| }

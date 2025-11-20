@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚙️ Coherence Simulator - Quannex</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 50% 50%, #0a0a1a 0%, #000000 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 42px;
+            font-weight: 200;
+            letter-spacing: 6px;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00ffcc, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.7;
+            letter-spacing: 2px;
+        }
+
+        .coming-soon {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 15px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .coming-soon-title {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: #00ffcc;
+        }
+
+        .coming-soon-text {
+            font-size: 16px;
+            line-height: 1.8;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .preview-section {
+            margin-top: 50px;
+        }
+
+        .preview-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(0, 255, 204, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .feature-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #00ffcc;
+        }
+
+        .feature-description {
+            font-size: 14px;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .mockup-container {
+            margin-top: 50px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 15px;
+            padding: 40px;
+        }
+
+        .mockup-title {
+            font-size: 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .slider-demo {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .slider-item {
+            margin-bottom: 30px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .slider-name {
+            font-weight: 600;
+        }
+
+        .slider-value {
+            color: #00ffcc;
+            font-weight: 700;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00ffcc, #00cc99);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00ffcc, #00cc99);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+        }
+
+        .impact-display {
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(0, 255, 204, 0.05);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 12px;
+        }
+
+        .impact-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #00ffcc;
+        }
+
+        .impact-metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .impact-metric:last-child {
+            border-bottom: none;
+        }
+
+        .impact-change {
+            font-weight: 700;
+        }
+
+        .positive {
+            color: #00ff66;
+        }
+
+        .negative {
+            color: #ff6666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="title">⚙️ COHERENCE SIMULATOR</div>
+            <div class="subtitle">Interactive What-If Analysis</div>
+        </div>
+
+        <div class="coming-soon">
+            <div class="coming-soon-title">🚧 Under Development</div>
+            <div class="coming-soon-text">
+                The Coherence Simulator is currently being built. This will be the most powerful feature
+                of Quannex - allowing you to test organizational changes before implementing them.
+                <br><br>
+                <strong>Expected completion: Week 2 of development cycle</strong>
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <div class="preview-title">✨ Planned Features</div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎚️</div>
+                    <div class="feature-name">Interactive KPI Sliders</div>
+                    <div class="feature-description">
+                        Adjust any organizational metric with smooth, real-time sliders.
+                        See instant feedback on how changes ripple through the system.
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔷</div>
+                    <div class="feature-name">Live 3D Feedback</div>
+                    <div class="feature-description">
+                        Watch the dodecahedron morph as you adjust values. Colors shift,
+                        edges pulse, vertices glow - all responding to your changes.
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-name">Coherence Impact Analysis</div>
+                    <div class="feature-description">
+                        See exactly how each change affects global coherence, local face health,
+                        breath ratios, and shadow patterns.
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚠️</div>
+                    <div class="feature-name">Shadow Detection</div>
+                    <div class="feature-description">
+                        Get real-time warnings about hypocrisy patterns: burnout engine,
+                        brittle profit, extractive growth, and more.
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <div class="feature-name">AI-Powered Insights</div>
+                    <div class="feature-description">
+                        Receive intelligent recommendations based on your simulated changes.
+                        What should you prioritize? What's the optimal path forward?
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <div class="feature-name">Save Scenarios</div>
+                    <div class="feature-description">
+                        Create multiple "what-if" scenarios and compare them side-by-side.
+                        Export scenarios as PDF reports for team discussions.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mockup-container">
+            <div class="mockup-title">🎨 Interface Preview (Interactive Mockup)</div>
+
+            <div class="slider-demo">
+                <div class="slider-item">
+                    <div class="slider-label">
+                        <span class="slider-name">💰 Financial Capital</span>
+                        <span class="slider-value" id="financialValue">75%</span>
+                    </div>
+                    <input type="range" min="0" max="100" value="75" class="slider" id="financialSlider">
+                </div>
+
+                <div class="slider-item">
+                    <div class="slider-label">
+                        <span class="slider-name">👥 Human Capital</span>
+                        <span class="slider-value" id="humanValue">45%</span>
+                    </div>
+                    <input type="range" min="0" max="100" value="45" class="slider" id="humanSlider">
+                </div>
+
+                <div class="slider-item">
+                    <div class="slider-label">
+                        <span class="slider-name">⚙️ Core Operations</span>
+                        <span class="slider-value" id="operationsValue">90%</span>
+                    </div>
+                    <input type="range" min="0" max="100" value="90" class="slider" id="operationsSlider">
+                </div>
+
+                <div class="slider-item">
+                    <div class="slider-label">
+                        <span class="slider-name">🌱 Regenerative Flow</span>
+                        <span class="slider-value" id="regenValue">67%</span>
+                    </div>
+                    <input type="range" min="0" max="100" value="67" class="slider" id="regenSlider">
+                </div>
+            </div>
+
+            <div class="impact-display">
+                <div class="impact-title">📊 Coherence Impact</div>
+                <div class="impact-metric">
+                    <span>Global Coherence:</span>
+                    <span class="impact-change" id="globalImpact">67% → 71% (+4%)</span>
+                </div>
+                <div class="impact-metric">
+                    <span>Being/Doing Balance:</span>
+                    <span class="impact-change" id="balanceImpact">0.50 → 0.89 (Improving)</span>
+                </div>
+                <div class="impact-metric">
+                    <span>Shadow Alert:</span>
+                    <span class="impact-change negative" id="shadowImpact">⚠️ Burnout Engine Detected</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Interactive mockup logic
+        const sliders = {
+            financial: document.getElementById('financialSlider'),
+            human: document.getElementById('humanSlider'),
+            operations: document.getElementById('operationsSlider'),
+            regen: document.getElementById('regenSlider')
+        };
+
+        const values = {
+            financial: document.getElementById('financialValue'),
+            human: document.getElementById('humanValue'),
+            operations: document.getElementById('operationsValue'),
+            regen: document.getElementById('regenValue')
+        };
+
+        const impacts = {
+            global: document.getElementById('globalImpact'),
+            balance: document.getElementById('balanceImpact'),
+            shadow: document.getElementById('shadowImpact')
+        };
+
+        // Update slider values
+        Object.keys(sliders).forEach(key => {
+            sliders[key].addEventListener('input', (e) => {
+                values[key].textContent = e.target.value + '%';
+                calculateImpact();
+            });
+        });
+
+        function calculateImpact() {
+            // Simple mockup calculation
+            const avg = (
+                parseInt(sliders.financial.value) +
+                parseInt(sliders.human.value) +
+                parseInt(sliders.operations.value) +
+                parseInt(sliders.regen.value)
+            ) / 4;
+
+            const newCoherence = Math.round(avg);
+            const change = newCoherence - 67;
+            const changeStr = change >= 0 ? `+${change}` : change;
+
+            impacts.global.textContent = `67% → ${newCoherence}% (${changeStr}%)`;
+            impacts.global.className = 'impact-change ' + (change >= 0 ? 'positive' : 'negative');
+
+            // Balance calculation
+            const being = (parseInt(sliders.human.value) + parseInt(sliders.regen.value)) / 200;
+            const doing = (parseInt(sliders.operations.value) + parseInt(sliders.financial.value)) / 200;
+            const balance = being > 0 ? doing / being : 0;
+
+            impacts.balance.textContent = `0.50 → ${balance.toFixed(2)} (${balance > 0.8 ? 'Improving' : 'Needs Work'})`;
+            impacts.balance.className = 'impact-change ' + (balance > 0.8 ? 'positive' : 'negative');
+
+            // Shadow detection
+            if (parseInt(sliders.operations.value) > 80 && parseInt(sliders.human.value) < 50) {
+                impacts.shadow.textContent = '⚠️ Burnout Engine Detected';
+                impacts.shadow.className = 'impact-change negative';
+            } else if (newCoherence > 75) {
+                impacts.shadow.textContent = '✅ No Shadows Detected';
+                impacts.shadow.className = 'impact-change positive';
+            } else {
+                impacts.shadow.textContent = '◯ Minor Imbalances';
+                impacts.shadow.className = 'impact-change';
+            }
+        }
+
+        console.log('🎨 Coherence Simulator mockup loaded');
+        console.log('🚧 Full functionality coming in Week 2');
+
+        // ============================================
+        // PARENT-CHILD COMMUNICATION
+        // ============================================
+        // Track currently loaded company
+        let currentLoadedCompanyId = null;
+
+        /**
+         * Listen for company data from parent window (when embedded in iframe)
+         */
+        window.addEventListener('message', async (event) => {
+            const { type, companyId } = event.data;
+
+            if (type === 'LOAD_COMPANY') {
+                console.log(`[Simulator] 📨 Received company load request from parent: ${companyId}`);
+
+                // Check if this company is already loaded
+                if (currentLoadedCompanyId === companyId) {
+                    console.log(`[Simulator] ℹ️ Company "${companyId}" is already loaded`);
+                    return;
+                }
+
+                // Update header subtitle to show selected company
+                const companyNames = {
+                    'quannex': 'Quannex',
+                    'nova-tech': 'Nova Tech',
+                    'zenith-solutions': 'Zenith Solutions',
+                    'apex-industries': 'Apex Industries'
+                };
+                const companyName = companyNames[companyId] || companyId;
+
+                const subtitle = document.querySelector('.subtitle');
+                if (subtitle) {
+                    subtitle.textContent = `Interactive What-If Analysis • ${companyName}`;
+                }
+
+                // Mark as loaded
+                currentLoadedCompanyId = companyId;
+
+                console.log(`[Simulator] ✅ Acknowledged company selection: ${companyName}`);
+                console.log(`[Simulator] 🚧 Full simulator functionality coming soon`);
+            }
+        });
+
+        /**
+         * Check sessionStorage for company ID (fallback mechanism)
+         */
+        function checkSessionStorageSimulator() {
+            // Check for custom data from orchestrator
+            const selectedCompanyId = sessionStorage.getItem('selectedCompanyId');
+            const customDataJson = sessionStorage.getItem('customCompanyData');
+
+            if (selectedCompanyId === 'custom' && customDataJson) {
+                try {
+                    console.log(`[Simulator] 🎨 Loading CUSTOM data from orchestrator`);
+                    const customData = JSON.parse(customDataJson);
+
+                    const companyName = customData.name || 'Custom Analysis';
+
+                    // Update subtitle to show custom data
+                    const subtitle = document.querySelector('.subtitle');
+                    if (subtitle) {
+                        subtitle.textContent = `Interactive What-If Analysis • ${companyName}`;
+                    }
+
+                    // Update coming soon message
+                    const comingSoonText = document.querySelector('.coming-soon-text');
+                    if (comingSoonText) {
+                        comingSoonText.innerHTML = `
+                            The Coherence Simulator is currently being built. This will be the most powerful feature
+                            of Quannex - allowing you to test organizational changes before implementing them.
+                            <br><br>
+                            <strong>Your custom data "${companyName}" has been loaded and will be ready for simulation once this feature is complete.</strong>
+                            <br><br>
+                            Expected completion: Week 2 of development cycle
+                        `;
+                    }
+
+                    // Mark as loaded
+                    currentLoadedCompanyId = 'custom';
+
+                    console.log(`[Simulator] ✅ Acknowledged custom data: ${companyName}`);
+                    console.log(`[Simulator] 📊 Ready to simulate ${customData.kpis ? customData.kpis.length : 0} KPIs (when feature is complete)`);
+                } catch (error) {
+                    console.error('[Simulator] ❌ Failed to load custom data:', error);
+                }
+            } else if (window.self !== window.top && selectedCompanyId) {
+                // Running in iframe with regular company
+                if (selectedCompanyId && !currentLoadedCompanyId) {
+                    console.log(`[Simulator] 💾 Found company ID in sessionStorage: ${selectedCompanyId}`);
+                    // Trigger load via postMessage handler
+                    window.postMessage({ type: 'LOAD_COMPANY', companyId: selectedCompanyId }, '*');
+                }
+            }
+        }
+
+        // Check for company in sessionStorage after page loads
+        setTimeout(checkSessionStorageSimulator, 500);
+
+        console.log('[Simulator] 📡 Message listener initialized');
+    </script>
+</body>
+</html>

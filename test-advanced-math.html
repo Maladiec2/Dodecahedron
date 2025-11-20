@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Math Test - Organizational Coherence Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            padding: 40px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 42px;
+            font-weight: 300;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #00ffcc;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #00ffcc;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            font-size: 28px;
+        }
+
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            border-color: #00ffcc;
+            background: rgba(0, 255, 204, 0.05);
+        }
+
+        .metric-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 200;
+            color: #00ffcc;
+            margin-bottom: 8px;
+        }
+
+        .metric-description {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .output {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            color: #00ffcc;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .critical {
+            color: #ff6b6b;
+        }
+
+        .warning {
+            color: #ffaa00;
+        }
+
+        .success {
+            color: #00ff66;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .badge-critical {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            border: 1px solid #ff6b6b;
+        }
+
+        .badge-high {
+            background: rgba(255, 170, 0, 0.2);
+            color: #ffaa00;
+            border: 1px solid #ffaa00;
+        }
+
+        .badge-good {
+            background: rgba(0, 255, 102, 0.2);
+            color: #00ff66;
+            border: 1px solid #00ff66;
+        }
+
+        .recommendation-card {
+            background: rgba(255, 255, 0, 0.05);
+            border-left: 3px solid #ffff00;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+        }
+
+        .recommendation-title {
+            font-weight: 600;
+            color: #ffff00;
+            margin-bottom: 8px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 255, 204, 0.2);
+            border-top: 3px solid #00ffcc;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 204, 0.3);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 204, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 Advanced Mathematical Analysis</h1>
+        <div class="subtitle">Complete Organizational Coherence Engine Test</div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <div>Initializing analysis engines...</div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <!-- Results will be inserted here -->
+        </div>
+    </div>
+
+    <script type="module">
+        import { SpectralAnalyzer } from './js/advanced/spectral-analyzer.js';
+        import { EdgeAnalyzer } from './js/advanced/edge-analyzer.js';
+        import { VertexAnalyzer } from './js/advanced/vertex-analyzer.js';
+        import { ShadowDetector } from './js/advanced/shadow-detector.js';
+
+        console.log('🚀 Advanced Math Test Starting...');
+
+        // Mock Quannex data (real values from CSV)
+        const mockFaces = [
+            { id: 1, name: 'Financial Capital', faceEnergy: 0.3930 },
+            { id: 2, name: 'Intellectual Capital', faceEnergy: 0.6094 },
+            { id: 3, name: 'Human Capital', faceEnergy: 0.1872 },
+            { id: 4, name: 'Structural Capital', faceEnergy: 0.3720 },
+            { id: 5, name: 'Market Resonance', faceEnergy: 0.0000 },
+            { id: 6, name: 'Community & Partners', faceEnergy: 0.4025 },
+            { id: 7, name: 'Brand & Reputation', faceEnergy: 0.3132 },
+            { id: 8, name: 'Core Operations', faceEnergy: 0.4074 },
+            { id: 9, name: 'Regenerative Flow', faceEnergy: 0.6702 },
+            { id: 10, name: 'Foundational Values', faceEnergy: 0.6702 },
+            { id: 11, name: 'Funding Pipeline', faceEnergy: 0.1925 },
+            { id: 12, name: 'Risk & Resilience', faceEnergy: 0.2691 }
+        ];
+
+        const mockKPIs = [
+            { id: 'R1.1', name: 'Bus Factor', value: 1.27 }  // Special case for Lonely Hero detection
+        ];
+
+        async function runAnalysis() {
+            try {
+                console.log('📊 Creating analyzer instances...');
+
+                const spectral = new SpectralAnalyzer();
+                const edges = new EdgeAnalyzer();
+                const vertices = new VertexAnalyzer();
+                const shadows = new ShadowDetector();
+
+                console.log('✅ Analyzers initialized');
+
+                // Run analyses
+                console.log('🔬 Running spectral analysis...');
+                const faceEnergies = mockFaces.map(f => f.faceEnergy);
+                const spectralResults = spectral.analyze(faceEnergies);
+
+                console.log('🔗 Running edge analysis...');
+                const edgeResults = edges.calculateAllEdges(mockFaces);
+                const edgeStats = edges.getTensionStats(edgeResults);
+                const criticalEdges = edges.getCriticalEdges(edgeResults, 5);
+
+                console.log('🌀 Running vertex analysis...');
+                const vertexResults = vertices.calculateAllVertices(mockFaces);
+                const vertexStats = vertices.getVortexStats(vertexResults);
+                const leveragePoints = vertices.getLeveragePoints(vertexResults);
+
+                console.log('👁️ Running shadow detection...');
+                const shadowResults = shadows.analyze(mockFaces, mockKPIs);
+
+                console.log('✅ All analyses complete!');
+
+                // Display results
+                displayResults({
+                    spectral: spectralResults,
+                    edges: edgeResults,
+                    edgeStats: edgeStats,
+                    criticalEdges: criticalEdges,
+                    vertices: vertexResults,
+                    vertexStats: vertexStats,
+                    leveragePoints: leveragePoints,
+                    shadows: shadowResults
+                });
+
+            } catch (error) {
+                console.error('❌ Analysis failed:', error);
+                document.getElementById('loading').innerHTML = `
+                    <div class="critical">Error: ${error.message}</div>
+                    <div style="margin-top: 20px;">Check console for details</div>
+                `;
+            }
+        }
+
+        function displayResults(results) {
+            const container = document.getElementById('results');
+            document.getElementById('loading').style.display = 'none';
+            container.style.display = 'block';
+
+            container.innerHTML = `
+                <!-- Global Metrics -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">🌍</span>
+                        Global Coherence Metrics
+                    </div>
+                    <div class="metric-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">Spectral Dissonance</div>
+                            <div class="metric-value">${results.spectral.diagnostics.dissonanceIndex.percentage.toFixed(1)}%</div>
+                            <div class="metric-description">${results.spectral.diagnostics.dissonanceIndex.interpretation}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Being-Action Balance</div>
+                            <div class="metric-value">${results.spectral.diagnostics.beingActionBalance.percentage.toFixed(1)}%</div>
+                            <div class="metric-description">${results.spectral.diagnostics.beingActionBalance.interpretation}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Edge Tension</div>
+                            <div class="metric-value">${(results.edgeStats.average * 100).toFixed(1)}%</div>
+                            <div class="metric-description">Average tension across 30 edges</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">System Integrity</div>
+                            <div class="metric-value">${(results.shadows.systemIntegrity.score * 100).toFixed(1)}%</div>
+                            <div class="metric-description">${results.shadows.systemIntegrity.status}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spectral Analysis -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">🎵</span>
+                        Spectral Mode Analysis
+                    </div>
+                    <div class="metric-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">Dominant Mode</div>
+                            <div class="metric-value">${results.spectral.dominantMode.mode}</div>
+                            <div class="metric-description">λ = ${results.spectral.dominantMode.eigenvalue.toFixed(3)}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Pattern</div>
+                            <div class="metric-value" style="font-size: 18px;">${results.spectral.summary.pattern}</div>
+                            <div class="metric-description">${results.spectral.dominantMode.interpretation}</div>
+                        </div>
+                    </div>
+                    ${results.spectral.correctiveActions.topPriority ? `
+                        <div class="recommendation-card">
+                            <div class="recommendation-title">🎯 Top Priority Action</div>
+                            <div>Face ${results.spectral.correctiveActions.topPriority.faceId} needs +${(results.spectral.correctiveActions.topPriority.deltaValue * 100).toFixed(1)}% energy boost</div>
+                            <div style="margin-top: 8px; font-size: 12px; opacity: 0.8;">
+                                Current: ${(results.spectral.correctiveActions.topPriority.currentEnergy * 100).toFixed(1)}% →
+                                Target: ${(results.spectral.correctiveActions.topPriority.targetEnergy * 100).toFixed(1)}%
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- Edge Analysis -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">🔗</span>
+                        Edge Tension Analysis
+                        <span class="badge badge-${results.edgeStats.highCount > 5 ? 'critical' : 'good'}">${results.edges.length} edges analyzed</span>
+                    </div>
+                    <div class="metric-grid">
+                        <div class="metric-card ${results.edgeStats.highCount > 5 ? 'critical' : ''}">
+                            <div class="metric-label">High Tension Edges</div>
+                            <div class="metric-value">${results.edgeStats.highCount}</div>
+                            <div class="metric-description">Tension > 60%</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Medium Tension</div>
+                            <div class="metric-value">${results.edgeStats.mediumCount}</div>
+                            <div class="metric-description">30% - 60%</div>
+                        </div>
+                        <div class="metric-card ${results.edgeStats.lowCount > 15 ? 'success' : ''}">
+                            <div class="metric-label">Low Tension</div>
+                            <div class="metric-value">${results.edgeStats.lowCount}</div>
+                            <div class="metric-description">Flowing edges < 30%</div>
+                        </div>
+                    </div>
+                    <div class="output">
+${results.criticalEdges.map(e =>
+`${e.id}: ${e.face1Name} ↔ ${e.face2Name}
+  Tension: ${(e.tension * 100).toFixed(1)}% (${e.healthStatus})
+  Flow: ${e.flowDirection} (ratio: ${e.breathRatio.toFixed(2)})
+  Element: ${e.element} (×${e.elementalMultiplier})
+`).join('\n')}
+                    </div>
+                </div>
+
+                <!-- Vertex Analysis -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">🌀</span>
+                        Vortex & Leverage Point Analysis
+                        <span class="badge badge-${results.leveragePoints.length > 0 ? 'high' : 'good'}">${results.leveragePoints.length} leverage points</span>
+                    </div>
+                    <div class="metric-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">Upward Vortices</div>
+                            <div class="metric-value ${results.vertexStats.upwardCount > 10 ? 'success' : ''}">${results.vertexStats.upwardCount}</div>
+                            <div class="metric-description">${results.vertexStats.dominantDirection}</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Downward Vortices</div>
+                            <div class="metric-value ${results.vertexStats.downwardCount > 10 ? 'warning' : ''}">${results.vertexStats.downwardCount}</div>
+                            <div class="metric-description">Declining patterns</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Average Vortex Strength</div>
+                            <div class="metric-value">${(results.vertexStats.averageStrength * 100).toFixed(1)}%</div>
+                            <div class="metric-description">System dynamics</div>
+                        </div>
+                    </div>
+                    ${results.leveragePoints.length > 0 ? `
+                        <div class="output">
+${results.leveragePoints.map(v =>
+`🎯 Vertex ${v.id}: ${v.archetype}
+  Faces: ${v.faceNames.join(', ')}
+  Vortex Strength: ${(v.vortexStrength * 100).toFixed(1)}%
+  Direction: ${v.vortexType}
+  Coherence: ${(v.coherence * 100).toFixed(1)}% (${v.healthStatus})
+  ⚡ HIGH LEVERAGE POINT - Small changes here cascade systemically
+`).join('\n')}
+                        </div>
+                    ` : '<div class="output">No high-leverage points detected. System is balanced.</div>'}
+                </div>
+
+                <!-- Shadow Detection -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">👁️</span>
+                        Shadow Pattern Detection
+                        <span class="badge badge-${results.shadows.totalPatternsDetected > 0 ? 'critical' : 'good'}">${results.shadows.totalPatternsDetected} detected</span>
+                    </div>
+                    ${results.shadows.detectedPatterns.length > 0 ? `
+                        ${results.shadows.detectedPatterns.map(pattern => `
+                            <div class="recommendation-card" style="border-left-color: ${pattern.severity === 'critical' ? '#ff6b6b' : '#ffaa00'};">
+                                <div class="recommendation-title">
+                                    ${pattern.icon} ${pattern.pattern}
+                                    <span class="badge badge-${pattern.severity === 'critical' ? 'critical' : 'high'}">${pattern.severity}</span>
+                                </div>
+                                <div style="margin-top: 8px;">${pattern.story}</div>
+                                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <strong>Recommendation:</strong> ${results.shadows.recommendations.find(r => r.pattern === pattern.pattern).recommendation}
+                                </div>
+                            </div>
+                        `).join('')}
+                    ` : `
+                        <div class="output success">
+✅ No shadow patterns detected!
+
+System integrity: ${(results.shadows.systemIntegrity.score * 100).toFixed(1)}%
+Status: ${results.shadows.systemIntegrity.message}
+
+The organization shows no major contradictions between high-performing
+and neglected domains. This is a sign of holistic, coherent development.
+                        </div>
+                    `}
+                </div>
+
+                <!-- Summary Recommendations -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-icon">🎯</span>
+                        Strategic Recommendations
+                    </div>
+                    <div class="recommendation-card">
+                        <div class="recommendation-title">Overall System Pattern</div>
+                        <div>${results.spectral.summary.recommendation}</div>
+                    </div>
+                </div>
+            `;
+
+            console.log('📊 Complete analysis results:', results);
+        }
+
+        // Run the analysis
+        runAnalysis();
+    </script>
+</body>
+</html>
