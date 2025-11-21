@@ -984,7 +984,7 @@ function identifyNervousEndpoints() {
  */
 function launchView(viewName) {
     const viewUrls = {
-        'dodecahedron': 'dodecahedron-3d-enhanced.html',
+        'dodecahedron': 'dodecahedron-3d.html',
         'calculations': 'calculations.html',
         'breath': 'breath-analysis.html',
         'dna': 'octave-dna.html',

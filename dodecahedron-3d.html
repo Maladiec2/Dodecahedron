@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -392,11 +393,30 @@
             letter-spacing: 1px;
         }
 
-        .kpi-element.earth { background: rgba(120, 120, 120, 0.3); color: #999; }
-        .kpi-element.water { background: rgba(30, 144, 255, 0.3); color: #4a9eff; }
-        .kpi-element.fire { background: rgba(255, 120, 0, 0.3); color: #ff9944; }
-        .kpi-element.air { background: rgba(0, 200, 150, 0.3); color: #00d9a3; }
-        .kpi-element.ether { background: rgba(100, 100, 200, 0.3); color: #8888dd; }
+        .kpi-element.earth {
+            background: rgba(120, 120, 120, 0.3);
+            color: #999;
+        }
+
+        .kpi-element.water {
+            background: rgba(30, 144, 255, 0.3);
+            color: #4a9eff;
+        }
+
+        .kpi-element.fire {
+            background: rgba(255, 120, 0, 0.3);
+            color: #ff9944;
+        }
+
+        .kpi-element.air {
+            background: rgba(0, 200, 150, 0.3);
+            color: #00d9a3;
+        }
+
+        .kpi-element.ether {
+            background: rgba(100, 100, 200, 0.3);
+            color: #8888dd;
+        }
 
         .kpi-value-bar {
             height: 6px;
@@ -412,9 +432,17 @@
             transition: width 0.5s ease;
         }
 
-        .kpi-value-fill.healthy { background: linear-gradient(90deg, #00ff88, #00ffcc); }
-        .kpi-value-fill.warning { background: linear-gradient(90deg, #ffa500, #ffcc00); }
-        .kpi-value-fill.critical { background: linear-gradient(90deg, #ff4444, #ff6b6b); }
+        .kpi-value-fill.healthy {
+            background: linear-gradient(90deg, #00ff88, #00ffcc);
+        }
+
+        .kpi-value-fill.warning {
+            background: linear-gradient(90deg, #ffa500, #ffcc00);
+        }
+
+        .kpi-value-fill.critical {
+            background: linear-gradient(90deg, #ff4444, #ff6b6b);
+        }
 
         /* Legend */
         .legend {
@@ -484,7 +512,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Tooltip */
@@ -569,8 +599,417 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(0, 255, 204, 0.5);
         }
+
+        /* Phase Warning Overlay */
+        .phase-warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 170, 0, 0.15);
+            border: 2px solid #ffaa00;
+            border-radius: 12px;
+            padding: 20px 30px;
+            backdrop-filter: blur(10px);
+            z-index: 500;
+            animation: pulse 2s ease-in-out infinite;
+            display: none;
+        }
+
+        .phase-warning.visible {
+            display: block;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+
+        .phase-warning-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffaa00;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .phase-warning-message {
+            font-size: 14px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* Insight Cards */
+        .insight-card {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid #ff6b6b;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .insight-card.warning {
+            background: rgba(255, 170, 0, 0.1);
+            border-left-color: #ffaa00;
+        }
+
+        .insight-card.opportunity {
+            background: rgba(0, 255, 102, 0.1);
+            border-left-color: #00ff66;
+        }
+
+        .insight-card.critical {
+            background: rgba(255, 107, 107, 0.15);
+            border-left-color: #ff6b6b;
+        }
+
+        .insight-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .insight-message {
+            opacity: 0.9;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .insight-action {
+            opacity: 0.8;
+            font-size: 10px;
+            font-style: italic;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Shadow Alerts */
+        .shadow-alert {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid #ff6b6b;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .shadow-alert-title {
+            font-weight: 600;
+            color: #ff6b6b;
+            margin-bottom: 4px;
+        }
+
+        /* Leverage Points */
+        .leverage-point {
+            background: rgba(255, 255, 0, 0.1);
+            border-left: 3px solid #ffff00;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .leverage-point-title {
+            font-weight: 600;
+            color: #ffff00;
+            margin-bottom: 4px;
+        }
+
+        /* Harmonic Tuner Dashboard */
+        .harmonic-tuner {
+            position: fixed;
+            bottom: -200px;
+            /* Hidden by default */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 180px;
+            background: linear-gradient(180deg, rgba(10, 15, 20, 0.95) 0%, rgba(0, 0, 0, 1) 100%);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-bottom: none;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -10px 50px rgba(0, 255, 204, 0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 40px;
+            transition: bottom 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+
+        .harmonic-tuner.visible {
+            bottom: 0;
+        }
+
+        .tuner-toggle {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-bottom: none;
+            padding: 5px 20px;
+            border-radius: 10px 10px 0 0;
+            color: #00ffcc;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 -2px 5px rgba(0, 255, 204, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 -5px 15px rgba(0, 255, 204, 0.4);
+            }
+
+            100% {
+                box-shadow: 0 -2px 5px rgba(0, 255, 204, 0.1);
+            }
+        }
+
+        .tuner-toggle:hover {
+            background: rgba(0, 255, 204, 0.2);
+            animation: none;
+            box-shadow: 0 -5px 20px rgba(0, 255, 204, 0.3);
+        }
+
+        /* Tooltip System */
+        .tuner-tooltip {
+            position: absolute;
+            background: rgba(10, 15, 20, 0.95);
+            border: 1px solid #00ffcc;
+            border-radius: 8px;
+            padding: 12px;
+            width: 220px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 2000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        .tuner-tooltip.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-20px);
+        }
+
+        .tooltip-title {
+            color: #00ffcc;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .tooltip-desc {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .info-icon {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 14px;
+            height: 14px;
+            background: rgba(0, 255, 204, 0.2);
+            border: 1px solid rgba(0, 255, 204, 0.5);
+            border-radius: 50%;
+            color: #00ffcc;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: help;
+            opacity: 0.7;
+            transition: all 0.2s;
+        }
+
+        .info-icon:hover {
+            opacity: 1;
+            background: rgba(0, 255, 204, 0.4);
+            transform: scale(1.1);
+        }
+
+        /* Knob Container */
+        .knob-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 80px;
+        }
+
+        .knob-label {
+            color: #00ffcc;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .knob-sublabel {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 8px;
+            margin-top: 2px;
+        }
+
+        /* The Rotary Knob */
+        .knob-control {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #2a2a2a, #000);
+            border: 2px solid rgba(0, 255, 204, 0.2);
+            position: relative;
+            cursor: ns-resize;
+            /* Up/down drag cursor */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.05);
+            transition: border-color 0.3s;
+        }
+
+        .knob-control:hover {
+            border-color: rgba(0, 255, 204, 0.6);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+        }
+
+        .knob-control::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: #00ffcc;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #00ffcc;
+        }
+
+        /* Indicator Ring (SVG) */
+        .knob-ring {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            width: 70px;
+            height: 70px;
+            pointer-events: none;
+            transform: rotate(-90deg);
+            /* Start from top */
+        }
+
+        .knob-ring circle {
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        .knob-ring-bg {
+            stroke: rgba(255, 255, 255, 0.1);
+        }
+
+        .knob-ring-value {
+            stroke: #00ffcc;
+            stroke-dasharray: 176;
+            /* 2 * PI * r (r=28) approx */
+            stroke-dashoffset: 176;
+            transition: stroke-dashoffset 0.1s;
+        }
+
+
+        /* Resonance Meter */
+        .resonance-meter {
+            width: 160px;
+            height: 100px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 10px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        .meter-scale {
+            width: 140px;
+            height: 70px;
+            border-top-left-radius: 70px;
+            border-top-right-radius: 70px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-bottom: none;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .meter-needle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            height: 60px;
+            background: #ff3333;
+            transform-origin: bottom center;
+            transform: rotate(-45deg);
+            transition: transform 0.5s cubic-bezier(0.2, 1.5, 0.5, 1);
+            /* Bouncy needle */
+            box-shadow: 0 0 5px #ff3333;
+            z-index: 2;
+        }
+
+        .meter-needle.tuned {
+            background: #00ffcc;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+
+        .meter-label {
+            margin-top: 10px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .meter-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 5px;
+        }
     </style>
+    <link rel="stylesheet" href="css/harmonic-tuner.css">
 </head>
+
 <body>
     <!-- Header -->
     <div class="page-header" id="pageHeader">
@@ -601,6 +1040,12 @@
         </div>
     </div>
 
+    <!-- Phase Warning Overlay -->
+    <div id="phase-warning" class="phase-warning">
+        <div class="phase-warning-title">⚠️ PHASE TRANSITION IMMINENT</div>
+        <div class="phase-warning-message" id="phase-warning-message"></div>
+    </div>
+
     <!-- Loading -->
     <div class="loading" id="loading">
         <div class="loading-text">INITIALIZING GEOMETRY</div>
@@ -621,39 +1066,7 @@
             <button class="control-button" id="toggleRotation">Auto-Rotate: OFF</button>
         </div>
 
-        <div class="control-group">
-            <label class="control-label">Tuning (Conductor's Settings)</label>
-            
-            <div class="stats-item">
-                <span class="stats-label" title="Synergy Blend (Arithmetic vs Geometric)">α Alpha (Synergy)</span>
-                <span class="stats-value" id="valAlpha">0.6</span>
-            </div>
-            <input type="range" id="rangeAlpha" min="0" max="1" step="0.1" value="0.6" style="width: 100%; margin-bottom: 8px;">
 
-            <div class="stats-item">
-                <span class="stats-label" title="Intersection Blend (Symmetry)">β Beta (Symmetry)</span>
-                <span class="stats-value" id="valBeta">0.5</span>
-            </div>
-            <input type="range" id="rangeBeta" min="0" max="1" step="0.1" value="0.5" style="width: 100%; margin-bottom: 8px;">
-
-            <div class="stats-item">
-                <span class="stats-label" title="Ball vs Pillar Blend (Internal vs Relational)">γ Gamma (Balance)</span>
-                <span class="stats-value" id="valGamma">0.7</span>
-            </div>
-            <input type="range" id="rangeGamma" min="0" max="1" step="0.1" value="0.7" style="width: 100%; margin-bottom: 8px;">
-
-            <div class="stats-item">
-                <span class="stats-label" title="Axis Coherence Factor (Shadow Influence)">δ Delta (Shadow)</span>
-                <span class="stats-value" id="valDelta">0.9</span>
-            </div>
-            <input type="range" id="rangeDelta" min="0" max="1" step="0.1" value="0.9" style="width: 100%; margin-bottom: 8px;">
-
-            <div class="stats-item">
-                <span class="stats-label" title="Sensitivity Amplifier">κ Kappa (Gain)</span>
-                <span class="stats-value" id="valKappa">2.0</span>
-            </div>
-            <input type="range" id="rangeKappa" min="1" max="10" step="0.5" value="2.0" style="width: 100%; margin-bottom: 8px;">
-        </div>
 
         <div class="control-group">
             <label class="control-label">Company</label>
@@ -767,7 +1180,8 @@
     </div>
 
     <!-- Vertex Tooltip -->
-    <div class="edge-tooltip" id="vertexTooltip" style="border-color: rgba(255, 0, 100, 0.6); box-shadow: 0 4px 20px rgba(255, 0, 100, 0.3);">
+    <div class="edge-tooltip" id="vertexTooltip"
+        style="border-color: rgba(255, 0, 100, 0.6); box-shadow: 0 4px 20px rgba(255, 0, 100, 0.3);">
         <!-- Content will be dynamically injected -->
     </div>
 
@@ -777,7 +1191,7 @@
 
     <!-- Load breath analyzer first -->
     <script src="js/breath-analyzer.js"></script>
-    
+
     <!-- Load spectral analyzer (required for engine) -->
     <script src="js/spectral-analyzer.js"></script>
 
@@ -839,7 +1253,7 @@
         let advancedAnalysisResults = null;
 
         // Mode switching
-        window.switchMode = async function(mode) {
+        window.switchMode = async function (mode) {
             console.log(`🔄 Switching to ${mode} mode`);
             currentMode = mode;
 
@@ -898,6 +1312,21 @@
                 renderVertexVortices();
                 renderFeedbackLoops();
                 updateAnalysisPanel();
+                checkPhaseTransitionWarning();
+
+                // Highlight frozen faces (System Inertia)
+                if (advancedAnalysisResults.dynamics && window.dodecahedronMaterials) {
+                    const materials = window.dodecahedronMaterials;
+                    companyData.faces.forEach((face, i) => {
+                        if (i < materials.length) {
+                            const frozenFace = advancedAnalysisResults.dynamics.inertia.faceInertia.find(f => f.faceId === face.id);
+                            if (frozenFace && frozenFace.responsiveness === 'Frozen') {
+                                materials[i].emissiveIntensity = 0.8; // High glow for frozen faces
+                                materials[i].needsUpdate = true;
+                            }
+                        }
+                    });
+                }
             }
         }
 
@@ -941,17 +1370,17 @@
             // Load CSV edge tension data for rich metadata
             console.log('📊 Loading edge tension CSV data...');
             await edges.loadEdgeCSV('./data/CSV_Edge_tension_Map.csv');
-            
+
             // Load CSV vertex data for rich metadata
             console.log('📊 Loading vertex vortex CSV data...');
             await vertices.loadVertexCSV('./data/CSV_Vortex_Map.csv');
-            
+
             // Load spectral data if available
             const spectralAnalysis = spectral.analyze(faceEnergies);
-            
+
             // Calculate base edges
             let edgeAnalysis = edges.calculateAllEdges(companyData.faces);
-            
+
             // 🧠 ENHANCE WITH AI INTERPRETATION
             // This adds the "Story" to the "Physics"
             console.log('🧠 Running AI Edge Interpreter...');
@@ -959,7 +1388,7 @@
                 // Get face objects
                 const face1 = companyData.faces.find(f => f.id === edge.face1Id);
                 const face2 = companyData.faces.find(f => f.id === edge.face2Id);
-                
+
                 // Generate AI metadata (Archetype, Question, KPI)
                 // Pass existing CSV data if available to fill gaps
                 const csvData = edge.hasCSVData ? {
@@ -969,9 +1398,9 @@
                     kpiMetric: edge.kpiMetric,
                     kpiCalculation: edge.kpiCalculation
                 } : null;
-                
+
                 const aiMeta = aiInterpreter.generateEdgeMetadata(face1, face2, edge.element, csvData);
-                
+
                 // Merge into edge object
                 return {
                     ...edge,
@@ -1031,152 +1460,152 @@
             const edges = advancedAnalysisResults.edges;
             const companyData = window.Quannex ? window.Quannex.getState() : null;
 
-        // Initialize/clear global edgeLines array for raycasting
-        if (!window.edgeLines) {
-            window.edgeLines = [];
-        } else {
-            // Clear existing edge meshes from scene
-            window.edgeLines.forEach(mesh => scene.remove(mesh));
-            window.edgeLines = [];
-        }
-
-        // EDGE ANALYZER INSTANCE (Needed for narrative generation)
-        const edgeAnalyzer = new EdgeAnalyzer();
-
-        console.log(`🎨 Rendering ${edges.length} neon edge tubes on dodecahedron surface...`);
-
-        let successfulEdges = 0;
-        let skippedEdges = 0;
-
-        edges.forEach(edge => {
-            // Find the 2 shared vertex positions directly from face geometries
-            const sharedPositions = findSharedEdgeVertices(edge.face1Id, edge.face2Id);
-
-            if (!sharedPositions || sharedPositions.length !== 2) {
-                console.warn(`⚠️ Cannot find shared edge for ${edge.id} (Face ${edge.face1Id}-${edge.face2Id})`);
-                skippedEdges++;
-                return;
+            // Initialize/clear global edgeLines array for raycasting
+            if (!window.edgeLines) {
+                window.edgeLines = [];
+            } else {
+                // Clear existing edge meshes from scene
+                window.edgeLines.forEach(mesh => scene.remove(mesh));
+                window.edgeLines = [];
             }
 
-            const vertex1 = sharedPositions[0];
-            const vertex2 = sharedPositions[1];
+            // EDGE ANALYZER INSTANCE (Needed for narrative generation)
+            const edgeAnalyzer = new EdgeAnalyzer();
 
-        // 🎯 SMART EDGE NAMING SYSTEM
-            // Now powered by AI Interpreter
-            let edgeName = edge.archetype; // AI Interpreter ensures this is always populated
-            let face1Name = edge.face1Name;
-            let face2Name = edge.face2Name;
+            console.log(`🎨 Rendering ${edges.length} neon edge tubes on dodecahedron surface...`);
 
-            // 📖 GENERATE NARRATIVE (Enhanced with AI Context)
-            // We pass the enriched edge object which now has kpiName, question, etc.
-            const narrative = edgeAnalyzer.generateNarrative(edge);
-            
-            // Add AI specific fields to narrative if not present
-            narrative.kpiSuggestion = edge.kpiName;
-            narrative.kpiMetric = edge.kpiMetric;
-            narrative.aiSource = edge.aiSource;
+            let successfulEdges = 0;
+            let skippedEdges = 0;
 
-            // === NEON TUBE GEOMETRY ON SURFACE ===
-            // Create glowing tube between the two shared vertices
+            edges.forEach(edge => {
+                // Find the 2 shared vertex positions directly from face geometries
+                const sharedPositions = findSharedEdgeVertices(edge.face1Id, edge.face2Id);
 
-            // Create path between geometric vertices
-            const curve = new THREE.LineCurve3(vertex1, vertex2);
+                if (!sharedPositions || sharedPositions.length !== 2) {
+                    console.warn(`⚠️ Cannot find shared edge for ${edge.id} (Face ${edge.face1Id}-${edge.face2Id})`);
+                    skippedEdges++;
+                    return;
+                }
 
-            // Tube radius based on tension: 0.025 (low) -> 0.045 (high)
-            // Slightly thicker for visibility
-            const tubeRadius = 0.025 + (edge.tension * 0.02);
-            const tubeGeometry = new THREE.TubeGeometry(curve, 2, tubeRadius, 8, false);
+                const vertex1 = sharedPositions[0];
+                const vertex2 = sharedPositions[1];
 
-            // Parse color from edge.color (hex string from EdgeAnalyzer)
-            const colorValue = new THREE.Color(edge.color || '#00ff88');
+                // 🎯 SMART EDGE NAMING SYSTEM
+                // Now powered by AI Interpreter
+                let edgeName = edge.archetype; // AI Interpreter ensures this is always populated
+                let face1Name = edge.face1Name;
+                let face2Name = edge.face2Name;
 
-            // NEON GLOW SETTINGS
-            const baseOpacity = 0.9 + (edge.tension * 0.05); // 90-95% visible
-            const pulseSpeed = 1000 / (1 + edge.tension * 3); // High tension = faster pulse
-            const emissiveIntensity = 0.5 + (edge.tension * 0.4); // 0.5 (low) -> 0.9 (high)
+                // 📖 GENERATE NARRATIVE (Enhanced with AI Context)
+                // We pass the enriched edge object which now has kpiName, question, etc.
+                const narrative = edgeAnalyzer.generateNarrative(edge);
 
-            // MeshPhongMaterial for neon effect
-            const material = new THREE.MeshPhongMaterial({
-                color: colorValue,
-                emissive: colorValue,
-                emissiveIntensity: emissiveIntensity,
-                transparent: true,
-                opacity: baseOpacity,
-                shininess: 100, // High shininess for neon look
-                side: THREE.DoubleSide
+                // Add AI specific fields to narrative if not present
+                narrative.kpiSuggestion = edge.kpiName;
+                narrative.kpiMetric = edge.kpiMetric;
+                narrative.aiSource = edge.aiSource;
+
+                // === NEON TUBE GEOMETRY ON SURFACE ===
+                // Create glowing tube between the two shared vertices
+
+                // Create path between geometric vertices
+                const curve = new THREE.LineCurve3(vertex1, vertex2);
+
+                // Tube radius based on tension: 0.025 (low) -> 0.045 (high)
+                // Slightly thicker for visibility
+                const tubeRadius = 0.025 + (edge.tension * 0.02);
+                const tubeGeometry = new THREE.TubeGeometry(curve, 2, tubeRadius, 8, false);
+
+                // Parse color from edge.color (hex string from EdgeAnalyzer)
+                const colorValue = new THREE.Color(edge.color || '#00ff88');
+
+                // NEON GLOW SETTINGS
+                const baseOpacity = 0.9 + (edge.tension * 0.05); // 90-95% visible
+                const pulseSpeed = 1000 / (1 + edge.tension * 3); // High tension = faster pulse
+                const emissiveIntensity = 0.5 + (edge.tension * 0.4); // 0.5 (low) -> 0.9 (high)
+
+                // MeshPhongMaterial for neon effect
+                const material = new THREE.MeshPhongMaterial({
+                    color: colorValue,
+                    emissive: colorValue,
+                    emissiveIntensity: emissiveIntensity,
+                    transparent: true,
+                    opacity: baseOpacity,
+                    shininess: 100, // High shininess for neon look
+                    side: THREE.DoubleSide
+                });
+
+                const tubeMesh = new THREE.Mesh(tubeGeometry, material);
+                tubeMesh.renderOrder = 10; // Render edges ON TOP of everything
+
+                // Store comprehensive edge data for interaction
+                tubeMesh.userData.edgeData = edge;
+                tubeMesh.userData.edgeName = edgeName;
+                tubeMesh.userData.narrative = narrative; // STORE NARRATIVE HERE
+                tubeMesh.userData.face1Name = face1Name;
+                tubeMesh.userData.face2Name = face2Name;
+                tubeMesh.userData.isEdge = true; // Mark as edge for raycasting
+                tubeMesh.userData.animation = {
+                    baseOpacity: baseOpacity,
+                    baseEmissive: emissiveIntensity,
+                    pulseSpeed: pulseSpeed,
+                    startTime: Date.now(),
+                    pulseAmplitude: 0.1 // Subtle pulse
+                };
+
+                scene.add(tubeMesh);
+                window.edgeLines.push(tubeMesh);
+                successfulEdges++;
             });
 
-            const tubeMesh = new THREE.Mesh(tubeGeometry, material);
-            tubeMesh.renderOrder = 10; // Render edges ON TOP of everything
+            console.log(`✅ Rendered ${successfulEdges} neon edge tubes (${skippedEdges} skipped)`);
 
-            // Store comprehensive edge data for interaction
-            tubeMesh.userData.edgeData = edge;
-            tubeMesh.userData.edgeName = edgeName;
-            tubeMesh.userData.narrative = narrative; // STORE NARRATIVE HERE
-            tubeMesh.userData.face1Name = face1Name;
-            tubeMesh.userData.face2Name = face2Name;
-            tubeMesh.userData.isEdge = true; // Mark as edge for raycasting
-            tubeMesh.userData.animation = {
-                baseOpacity: baseOpacity,
-                baseEmissive: emissiveIntensity,
-                pulseSpeed: pulseSpeed,
-                startTime: Date.now(),
-                pulseAmplitude: 0.1 // Subtle pulse
-            };
-
-            scene.add(tubeMesh);
-            window.edgeLines.push(tubeMesh);
-            successfulEdges++;
-        });
-
-        console.log(`✅ Rendered ${successfulEdges} neon edge tubes (${skippedEdges} skipped)`);
-
-        // Start animation loop if not already running
-        if (window.edgeLines.length > 0 && !window.edgeAnimationRunning) {
-            animateEdges();
+            // Start animation loop if not already running
+            if (window.edgeLines.length > 0 && !window.edgeAnimationRunning) {
+                animateEdges();
+            }
         }
-    }
 
-    // Handle Edge & Vertex Raycasting (Narrative Tooltip)
-    const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
-    const edgeTooltip = document.getElementById('edgeTooltip');
-    const vertexTooltip = document.getElementById('vertexTooltip');
+        // Handle Edge & Vertex Raycasting (Narrative Tooltip)
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const edgeTooltip = document.getElementById('edgeTooltip');
+        const vertexTooltip = document.getElementById('vertexTooltip');
 
-    window.addEventListener('mousemove', (event) => {
-        if ((!window.edgeLines || window.edgeLines.length === 0) && (!window.vertexSpheres || window.vertexSpheres.length === 0)) return;
-        
-        // Only check if canvas is visible
-        const canvas = document.getElementById('scene');
-        if (!canvas) return;
+        window.addEventListener('mousemove', (event) => {
+            if ((!window.edgeLines || window.edgeLines.length === 0) && (!window.vertexSpheres || window.vertexSpheres.length === 0)) return;
 
-        // Normalized mouse coordinates
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            // Only check if canvas is visible
+            const canvas = document.getElementById('scene');
+            if (!canvas) return;
 
-        // Raycast against edge lines AND vertices
-        raycaster.setFromCamera(mouse, window.camera);
-        
-        // Increase threshold for easier selection of thin lines
-        raycaster.params.Line.threshold = 0.1; 
-        
-        // Combine interaction targets
-        const targets = [...(window.edgeLines || []), ...(window.vertexSpheres || [])];
-        const intersects = raycaster.intersectObjects(targets);
+            // Normalized mouse coordinates
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        if (intersects.length > 0) {
-            const object = intersects[0].object;
-            const data = object.userData;
-            
-            if (data.isEdge) {
-                // Hide vertex tooltip
-                if (vertexTooltip) vertexTooltip.classList.remove('visible');
+            // Raycast against edge lines AND vertices
+            raycaster.setFromCamera(mouse, window.camera);
 
-                const narrative = data.narrative;
+            // Increase threshold for easier selection of thin lines
+            raycaster.params.Line.threshold = 0.1;
 
-                // Show Edge Tooltip (Enhanced AI Layout)
-                if (edgeTooltip) {
-                    edgeTooltip.innerHTML = `
+            // Combine interaction targets
+            const targets = [...(window.edgeLines || []), ...(window.vertexSpheres || [])];
+            const intersects = raycaster.intersectObjects(targets);
+
+            if (intersects.length > 0) {
+                const object = intersects[0].object;
+                const data = object.userData;
+
+                if (data.isEdge) {
+                    // Hide vertex tooltip
+                    if (vertexTooltip) vertexTooltip.classList.remove('visible');
+
+                    const narrative = data.narrative;
+
+                    // Show Edge Tooltip (Enhanced AI Layout)
+                    if (edgeTooltip) {
+                        edgeTooltip.innerHTML = `
                         <div style="font-weight: bold; color: #00ffcc; margin-bottom: 2px; font-size: 13px;">${data.edgeName}</div>
                         <div style="font-size: 9px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
                             ${data.face1Name} ↔ ${data.face2Name}
@@ -1208,26 +1637,26 @@
                         </div>
                         ` : ''}
                     `;
-                    
-                    edgeTooltip.style.left = (event.clientX + 15) + 'px';
-                    edgeTooltip.style.top = (event.clientY + 15) + 'px';
-                    edgeTooltip.classList.add('visible');
-                }
-                
-                // Highlight Effect
-                document.body.style.cursor = 'help';
-                object.material.emissiveIntensity = 2.0; // Super glow on hover
 
-            } else if (data.isVertex) {
-                // Hide edge tooltip
-                if (edgeTooltip) edgeTooltip.classList.remove('visible');
+                        edgeTooltip.style.left = (event.clientX + 15) + 'px';
+                        edgeTooltip.style.top = (event.clientY + 15) + 'px';
+                        edgeTooltip.classList.add('visible');
+                    }
 
-                const vertex = data.vertexData;
-                const narrative = data.narrative;
+                    // Highlight Effect
+                    document.body.style.cursor = 'help';
+                    object.material.emissiveIntensity = 2.0; // Super glow on hover
 
-                // Show Vertex Tooltip
-                if (vertexTooltip) {
-                    vertexTooltip.innerHTML = `
+                } else if (data.isVertex) {
+                    // Hide edge tooltip
+                    if (edgeTooltip) edgeTooltip.classList.remove('visible');
+
+                    const vertex = data.vertexData;
+                    const narrative = data.narrative;
+
+                    // Show Vertex Tooltip
+                    if (vertexTooltip) {
+                        vertexTooltip.innerHTML = `
                         <div style="font-weight: bold; color: #ff0066; margin-bottom: 2px; font-size: 13px;">${data.vertexName}</div>
                         <div style="font-size: 9px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">
                             ${vertex.id} • Vortex Point
@@ -1257,35 +1686,35 @@
                         </div>
                     `;
 
-                    vertexTooltip.style.left = (event.clientX + 15) + 'px';
-                    vertexTooltip.style.top = (event.clientY + 15) + 'px';
-                    vertexTooltip.classList.add('visible');
+                        vertexTooltip.style.left = (event.clientX + 15) + 'px';
+                        vertexTooltip.style.top = (event.clientY + 15) + 'px';
+                        vertexTooltip.classList.add('visible');
+                    }
+
+                    // Highlight Effect
+                    document.body.style.cursor = 'help';
+                    object.material.opacity = 1.0; // Full opacity on hover
+                    object.scale.setScalar(1.3); // Grow slightly
                 }
 
-                // Highlight Effect
-                document.body.style.cursor = 'help';
-                object.material.opacity = 1.0; // Full opacity on hover
-                object.scale.setScalar(1.3); // Grow slightly
+            } else {
+                if (edgeTooltip) edgeTooltip.classList.remove('visible');
+                if (vertexTooltip) vertexTooltip.classList.remove('visible');
+                document.body.style.cursor = 'default';
+
+                // Reset highlights
+                window.edgeLines.forEach(mesh => {
+                    if (mesh.userData.animation) {
+                        mesh.material.emissiveIntensity = mesh.userData.animation.baseEmissive;
+                    }
+                });
+
+                window.vertexSpheres.forEach(mesh => {
+                    mesh.material.opacity = 0.7; // Reset opacity
+                    mesh.scale.setScalar(1.0); // Reset scale
+                });
             }
-
-        } else {
-            if (edgeTooltip) edgeTooltip.classList.remove('visible');
-            if (vertexTooltip) vertexTooltip.classList.remove('visible');
-            document.body.style.cursor = 'default';
-            
-            // Reset highlights
-            window.edgeLines.forEach(mesh => {
-                if (mesh.userData.animation) {
-                    mesh.material.emissiveIntensity = mesh.userData.animation.baseEmissive;
-                }
-            });
-            
-            window.vertexSpheres.forEach(mesh => {
-                mesh.material.opacity = 0.7; // Reset opacity
-                mesh.scale.setScalar(1.0); // Reset scale
-            });
-        }
-    });
+        });
         function animateEdges() {
             window.edgeAnimationRunning = true;
 
@@ -1409,7 +1838,7 @@
                 sphere.userData.isEdge = false;
                 sphere.userData.vertexName = vertex.archetype;
                 sphere.userData.narrative = vertex.narrative;
-                
+
                 scene.add(sphere);
                 window.vertexSpheres.push(sphere);
             });
@@ -1512,7 +1941,7 @@
         let cachedAnalyticalToGeometricMap = null;
 
         // Get actual vertex positions and build face topology from Three.js dodecahedron
-        window.getDodecahedronVertices = function() {
+        window.getDodecahedronVertices = function () {
             // Return cached vertices if available
             if (cachedGeometricVertices) {
                 return cachedGeometricVertices;
@@ -1564,18 +1993,18 @@
                 new THREE.Vector3(-1, 1, -1).normalize().multiplyScalar(radius),
                 new THREE.Vector3(-1, -1, 1).normalize().multiplyScalar(radius),
                 new THREE.Vector3(-1, -1, -1).normalize().multiplyScalar(radius),
-                new THREE.Vector3(0, phi, 1/phi).normalize().multiplyScalar(radius),
-                new THREE.Vector3(0, phi, -1/phi).normalize().multiplyScalar(radius),
-                new THREE.Vector3(0, -phi, 1/phi).normalize().multiplyScalar(radius),
-                new THREE.Vector3(0, -phi, -1/phi).normalize().multiplyScalar(radius),
-                new THREE.Vector3(1/phi, 0, phi).normalize().multiplyScalar(radius),
-                new THREE.Vector3(1/phi, 0, -phi).normalize().multiplyScalar(radius),
-                new THREE.Vector3(-1/phi, 0, phi).normalize().multiplyScalar(radius),
-                new THREE.Vector3(-1/phi, 0, -phi).normalize().multiplyScalar(radius),
-                new THREE.Vector3(phi, 1/phi, 0).normalize().multiplyScalar(radius),
-                new THREE.Vector3(phi, -1/phi, 0).normalize().multiplyScalar(radius),
-                new THREE.Vector3(-phi, 1/phi, 0).normalize().multiplyScalar(radius),
-                new THREE.Vector3(-phi, -1/phi, 0).normalize().multiplyScalar(radius)
+                new THREE.Vector3(0, phi, 1 / phi).normalize().multiplyScalar(radius),
+                new THREE.Vector3(0, phi, -1 / phi).normalize().multiplyScalar(radius),
+                new THREE.Vector3(0, -phi, 1 / phi).normalize().multiplyScalar(radius),
+                new THREE.Vector3(0, -phi, -1 / phi).normalize().multiplyScalar(radius),
+                new THREE.Vector3(1 / phi, 0, phi).normalize().multiplyScalar(radius),
+                new THREE.Vector3(1 / phi, 0, -phi).normalize().multiplyScalar(radius),
+                new THREE.Vector3(-1 / phi, 0, phi).normalize().multiplyScalar(radius),
+                new THREE.Vector3(-1 / phi, 0, -phi).normalize().multiplyScalar(radius),
+                new THREE.Vector3(phi, 1 / phi, 0).normalize().multiplyScalar(radius),
+                new THREE.Vector3(phi, -1 / phi, 0).normalize().multiplyScalar(radius),
+                new THREE.Vector3(-phi, 1 / phi, 0).normalize().multiplyScalar(radius),
+                new THREE.Vector3(-phi, -1 / phi, 0).normalize().multiplyScalar(radius)
             ];
 
             cachedGeometricVertices = fallbackVertices;
@@ -1591,7 +2020,7 @@
          * Build a topology-aware mapping from Three.js face indices to analytical Face IDs
          * Returns an array where index = Three.js face index (0-11), value = analytical Face ID (1-12)
          */
-        window.buildFaceIndexMapping = function() {
+        window.buildFaceIndexMapping = function () {
             console.log('\n🔄 BUILDING TOPOLOGY-AWARE FACE MAPPING:');
             console.log('='.repeat(60));
 
@@ -1828,7 +2257,7 @@
         }
 
         // Build a map of geometric vertex index -> face indices
-        window.buildVertexToFacesMap = function() {
+        window.buildVertexToFacesMap = function () {
             if (cachedVertexToFacesMap) {
                 return cachedVertexToFacesMap;
             }
@@ -2054,6 +2483,29 @@
                         <span class="metric-label">Strong Vortices</span>
                         <span class="metric-value">${vertices.filter(v => v.vortexStrength > 0.5).length}</span>
                     </div>
+                    
+                    <!-- Leverage Points List -->
+                    ${(() => {
+                    // Calculate leverage points if not available in summary
+                    const leveragePoints = vertices.filter(v => v.isLeveragePoint)
+                        .sort((a, b) => b.vortexStrength - a.vortexStrength)
+                        .slice(0, 3);
+
+                    if (leveragePoints.length > 0) {
+                        return `
+                                <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                                    <div style="font-size: 11px; opacity: 0.7; margin-bottom: 6px;">TOP LEVERAGE POINTS</div>
+                                    ${leveragePoints.map(v => `
+                                        <div class="leverage-point">
+                                            <div class="leverage-point-title">V${v.id}: ${v.archetype || 'Unknown'}</div>
+                                            <div style="font-size: 11px; opacity: 0.8;">Strength: ${(v.vortexStrength * 100).toFixed(0)}%</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                             `;
+                    }
+                    return '';
+                })()}
                 </div>
 
                 <!-- Shadow Detection -->
@@ -2071,6 +2523,17 @@
                             ${(shadows.systemIntegrity.score * 100).toFixed(1)}%
                         </span>
                     </div>
+
+                    ${shadows.detectedPatterns.length > 0 ? `
+                        <div style="margin-top: 12px;">
+                            ${shadows.detectedPatterns.map(pattern => `
+                                <div class="shadow-alert">
+                                    <div class="shadow-alert-title">${pattern.icon || '⚠️'} ${pattern.pattern}</div>
+                                    <div style="font-size: 11px; opacity: 0.8;">${pattern.severity ? pattern.severity.toUpperCase() : 'DETECTED'}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : '<div style="font-size: 12px; opacity: 0.7; margin-top: 10px;">No shadows detected ✅</div>'}
                 </div>
             `;
 
@@ -2129,6 +2592,35 @@
                             <span class="metric-value">${dynamics.phaseTransitions.prediction.likelihood}</span>
                         </div>
                     </div>
+
+                    <!-- System Inertia -->
+                    <div class="analysis-section">
+                        <div class="section-title">⏳ System Inertia</div>
+                        <div class="metric-row">
+                            <span class="metric-label">Frozen Faces</span>
+                            <span class="metric-value ${dynamics.inertia.summary.frozenFaces > 3 ? 'critical' : ''}">
+                                ${dynamics.inertia.summary.frozenFaces}
+                            </span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Flexibility</span>
+                            <span class="metric-value">${dynamics.inertia.summary.systemFlexibility.status}</span>
+                        </div>
+                    </div>
+
+                    <!-- Critical Insights -->
+                    ${dynamics.summary.criticalInsights.length > 0 ? `
+                        <div class="analysis-section">
+                            <div class="section-title">⚡ Critical Insights</div>
+                            ${dynamics.summary.criticalInsights.map(insight => `
+                                <div class="insight-card ${insight.type.toLowerCase()}">
+                                    <div class="insight-title">${insight.type}: ${insight.category}</div>
+                                    <div class="insight-message">${insight.message}</div>
+                                    <div class="insight-action">→ ${insight.action}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
                 `;
             }
 
@@ -2211,7 +2703,7 @@
                             document.getElementById('statCoherence').textContent = coherencePercent + '%';
 
                             const status = state.globalCoherence >= 0.7 ? 'Healthy' :
-                                         state.globalCoherence >= 0.5 ? 'Moderate' : 'Critical';
+                                state.globalCoherence >= 0.5 ? 'Moderate' : 'Critical';
                             document.getElementById('statStatus').textContent = status;
                         }
 
@@ -2269,7 +2761,7 @@
                             document.getElementById('statCoherence').textContent = coherencePercent + '%';
 
                             const status = state.globalCoherence >= 0.7 ? 'Healthy' :
-                                         state.globalCoherence >= 0.5 ? 'Moderate' : 'Critical';
+                                state.globalCoherence >= 0.5 ? 'Moderate' : 'Critical';
                             document.getElementById('statStatus').textContent = status;
                         }
 
@@ -2339,43 +2831,144 @@
         // Initialize
         setTimeout(checkSessionStorage, 1000);
 
-        // Handle Tuning Inputs
-        const tuningInputs = [
-            { id: 'rangeAlpha', key: 'ALPHA', display: 'valAlpha' },
-            { id: 'rangeBeta', key: 'BETA', display: 'valBeta' },
-            { id: 'rangeGamma', key: 'GAMMA', display: 'valGamma' },
-            { id: 'rangeDelta', key: 'DELTA', display: 'valDelta' },
-            { id: 'rangeKappa', key: 'KAPPA', display: 'valKappa' }
-        ];
 
-        tuningInputs.forEach(input => {
-            const el = document.getElementById(input.id);
-            const display = document.getElementById(input.display);
-            
-            if (el && display) {
-                el.addEventListener('input', (e) => {
-                    const val = parseFloat(e.target.value);
-                    display.textContent = val;
-                    
-                    if (window.Quannex && window.Quannex.updateTuning) {
-                        window.Quannex.updateTuning(input.key, val);
-                        
-                        // Trigger visual refresh
-                        if (window.refreshVisualization) {
-                            window.refreshVisualization();
-                        }
-                        
-                        // Update stats
-                        const state = window.Quannex.getState();
-                        const coherencePercent = (state.globalCoherence * 100).toFixed(1);
-                        document.getElementById('statCoherence').textContent = coherencePercent + '%';
-                    }
-                });
+
+        function checkPhaseTransitionWarning() {
+            if (!advancedAnalysisResults || !advancedAnalysisResults.dynamics) return;
+
+            const transitions = advancedAnalysisResults.dynamics.phaseTransitions;
+
+            if (transitions.isImminent) {
+                const warning = document.getElementById('phase-warning');
+                const message = document.getElementById('phase-warning-message');
+
+                message.textContent = `${transitions.nearestTransition.name} transition detected! ` +
+                    `${transitions.prediction.message}`;
+
+                warning.classList.add('visible');
+
+                // Hide after 10 seconds
+                setTimeout(() => {
+                    warning.classList.remove('visible');
+                }, 10000);
             }
-        });
+        }
 
         console.log('[3D View] 📡 Unified visualization initialized');
         console.log('[3D View] 🎨 Mode system ready - Standard/Advanced/Complete/Minimal');
+
     </script>
+    <!-- Harmonic Tuner Dashboard -->
+    <div class="harmonic-tuner" id="harmonicTuner">
+        <div class="tuner-toggle" id="tunerToggle">▲ Harmonic Tuner</div>
+
+        <!-- Alpha: Synergy -->
+        <div class="knob-group">
+            <div class="knob-label">Alpha<div class="knob-sublabel">Synergy</div>
+            </div>
+            <div class="info-icon" data-title="Alpha (Synergy)"
+                data-desc="Controls the blend between individual brilliance (Arithmetic) and collective synergy (Geometric). Low = Soloist, High = Orchestra.">
+                ?</div>
+            <div class="knob-control" id="knobAlpha" data-param="ALPHA" data-min="0" data-max="1" data-step="0.1"
+                data-value="0.6">
+                <svg class="knob-ring" viewBox="0 0 90 90">
+                    <circle class="knob-ring-bg" cx="45" cy="45" r="35"></circle>
+                    <circle class="knob-ring-value" cx="45" cy="45" r="35"></circle>
+                </svg>
+            </div>
+            <div class="knob-value-display" id="dispAlpha">0.6</div>
+        </div>
+
+        <!-- Beta: Structure -->
+        <div class="knob-group">
+            <div class="knob-label">Beta<div class="knob-sublabel">Structure</div>
+            </div>
+            <div class="info-icon" data-title="Beta (Structure)"
+                data-desc="Adjusts the rigidity of the organizational lattice. Low = Fluid/Organic, High = Crystalline/Stable.">
+                ?</div>
+            <div class="knob-control" id="knobBeta" data-param="BETA" data-min="0" data-max="1" data-step="0.1"
+                data-value="0.5">
+                <svg class="knob-ring" viewBox="0 0 90 90">
+                    <circle class="knob-ring-bg" cx="45" cy="45" r="35"></circle>
+                    <circle class="knob-ring-value" cx="45" cy="45" r="35"></circle>
+                </svg>
+            </div>
+            <div class="knob-value-display" id="dispBeta">0.5</div>
+        </div>
+
+        <!-- Resonance Meter -->
+        <div class="resonance-meter">
+            <div class="info-icon" style="top: 5px; right: 5px;" data-title="Resonance Meter"
+                data-desc="Visualizes the real-time coherence of the organization. Aim for the green zone (>80%) for optimal harmonic alignment.">
+                ?</div>
+            <div class="meter-scale">
+                <div class="meter-needle" id="meterNeedle"></div>
+            </div>
+            <div class="meter-value" id="meterValue">0%</div>
+            <div class="meter-label">Resonance</div>
+        </div>
+
+        <!-- Gamma: Balance -->
+        <div class="knob-group">
+            <div class="knob-label">Gamma<div class="knob-sublabel">Balance</div>
+            </div>
+            <div class="info-icon" data-title="Gamma (Balance)"
+                data-desc="Balances Internal Gravity (Culture) vs External Reach (Market). Low = Hunter, High = Builder.">
+                ?</div>
+            <div class="knob-control" id="knobGamma" data-param="GAMMA" data-min="0" data-max="1" data-step="0.1"
+                data-value="0.7">
+                <svg class="knob-ring" viewBox="0 0 90 90">
+                    <circle class="knob-ring-bg" cx="45" cy="45" r="35"></circle>
+                    <circle class="knob-ring-value" cx="45" cy="45" r="35"></circle>
+                </svg>
+            </div>
+            <div class="knob-value-display" id="dispGamma">0.7</div>
+        </div>
+
+        <!-- Delta: Shadow -->
+        <div class="knob-group">
+            <div class="knob-label">Delta<div class="knob-sublabel">Shadow</div>
+            </div>
+            <div class="info-icon" data-title="Delta (Shadow)"
+                data-desc="Controls sensitivity to hidden risks and friction. Low = Optimist, High = Analyst (Crisis Scan).">
+                ?</div>
+            <div class="knob-control" id="knobDelta" data-param="DELTA" data-min="0" data-max="1" data-step="0.1"
+                data-value="0.9">
+                <svg class="knob-ring" viewBox="0 0 90 90">
+                    <circle class="knob-ring-bg" cx="45" cy="45" r="35"></circle>
+                    <circle class="knob-ring-value" cx="45" cy="45" r="35"></circle>
+                </svg>
+            </div>
+            <div class="knob-value-display" id="dispDelta">0.9</div>
+        </div>
+
+        <!-- Kappa: Gain -->
+        <div class="knob-group">
+            <div class="knob-label">Kappa<div class="knob-sublabel">Gain</div>
+            </div>
+            <div class="info-icon" data-title="Kappa (Gain)"
+                data-desc="Amplifies weak signals to make them visible. Low = Noise Gate, High = Deep Scan.">?</div>
+            <div class="knob-control" id="knobKappa" data-param="KAPPA" data-min="1" data-max="10" data-step="0.5"
+                data-value="2.0">
+                <svg class="knob-ring" viewBox="0 0 90 90">
+                    <circle class="knob-ring-bg" cx="45" cy="45" r="35"></circle>
+                    <circle class="knob-ring-value" cx="45" cy="45" r="35"></circle>
+                </svg>
+            </div>
+            <div class="knob-value-display" id="dispKappa">2.0</div>
+        </div>
+
+        <!-- Tooltip Element -->
+        <div class="tuner-tooltip" id="tunerTooltip">
+            <div class="tooltip-title"></div>
+            <div class="tooltip-desc"></div>
+        </div>
+    </div>
+
+    <!-- Load Harmonic Tuner Logic -->
+    <script src="js/harmonic-tuner.js"></script>
+
 </body>
+
 </html>
+```
