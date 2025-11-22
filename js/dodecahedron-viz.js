@@ -443,6 +443,47 @@ function initDodecahedron() {
     };
 
     // ========================================
+    // PHILOSOPHICAL VISUAL FEEDBACK
+    // ========================================
+    window.updateVisualFeedback = function (params) {
+        // params: { ALPHA, BETA, GAMMA, DELTA, KAPPA }
+
+        // 1. GAMMA (Balance): Relational vs Internal
+        // Low Gamma = Relational = Stronger Edges (Pillars)
+        // High Gamma = Internal = Weaker Edges
+        if (params.GAMMA !== undefined) {
+            const edgeOpacity = 0.8 - (params.GAMMA * 0.6); // 0.0 -> 0.8, 1.0 -> 0.2
+            if (window.edgeLines) {
+                window.edgeLines.forEach(edges => {
+                    if (edges.material) {
+                        edges.material.opacity = edgeOpacity;
+                        edges.material.needsUpdate = true;
+                    }
+                });
+            }
+        }
+
+        // 2. DELTA (Shadow): Non-Duality vs Local Reality
+        // Low Delta = Non-Duality = See the Shadow (Transparency)
+        // High Delta = Local Reality = Solid Faces
+        if (params.DELTA !== undefined) {
+            const isNonDual = params.DELTA < 0.5;
+            const opacity = isNonDual ? 0.6 : 1.0;
+            const transparent = isNonDual;
+
+            if (window.dodecahedronMaterials) {
+                window.dodecahedronMaterials.forEach(mat => {
+                    mat.transparent = transparent;
+                    mat.opacity = opacity;
+                    // If non-dual, we want to see the inside/back faces clearly
+                    mat.side = THREE.DoubleSide;
+                    mat.needsUpdate = true;
+                });
+            }
+        }
+    };
+
+    // ========================================
     // INTERACTION
     // ========================================
 

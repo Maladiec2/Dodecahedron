@@ -74,6 +74,33 @@ class RotaryKnob {
         });
     }
 
+    // Philosophical Tooltip Messages
+    getPhilosophicalMessage(value) {
+        switch (this.param) {
+            case 'ALPHA': // Synergy
+                if (value < 0.3) return "Non-Linear Magic: The whole is greater than sum of parts.";
+                if (value > 0.8) return "Pragmatic Realism: Trusting the simple average.";
+                return "Synergistic Balance: Grounded magic.";
+            case 'BETA': // Structure
+                if (Math.abs(value - 0.5) < 0.1) return "Perfect Symmetry: Equal influence.";
+                return "Asymmetrical Flow: Directed influence.";
+            case 'GAMMA': // Balance
+                if (value < 0.3) return "Relational Dependency: We are nothing without our connections.";
+                if (value > 0.8) return "Radical Accountability: The 'Ball' is everything.";
+                return "Balanced Ecosystem: Strong core, strong bonds.";
+            case 'DELTA': // Shadow
+                if (value < 0.3) return "Non-Duality: We are inextricably linked to our shadow.";
+                if (value > 0.8) return "Local Reality: I am separate from my shadow.";
+                return "Axis Awareness: Acknowledging the polar opposite.";
+            case 'KAPPA': // Gain
+                if (value < 1.5) return "High Inertia: Gentle, forgiving system.";
+                if (value > 4.0) return "High Sensitivity: Reactive and emotional.";
+                return "Balanced Responsiveness.";
+            default:
+                return "";
+        }
+    }
+
     updateVisuals() {
         // Update display text
         if (this.display) {
@@ -114,6 +141,13 @@ class RotaryKnob {
             // Trigger visual refresh
             if (window.refreshVisualization) {
                 window.refreshVisualization();
+            }
+
+            // Trigger Philosophical Visual Feedback
+            if (window.updateVisualFeedback) {
+                const params = {};
+                params[this.param] = this.value;
+                window.updateVisualFeedback(params);
             }
 
             // Update meter
@@ -158,11 +192,13 @@ window.updateResonanceMeter = function () {
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[Harmonic Tuner] 🎸 Initializing...');
 
+    // Store knobs for external access
+    const knobsMap = {};
+
     // Initialize Knobs
-    const knobs = [];
     ['Alpha', 'Beta', 'Gamma', 'Delta', 'Kappa'].forEach(name => {
         const knob = new RotaryKnob(`knob${name}`);
-        knobs.push(knob);
+        knobsMap[name] = knob;
     });
 
     // Toggle Panel Logic
@@ -193,10 +229,28 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.info-icon').forEach(icon => {
             icon.addEventListener('mouseenter', (e) => {
                 const title = e.target.dataset.title;
-                const desc = e.target.dataset.desc;
+                let desc = e.target.dataset.desc;
+
+                // Dynamic Storytelling: Append current state philosophy
+                // Find which knob this icon belongs to
+                const knobGroup = icon.closest('.knob-group');
+                if (knobGroup) {
+                    const knobEl = knobGroup.querySelector('.knob-control');
+                    if (knobEl) {
+                        const param = knobEl.dataset.param;
+                        // Find the knob instance (a bit hacky, but works since we know the param)
+                        const knobName = param.charAt(0) + param.slice(1).toLowerCase(); // ALPHA -> Alpha
+                        const knobInstance = knobsMap[knobName];
+
+                        if (knobInstance) {
+                            const philosophy = knobInstance.getPhilosophicalMessage(knobInstance.value);
+                            desc += `<br><br><span style="color: #00ffcc; font-style: italic;">"${philosophy}"</span>`;
+                        }
+                    }
+                }
 
                 tooltipTitle.textContent = title;
-                tooltipDesc.textContent = desc;
+                tooltipDesc.innerHTML = desc; // Use innerHTML for styling
 
                 // Position tooltip above the icon
                 const rect = e.target.getBoundingClientRect();
@@ -217,6 +271,32 @@ document.addEventListener('DOMContentLoaded', () => {
             icon.addEventListener('mouseleave', () => {
                 tooltip.classList.remove('visible');
             });
+        });
+    }
+
+    // God Mode (Non-Duality) Button Logic
+    const godModeBtn = document.getElementById('godModeBtn');
+    if (godModeBtn) {
+        godModeBtn.addEventListener('click', () => {
+            console.log('♾️ God Mode Activated: Non-Duality');
+
+            // Set Delta to 0.5 (Non-Duality)
+            if (knobsMap['Delta']) {
+                knobsMap['Delta'].value = 0.5;
+                knobsMap['Delta'].updateVisuals();
+                knobsMap['Delta'].emitChange();
+            }
+
+            // Set Beta to 0.5 (Perfect Symmetry)
+            if (knobsMap['Beta']) {
+                knobsMap['Beta'].value = 0.5;
+                knobsMap['Beta'].updateVisuals();
+                knobsMap['Beta'].emitChange();
+            }
+
+            // Visual Feedback for the button itself
+            godModeBtn.classList.add('active');
+            setTimeout(() => godModeBtn.classList.remove('active'), 500);
         });
     }
 
