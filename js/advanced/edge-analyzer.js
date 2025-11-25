@@ -203,10 +203,17 @@ export class EdgeAnalyzer {
    *
    * @param {Array<Object>} faces - Array of 12 face objects
    * @param {Map<string, Object>} edgeKPIs - Optional map of edge KPIs
+   * @param {Array<Object>} backendEdges - Optional array of edges from Quannex.getState()
    * @returns {Array<Object>} Array of edge analyses with full CSV metadata
    */
-  calculateAllEdges(faces, edgeKPIs = null) {
+  calculateAllEdges(faces, edgeKPIs = null, backendEdges = null) {
     const edgeAnalyses = [];
+
+    // Create a map for faster lookup if backend edges are provided
+    const backendMap = new Map();
+    if (backendEdges) {
+      backendEdges.forEach(e => backendMap.set(e.id, e));
+    }
 
     this.edgeDefinitions.forEach(edgeDef => {
       const face1 = faces.find(f => f.id === edgeDef.face1);
@@ -225,11 +232,27 @@ export class EdgeAnalyzer {
 
       const edgeKPI = edgeKPIs ? edgeKPIs.get(edgeDef.id) : null;
 
-      const tension = this.calculateTension(face1, face2, element, edgeKPI);
-      const breathRatio = this.calculateBreathRatio(face1, face2);
-      const flowDirection = this.getFlowDirection(breathRatio);
-      const healthStatus = this.getHealthStatus(tension);
-      const color = this.getTensionColor(tension);
+      // Check for backend data
+      const backendEdge = backendMap.get(edgeDef.id);
+
+      let tension, breathRatio, flowDirection, healthStatus, color;
+
+      if (backendEdge) {
+        // Use backend physics (Single Source of Truth)
+        tension = backendEdge.tension;
+        breathRatio = backendEdge.breathRatio;
+        flowDirection = backendEdge.flowDirection;
+        // Re-derive presentation values from the authoritative physics
+        healthStatus = this.getHealthStatus(tension);
+        color = this.getTensionColor(tension);
+      } else {
+        // Fallback to local calculation
+        tension = this.calculateTension(face1, face2, element, edgeKPI);
+        breathRatio = this.calculateBreathRatio(face1, face2);
+        flowDirection = this.getFlowDirection(breathRatio);
+        healthStatus = this.getHealthStatus(tension);
+        color = this.getTensionColor(tension);
+      }
 
       // Build comprehensive edge object with CSV data merged in
       const edgeData = {
@@ -261,7 +284,10 @@ export class EdgeAnalyzer {
         question: csvData ? csvData.question : null,
         csvTension: csvData ? csvData.csvTension : null,
         csvBreathRatio: csvData ? csvData.csvBreathRatio : null,
-        hasCSVData: csvData !== null
+        hasCSVData: csvData !== null,
+
+        // Flag source
+        source: backendEdge ? 'backend' : 'frontend'
       };
 
       edgeAnalyses.push(edgeData);

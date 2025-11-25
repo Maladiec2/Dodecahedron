@@ -15,18 +15,18 @@ class SpectralAnalyzer {
     // The Dodecahedron Graph Laplacian Matrix (L)
     // This 12x12 matrix encodes the connectivity structure of the dodecahedron
     this.L = [
-      [ 5, -1,  0,  0, -1, -1,  0, -1, -1,  0,  0,  0],
-      [-1,  5, -1,  0,  0, -1,  0,  0, -1, -1,  0,  0],
-      [ 0, -1,  5, -1,  0, -1,  0,  0,  0, -1, -1,  0],
-      [ 0,  0, -1,  5, -1, -1, -1,  0,  0,  0, -1,  0],
-      [-1,  0,  0, -1,  5, -1, -1, -1,  0,  0,  0,  0],
-      [-1, -1, -1, -1, -1,  5,  0,  0,  0,  0,  0,  0],
-      [ 0,  0,  0, -1, -1,  0,  5, -1,  0,  0, -1, -1],
-      [-1,  0,  0,  0, -1,  0, -1,  5, -1,  0,  0, -1],
-      [-1, -1,  0,  0,  0,  0,  0, -1,  5, -1,  0, -1],
-      [ 0, -1, -1,  0,  0,  0,  0,  0, -1,  5, -1, -1],
-      [ 0,  0, -1, -1,  0,  0, -1,  0,  0, -1,  5, -1],
-      [ 0,  0,  0,  0,  0,  0, -1, -1, -1, -1, -1,  5]
+      [5, -1, 0, 0, -1, -1, 0, -1, -1, 0, 0, 0],
+      [-1, 5, -1, 0, 0, -1, 0, 0, -1, -1, 0, 0],
+      [0, -1, 5, -1, 0, -1, 0, 0, 0, -1, -1, 0],
+      [0, 0, -1, 5, -1, -1, -1, 0, 0, 0, -1, 0],
+      [-1, 0, 0, -1, 5, -1, -1, -1, 0, 0, 0, 0],
+      [-1, -1, -1, -1, -1, 5, 0, 0, 0, 0, 0, 0],
+      [0, 0, 0, -1, -1, 0, 5, -1, 0, 0, -1, -1],
+      [-1, 0, 0, 0, -1, 0, -1, 5, -1, 0, 0, -1],
+      [-1, -1, 0, 0, 0, 0, 0, -1, 5, -1, 0, -1],
+      [0, -1, -1, 0, 0, 0, 0, 0, -1, 5, -1, -1],
+      [0, 0, -1, -1, 0, 0, -1, 0, 0, -1, 5, -1],
+      [0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, 5]
     ];
 
     // The Dodecahedron Eigenvector Matrix (U)
@@ -34,18 +34,18 @@ class SpectralAnalyzer {
     // Eigenvalues: λ = [0, 2.394, 2.394, 2.394, 5.584, 5.584, 5.584, 6.854, 6.854, 8.146, 8.146, 8.146]
     this.U = [
       // Mode 1    2       3       4       5       6       7       8       9       10      11      12
-      [ 0.289, -0.421,  0.000,  0.250,  0.000, -0.354, -0.289,  0.408,  0.000,  0.368,  0.000, -0.421],  // Face 1
-      [ 0.289, -0.368,  0.250, -0.325,  0.354, -0.289,  0.162, -0.162,  0.408, -0.250,  0.500,  0.000],  // Face 2
-      [ 0.289, -0.368, -0.250, -0.325, -0.354, -0.289,  0.162, -0.162, -0.408, -0.250, -0.500,  0.000],  // Face 3
-      [ 0.289, -0.250,  0.000,  0.408,  0.000,  0.421, -0.368,  0.250,  0.000,  0.162,  0.000,  0.577],  // Face 4
-      [ 0.289, -0.250,  0.408,  0.162,  0.577,  0.000,  0.250,  0.250, -0.162, -0.421, -0.325, -0.289],  // Face 5
-      [ 0.289,  0.000,  0.368, -0.368, -0.577,  0.162,  0.250, -0.421, -0.250,  0.000,  0.325, -0.162],  // Face 6
-      [ 0.289,  0.162, -0.368, -0.368,  0.577,  0.162,  0.250, -0.421,  0.250,  0.000, -0.325, -0.162],  // Face 7
-      [ 0.289,  0.250, -0.408,  0.162,  0.000,  0.500, -0.421,  0.162, -0.250,  0.289,  0.162,  0.289],  // Face 8
-      [ 0.289,  0.250,  0.408,  0.162, -0.354, -0.162,  0.289,  0.162,  0.250, -0.421, -0.162,  0.289],  // Face 9
-      [ 0.289,  0.408, -0.162,  0.250,  0.354,  0.368,  0.000, -0.500,  0.125,  0.125, -0.289, -0.162],  // Face 10
-      [ 0.289,  0.408,  0.162,  0.250,  0.000, -0.368,  0.000,  0.000,  0.500,  0.125,  0.289, -0.162],  // Face 11
-      [ 0.289,  0.577,  0.000, -0.500,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000,  0.000, -0.577]   // Face 12
+      [0.289, -0.421, 0.000, 0.250, 0.000, -0.354, -0.289, 0.408, 0.000, 0.368, 0.000, -0.421],  // Face 1
+      [0.289, -0.368, 0.250, -0.325, 0.354, -0.289, 0.162, -0.162, 0.408, -0.250, 0.500, 0.000],  // Face 2
+      [0.289, -0.368, -0.250, -0.325, -0.354, -0.289, 0.162, -0.162, -0.408, -0.250, -0.500, 0.000],  // Face 3
+      [0.289, -0.250, 0.000, 0.408, 0.000, 0.421, -0.368, 0.250, 0.000, 0.162, 0.000, 0.577],  // Face 4
+      [0.289, -0.250, 0.408, 0.162, 0.577, 0.000, 0.250, 0.250, -0.162, -0.421, -0.325, -0.289],  // Face 5
+      [0.289, 0.000, 0.368, -0.368, -0.577, 0.162, 0.250, -0.421, -0.250, 0.000, 0.325, -0.162],  // Face 6
+      [0.289, 0.162, -0.368, -0.368, 0.577, 0.162, 0.250, -0.421, 0.250, 0.000, -0.325, -0.162],  // Face 7
+      [0.289, 0.250, -0.408, 0.162, 0.000, 0.500, -0.421, 0.162, -0.250, 0.289, 0.162, 0.289],  // Face 8
+      [0.289, 0.250, 0.408, 0.162, -0.354, -0.162, 0.289, 0.162, 0.250, -0.421, -0.162, 0.289],  // Face 9
+      [0.289, 0.408, -0.162, 0.250, 0.354, 0.368, 0.000, -0.500, 0.125, 0.125, -0.289, -0.162],  // Face 10
+      [0.289, 0.408, 0.162, 0.250, 0.000, -0.368, 0.000, 0.000, 0.500, 0.125, 0.289, -0.162],  // Face 11
+      [0.289, 0.577, 0.000, -0.500, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, -0.577]   // Face 12
     ];
 
     // Eigenvalues corresponding to each eigenvector (mode)
@@ -64,7 +64,7 @@ class SpectralAnalyzer {
     // Based on the 6 harmonic pairs from CSV_Breath_Ratios.csv
     this.projectionFaces = [11, 7, 8, 4, 5, 6];  // Exhale/Action pole
     this.receptionFaces = [1, 2, 3, 9, 10, 12];   // Inhale/Being pole
-    
+
     // 🔧 MATH FIX: Normalize Eigenvectors
     // Ensure modes 2-12 sum to exactly zero (orthogonality to DC mode)
     // This corrects any rounding errors in the hardcoded U matrix
@@ -83,7 +83,7 @@ class SpectralAnalyzer {
         sum += this.U[row][col];
       }
       const mean = sum / 12;
-      
+
       // 2. Subtract mean from each element
       for (let row = 0; row < 12; row++) {
         this.U[row][col] -= mean;
@@ -253,38 +253,50 @@ class SpectralAnalyzer {
    * @returns {Object} Complete spectral analysis results
    */
   analyze(faceEnergies) {
-    // Step 1: Calculate modal amplitudes
-    const modalAmplitudes = this.calculateModalAmplitudes(faceEnergies);
+    try {
+      // Step 1: Calculate modal amplitudes
+      const modalAmplitudes = this.calculateModalAmplitudes(faceEnergies);
 
-    // Step 2: Identify dominant mode
-    const dominantMode = this.identifyDominantMode(modalAmplitudes);
+      // Step 2: Identify dominant mode
+      let dominantMode = this.identifyDominantMode(modalAmplitudes);
 
-    // Step 3: Calculate delta vector
-    const deltaVector = this.calculateDeltaVector(dominantMode);
+      // Step 3: Calculate delta vector
+      let deltaVector = [];
+      if (dominantMode) {
+        deltaVector = this.calculateDeltaVector(dominantMode);
+      } else {
+        console.warn('⚠️ No dominant mode found (System Empty/Balanced). Using dummy mode.');
+        dominantMode = { mode: 0, eigenvalue: 0, amplitude: 0, interpretation: 'System Balanced / Empty' };
+      }
 
-    // Step 4: Calculate diagnostic indicators
-    const babScore = this.calculateBABScore(faceEnergies);
-    const dissonanceIndex = this.calculateDissonanceIndex(deltaVector, faceEnergies);
+      // Step 4: Calculate diagnostic indicators
+      const babScore = this.calculateBABScore(faceEnergies);
+      const dissonanceIndex = this.calculateDissonanceIndex(deltaVector, faceEnergies);
 
-    // Step 5: Identify corrective actions
-    const correctiveActions = this.identifyCorrectiveActions(deltaVector, faceEnergies);
+      // Step 5: Identify corrective actions
+      const correctiveActions = this.identifyCorrectiveActions(deltaVector, faceEnergies);
 
-    return {
-      modalAmplitudes: modalAmplitudes,
-      dominantMode: {
-        mode: dominantMode.mode,
-        eigenvalue: dominantMode.eigenvalue,
-        amplitude: dominantMode.amplitude,
-        interpretation: dominantMode.interpretation
-      },
-      deltaVector: deltaVector,
-      diagnostics: {
-        beingActionBalance: babScore,
-        dissonanceIndex: dissonanceIndex
-      },
-      correctiveActions: correctiveActions,
-      summary: this.generateSummary(dominantMode, babScore, dissonanceIndex)
-    };
+      return {
+        modalAmplitudes: modalAmplitudes,
+        dominantMode: {
+          mode: dominantMode.mode,
+          eigenvalue: dominantMode.eigenvalue,
+          amplitude: dominantMode.amplitude,
+          interpretation: dominantMode.interpretation
+        },
+        deltaVector: deltaVector,
+        diagnostics: {
+          beingActionBalance: babScore,
+          dissonanceIndex: dissonanceIndex
+        },
+        correctiveActions: correctiveActions,
+        summary: this.generateSummary(dominantMode, babScore, dissonanceIndex)
+      };
+    } catch (error) {
+      console.error('❌ Error in SpectralAnalyzer.analyze:', error);
+      console.error(error.stack);
+      throw error;
+    }
   }
 
   /**
@@ -416,8 +428,8 @@ class SpectralAnalyzer {
       recommendations.push('Local issues detected - can be addressed through targeted interventions');
     }
 
-    return recommendations.length > 0 
-      ? recommendations.join('. ') 
+    return recommendations.length > 0
+      ? recommendations.join('. ')
       : 'System is in good balance - maintain current trajectory';
   }
 }

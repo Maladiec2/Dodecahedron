@@ -85,13 +85,13 @@ export class VertexAnalyzer {
     // We strictly look for lines starting with "V" followed by a number
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
-      
+
       // Simple split by comma, but handle quotes if necessary (though this CSV seems simple)
       // Using a regex to handle quoted fields would be safer
       const values = this.parseCSVLine(line);
-      
+
       const vertexId = values[0] ? values[0].trim() : null;
-      
+
       if (!vertexId || !vertexId.startsWith('V')) continue;
 
       // Map CSV columns to properties
@@ -99,17 +99,17 @@ export class VertexAnalyzer {
       // Col 15: Departments/Archetype ("Financial Capital , Intellectual Capital...")
       // We can also extract the detailed text descriptions from the bottom if we want, 
       // but for now let's map the main table.
-      
+
       // The CSV structure is complex with text blocks at the bottom.
       // We'll focus on the main table rows first.
-      
+
       vertexMap[vertexId] = {
         id: vertexId,
         archetype: values[15] ? values[15].trim().replace(/^"|"$/g, '') : "Unknown Convergence",
         // We can add more fields here if needed
       };
     }
-    
+
     // Extract Rich Metadata from the bottom text blocks (V-Mean, Vortex Strength, etc.)
     // This is "hardcoded" or "pattern matched" from the specific CSV structure provided
     // The user wants "The Spin", "Ambient Temperature", "Action"
@@ -118,7 +118,7 @@ export class VertexAnalyzer {
     // The CSV *does* have specific columns:
     // Col 8: Macro Vortex Strength (?)
     // Col 13: Overall Vertex Coherence
-    
+
     return vertexMap;
   }
 
@@ -310,10 +310,17 @@ export class VertexAnalyzer {
    * Calculate all 20 vertices for the dodecahedron
    *
    * @param {Array<Object>} faces - Array of 12 face objects
+   * @param {Array<Object>} backendVertices - Optional array of vertices from Quannex.getState()
    * @returns {Array<Object>} Array of vertex analyses
    */
-  calculateAllVertices(faces) {
+  calculateAllVertices(faces, backendVertices = null) {
     const vertexAnalyses = [];
+
+    // Create a map for faster lookup if backend vertices are provided
+    const backendMap = new Map();
+    if (backendVertices) {
+      backendVertices.forEach(v => backendMap.set(v.id, v));
+    }
 
     this.vertexDefinitions.forEach(vertexDef => {
       // Get the 3 faces that meet at this vertex
@@ -326,20 +333,48 @@ export class VertexAnalyzer {
         return;
       }
 
-      const strength = this.calculateVortexStrength(convergingFaces);
-      const direction = this.calculateVortexDirection(convergingFaces);
-      const coherence = this.calculateCoherence(convergingFaces);
-      const vortexType = this.getVortexType(strength, direction);
-      const healthStatus = this.getHealthStatus(coherence);
-      const color = this.getVortexColor(strength, direction, coherence);
-      const isLeverage = this.isLeveragePoint(strength, coherence);
+      // Check for backend data
+      const backendVertex = backendMap.get(vertexDef.id); // Note: backend uses numeric ID for vertices? Let's check main.js
+      // In main.js Vertex class: this.id = config.id || '';
+      // In createVertices: id: row.Vertex_ID || row.id
+      // The CSV uses "V1", "V2".
+      // Let's assume backend ID matches the definition ID or we might need to handle "V" prefix.
+      // Wait, vertexDef.id is number (1, 2, 3). Backend might be string "V1" or number 1.
+      // Let's try both lookups just in case.
+      const backendVertexV = backendMap.get(`V${vertexDef.id}`);
+      const backendVertexNum = backendMap.get(vertexDef.id);
+      const activeBackendVertex = backendVertexV || backendVertexNum;
+
+      let strength, direction, coherence, vortexType, healthStatus, color, isLeverage;
+
+      if (activeBackendVertex) {
+        // Use backend physics
+        strength = activeBackendVertex.energy; // Mapped from vortexEnergy
+        direction = activeBackendVertex.vortexDirection;
+        coherence = activeBackendVertex.coherence;
+        isLeverage = activeBackendVertex.isLeveragePoint;
+
+        // Re-derive presentation
+        vortexType = this.getVortexType(strength, direction);
+        healthStatus = this.getHealthStatus(coherence);
+        color = this.getVortexColor(strength, direction, coherence);
+      } else {
+        // Fallback to local calculation
+        strength = this.calculateVortexStrength(convergingFaces);
+        direction = this.calculateVortexDirection(convergingFaces);
+        coherence = this.calculateCoherence(convergingFaces);
+        vortexType = this.getVortexType(strength, direction);
+        healthStatus = this.getHealthStatus(coherence);
+        color = this.getVortexColor(strength, direction, coherence);
+        isLeverage = this.isLeveragePoint(strength, coherence);
+      }
 
       // Merge CSV Data if available
       let csvInfo = null;
       // Map numeric ID (1) to CSV ID (V1)
       const csvId = `V${vertexDef.id}`;
       if (this.csvData && this.csvData[csvId]) {
-          csvInfo = this.csvData[csvId];
+        csvInfo = this.csvData[csvId];
       }
 
       vertexAnalyses.push({
@@ -357,7 +392,9 @@ export class VertexAnalyzer {
         isLeveragePoint: isLeverage,
         color: color,
         // Add narrative elements
-        narrative: this.generateVertexNarrative(strength, direction, coherence, csvInfo ? csvInfo.archetype : vertexDef.archetype)
+        narrative: this.generateVertexNarrative(strength, direction, coherence, csvInfo ? csvInfo.archetype : vertexDef.archetype),
+        // Flag source
+        source: activeBackendVertex ? 'backend' : 'frontend'
       });
     });
 
@@ -368,30 +405,30 @@ export class VertexAnalyzer {
    * Generate narrative for the vertex
    */
   generateVertexNarrative(strength, direction, coherence, archetype) {
-      let description = "";
-      
-      if (strength > 0.7) {
-          description = "This is a high-intensity vortex. The forces here are spinning rapidly, creating significant transformation pressure.";
-      } else if (strength < 0.3) {
-          description = "This is a calm, stable junction. The energies are balanced and dormant.";
-      } else {
-          description = "Active circulation. There is healthy movement and exchange between these domains.";
-      }
+    let description = "";
 
-      let action = "";
-      if (coherence < 0.4) {
-          action = "High dissonance detected. Requires immediate alignment of the three converging domains.";
-      } else if (coherence > 0.8) {
-          action = "High resonance. A potential hub for scaling best practices.";
-      } else {
-          action = "Monitor for potential friction or synergy opportunities.";
-      }
+    if (strength > 0.7) {
+      description = "This is a high-intensity vortex. The forces here are spinning rapidly, creating significant transformation pressure.";
+    } else if (strength < 0.3) {
+      description = "This is a calm, stable junction. The energies are balanced and dormant.";
+    } else {
+      description = "Active circulation. There is healthy movement and exchange between these domains.";
+    }
 
-      return {
-          description: description,
-          action: action,
-          spinLabel: strength > 0.5 ? (direction > 0 ? "Ascending Spiral" : "Descending Spiral") : "Neutral Flow"
-      };
+    let action = "";
+    if (coherence < 0.4) {
+      action = "High dissonance detected. Requires immediate alignment of the three converging domains.";
+    } else if (coherence > 0.8) {
+      action = "High resonance. A potential hub for scaling best practices.";
+    } else {
+      action = "Monitor for potential friction or synergy opportunities.";
+    }
+
+    return {
+      description: description,
+      action: action,
+      spinLabel: strength > 0.5 ? (direction > 0 ? "Ascending Spiral" : "Descending Spiral") : "Neutral Flow"
+    };
   }
 
   /**
@@ -461,8 +498,8 @@ export class VertexAnalyzer {
         priority: vertex.vortexStrength,
         direction: direction,
         message: `High leverage at "${vertex.archetype}" (Vertex ${vertex.id}). ` +
-                 `Strong ${momentum} momentum with low coherence across ${vertex.faceNames.join(', ')}. ` +
-                 `Small interventions here will cascade through connected faces.`
+          `Strong ${momentum} momentum with low coherence across ${vertex.faceNames.join(', ')}. ` +
+          `Small interventions here will cascade through connected faces.`
       });
     });
 

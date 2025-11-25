@@ -43,22 +43,6 @@ function parseCSV(csvText) {
   return data;
 }
 
-/**
- * Load CSV file from data folder
- * @param {string} filename - Name of CSV file
- * @returns {Promise<Array<Object>>} Parsed CSV data
- */
-async function loadCSV(filename) {
-  try {
-    const response = await fetch(`./data/${filename}`);
-    const text = await response.text();
-    return parseCSV(text);
-  } catch (error) {
-    console.error(`Failed to load ${filename}:`, error);
-    return [];
-  }
-}
-
 // ========================================
 // CONFIGURATION: Tuning Constants
 // ========================================
@@ -311,9 +295,6 @@ class Face {
     // Blend Ball and Pillars using Gamma
     this._localCoherence = (this.tuning.GAMMA * ballScore) + ((1 - this.tuning.GAMMA) * rawPillarAvg);
 
-    // Apply symmetry penalty (optional, from reference logic)
-    // this._localCoherence *= (0.8 + 0.2 * this.pillarSymmetry);
-
     return this._localCoherence;
   }
 
@@ -331,10 +312,6 @@ class Face {
     // The Axis Coherence Factor (Delta)
     // If Delta is 0.9, we are 90% local, 10% shadow
     this._faceEnergy = (this.tuning.DELTA * local) + ((1 - this.tuning.DELTA) * opposing);
-
-    // Apply Sensitivity Amplifier (Kappa) - S-Curve or Linear Multiplier?
-    // Simple multiplier cap for now, or logistic function if desired.
-    // Reference CSV implies a complex formula, but for POC we keep it linear but sensitive.
 
     return this._faceEnergy;
   }
@@ -412,6 +389,158 @@ class Face {
 }
 
 // ========================================
+// MODEL: Edge (Narrative Tension)
+// ========================================
+
+/**
+ * Represents a connection between two faces
+ * Models the "Narrative Tension" or relationship archetype
+ */
+class Edge {
+  constructor(config) {
+    this.id = config.id || '';
+    this.faceAId = parseInt(config.faceAId) || 0;
+    this.faceBId = parseInt(config.faceBId) || 0;
+    this.archetype = config.archetype || '';
+    this.description = config.description || '';
+
+    // State
+    this.tension = 0; // 0 (Dissonance) to 1 (Resonance)
+    this.status = 'Neutral';
+    this.breathRatio = 0;
+    this.flowDirection = 'balanced';
+    this.element = config.element || 'Ether';
+  }
+
+  /**
+   * Calculate tension based on the energy of connected faces
+   * @param {Face} faceA 
+   * @param {Face} faceB 
+   */
+  calculateTension(faceA, faceB) {
+    if (!faceA || !faceB) return 0;
+
+    const e1 = faceA.faceEnergy;
+    const e2 = faceB.faceEnergy;
+
+    // 1. Energy Delta (Difference)
+    const delta = Math.abs(e1 - e2);
+
+    // 2. Breath Ratio (Flow Direction)
+    // Positive = expansion (A to B), Negative = contraction (B to A)
+    // Normalized to -1 to +1 range
+    this.breathRatio = Math.max(-1.0, Math.min(1.0, (e2 - e1) * 2));
+
+    if (Math.abs(this.breathRatio) < 0.1) this.flowDirection = 'balanced';
+    else this.flowDirection = this.breathRatio > 0 ? 'expansion' : 'contraction';
+
+    // 3. Elemental Multiplier
+    const multipliers = {
+      'Fire': 1.3,    // Fire amplifies tension and flow
+      'Water': 0.9,   // Water smooths and dampens
+      'Earth': 0.8,   // Earth stabilizes and grounds
+      'Air': 1.1,     // Air accelerates flow
+      'Ether': 1.0    // Ether is neutral/balanced
+    };
+    const multiplier = multipliers[this.element] || 1.0;
+
+    // 4. Harmonic Resonance (Similarity)
+    if (e1 > 0.6 && e2 > 0.6) {
+      this.tension = 0.9; // High Synergy
+      this.status = 'Synergetic';
+    } else if (e1 < 0.4 && e2 < 0.4) {
+      this.tension = 0.2; // Depleted
+      this.status = 'Depleted';
+    } else {
+      // Base tension from delta, modulated by element
+      const baseTension = 0.5 + (delta / 2);
+      this.tension = Math.min(1.0, Math.max(0.0, baseTension * multiplier));
+      this.status = delta > 0.4 ? 'Flowing' : 'Stable';
+    }
+
+    return this.tension;
+  }
+}
+
+// ========================================
+// MODEL: Vertex (Triadic Synergy)
+// ========================================
+
+/**
+ * Represents the intersection of three faces (The Vortex)
+ * Models the synergy where three domains meet
+ */
+class Vertex {
+  constructor(config) {
+    this.id = config.id || '';
+    this.faceIds = config.faceIds || []; // Array of 3 face IDs
+    this.name = config.name || '';
+
+    // State
+    this.vortexEnergy = 0;
+    this.status = 'Dormant';
+    this.vortexDirection = 0; // -1 (Down) to +1 (Up)
+    this.coherence = 0; // 0 (Chaotic) to 1 (Coherent)
+    this.isLeveragePoint = false;
+  }
+
+  /**
+   * Calculate Vortex Energy (Triadic Synergy)
+   * @param {Array<Face>} faces - Array of 3 Face objects
+   */
+  calculateVortexEnergy(faces) {
+    if (!faces || faces.length !== 3) return 0;
+
+    const energies = faces.map(f => f.faceEnergy);
+
+    // 1. The Triad Average
+    const avg = energies.reduce((a, b) => a + b, 0) / 3;
+
+    // 2. The Weakest Link (Limiting Factor)
+    const min = Math.min(...energies);
+
+    // 3. Vortex Logic:
+    // A vortex requires ALL THREE to be active to spin.
+    // If one is dead (0), the vortex collapses.
+    // Formula: Average * (Min / Average)^0.5
+    // This penalizes imbalance. If all are equal, it equals the average.
+
+    if (avg === 0) {
+      this.vortexEnergy = 0;
+    } else {
+      this.vortexEnergy = avg * Math.sqrt(min / avg);
+    }
+
+    // 4. Vortex Direction (Upward/Downward Spiral)
+    // Positive = upward spiral (generative), Negative = downward spiral (degenerative)
+    this.vortexDirection = Math.max(-1.0, Math.min(1.0, (avg - 0.5) * 2));
+
+    // 5. Coherence (Balance)
+    // High coherence = faces are well-balanced
+    // Low coherence = faces are very different
+    const [f1, f2, f3] = energies;
+    const diff12 = Math.abs(f1 - f2);
+    const diff23 = Math.abs(f2 - f3);
+    const diff31 = Math.abs(f3 - f1);
+    const avgDiff = (diff12 + diff23 + diff31) / 3;
+    // Maximum possible average difference is ~0.667
+    this.coherence = Math.max(0.0, Math.min(1.0, 1.0 - (avgDiff / 0.667)));
+
+    // 6. Leverage Point
+    // High strength + low coherence = opportunity for transformation
+    this.isLeveragePoint = this.vortexEnergy > 0.7 && this.coherence < 0.5;
+
+    // Status
+    if (this.vortexEnergy > 0.8) this.status = 'Radiant Vortex';
+    else if (this.vortexEnergy > 0.5) this.status = 'Active Flow';
+    else if (this.vortexEnergy > 0.3) this.status = 'Weak Swirl';
+    else this.status = 'Stagnant';
+
+    return this.vortexEnergy;
+  }
+}
+
+// ========================================
 // ENGINE: Dodecahedron System
 // ========================================
 
@@ -432,14 +561,32 @@ class DodecahedronEngine {
   }
 
   /**
+   * Load CSV file from data folder
+   * @param {string} filename - Name of CSV file
+   * @returns {Promise<Array<Object>>} Parsed CSV data
+   */
+  async loadCSV(filename) {
+    try {
+      const response = await fetch(`./data/${filename}`);
+      const text = await response.text();
+      return parseCSV(text);
+    } catch (error) {
+      console.error(`Error loading ${filename}:`, error);
+      return [];
+    }
+  }
+
+  /**
    * Initialize system from CSV data
    */
   async initialize() {
     console.log('🌟 Initializing Quannex Coherence Engine...');
 
     // Load CSV data
-    const kpiData = await loadCSV('CSV_KPI_DATABASE.csv');
-    const faceData = await loadCSV('CSV_FACE_MODELS.csv');
+    const kpiData = await this.loadCSV('CSV_KPI_DATABASE.csv');
+    const faceData = await this.loadCSV('CSV_FACE_MODELS.csv');
+    const edgeData = await this.loadCSV('CSV_Edge_tension_Map.csv');
+    const vertexData = await this.loadCSV('CSV_Vortex_Map.csv');
 
     // Create KPIs
     this.createKPIs(kpiData);
@@ -447,11 +594,16 @@ class DodecahedronEngine {
     // Create Faces (simplified for POC)
     this.createFaces();
 
+    // Create Edges and Vertices
+    this.createEdges(edgeData);
+    this.createVertices(vertexData);
+
     // Calculate initial state
     this.recalculate();
 
     console.log('✅ System initialized');
     console.log(`📊 Loaded ${this.faces.length} faces, ${this.kpis.size} KPIs`);
+    console.log(`🔷 Loaded ${this.edges.length} edges, ${this.vertices.length} vertices`);
     console.log(`🎯 Global Coherence: ${(this.getGlobalCoherence() * 100).toFixed(1)}%`);
   }
 
@@ -556,6 +708,70 @@ class DodecahedronEngine {
   }
 
   /**
+   * Create Edge objects from CSV data
+   */
+  createEdges(edgeData) {
+    if (!edgeData) return;
+    console.log(`🔗 Creating Edges from ${edgeData.length} rows...`);
+
+    edgeData.forEach(row => {
+      // CSV columns: Edge_ID, Face_A_ID, Face_B_ID, Edge Archytype, Description
+      // Note: Face IDs in CSV might be "Face 1", "Face 2" etc. or just numbers.
+      // We need to parse them.
+
+      const parseFaceId = (val) => {
+        if (typeof val === 'number') return val;
+        if (typeof val === 'string') return parseInt(val.replace('Face ', '')) || 0;
+        return 0;
+      };
+
+      const edge = new Edge({
+        id: row.Edge_ID || row.id,
+        faceAId: parseFaceId(row.Face_A_ID || row.faceA),
+        faceBId: parseFaceId(row.Face_B_ID || row.faceB),
+        archetype: row['Edge Archytype'] || row.archetype,
+        description: row.Description || row.description
+      });
+
+      if (edge.faceAId && edge.faceBId) {
+        this.edges.push(edge);
+      }
+    });
+  }
+
+  /**
+   * Create Vertex objects from CSV data
+   */
+  createVertices(vertexData) {
+    if (!vertexData) return;
+    console.log(`🌀 Creating Vertices from ${vertexData.length} rows...`);
+
+    vertexData.forEach(row => {
+      // CSV columns: Vertex_ID, Face_1_ID, Face_2_ID, Face_3_ID
+
+      const parseFaceId = (val) => {
+        if (typeof val === 'number') return val;
+        if (typeof val === 'string') return parseInt(val.replace('Face ', '')) || 0;
+        return 0;
+      };
+
+      const f1 = parseFaceId(row.Face_1_ID);
+      const f2 = parseFaceId(row.Face_2_ID);
+      const f3 = parseFaceId(row.Face_3_ID);
+
+      const vertex = new Vertex({
+        id: row.Vertex_ID || row.id,
+        faceIds: [f1, f2, f3],
+        name: row.Name || `Vortex ${row.Vertex_ID}`
+      });
+
+      if (f1 && f2 && f3) {
+        this.vertices.push(vertex);
+      }
+    });
+  }
+
+  /**
    * Recalculate entire system state
    * NOW WITH AXIS-INFORMED FEEDBACK LOOP
    */
@@ -605,6 +821,19 @@ class DodecahedronEngine {
         this.spectralAnalysis = this.spectralAnalyzer.analyze(faceEnergies);
       }
     }
+
+    // 5. Update Edges
+    this.edges.forEach(edge => {
+      const faceA = this.faces.find(f => f.id === edge.faceAId);
+      const faceB = this.faces.find(f => f.id === edge.faceBId);
+      edge.calculateTension(faceA, faceB);
+    });
+
+    // 6. Update Vertices
+    this.vertices.forEach(vertex => {
+      const faces = vertex.faceIds.map(id => this.faces.find(f => f.id === id)).filter(f => f);
+      vertex.calculateVortexEnergy(faces);
+    });
   }
 
   /**
@@ -654,6 +883,26 @@ class DodecahedronEngine {
           element: kpi.element,
           healthStatus: kpi.healthStatus
         }))
+      })),
+      edges: this.edges.map(e => ({
+        id: e.id,
+        tension: e.tension,
+        status: e.status,
+        archetype: e.archetype,
+        faceAId: e.faceAId,
+        faceBId: e.faceBId,
+        breathRatio: e.breathRatio,
+        flowDirection: e.flowDirection,
+        element: e.element
+      })),
+      vertices: this.vertices.map(v => ({
+        id: v.id,
+        energy: v.vortexEnergy,
+        status: v.status,
+        faceIds: v.faceIds,
+        vortexDirection: v.vortexDirection,
+        coherence: v.coherence,
+        isLeveragePoint: v.isLeveragePoint
       })),
       timestamp: new Date().toISOString()
     };

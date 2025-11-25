@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Quannex Engine Tests</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #111;
+            color: #ddd;
+        }
+
+        h1 {
+            color: #00ffcc;
+        }
+
+        .test-result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .pass {
+            background: rgba(0, 255, 0, 0.2);
+            border: 1px solid #00ff00;
+        }
+
+        .fail {
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid #ff0000;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Quannex Engine Unit Tests</h1>
+    <div id="results"></div>
+
+    <!-- Load Engine Dependencies with Cache Busting -->
+    <script>
+        const ts = new Date().getTime();
+        document.write(`<script src="../js/breath-analyzer.js?v=${ts}"><\/script>`);
+        document.write(`<script src="../js/spectral-analyzer.js?v=${ts}"><\/script>`);
+        document.write(`<script type="module" src="../js/main.js?v=${ts}"><\/script>`);
+    </script>
+
+    <!-- Load Tests -->
+    <script type="module">
+        const ts = new Date().getTime();
+
+        // Helper to run a test module
+        async function runTestModule(path, name) {
+            try {
+                const module = await import(path + `?v=${ts}`);
+                if (module.default) {
+                    const results = await module.default();
+                    displayResults(name, results);
+                }
+            } catch (e) {
+                console.error(`Failed to load ${name}:`, e);
+                displayResults(name, [{ passed: false, message: `Failed to load module: ${e.message}` }]);
+            }
+        }
+
+        function displayResults(suiteName, results) {
+            const container = document.getElementById('results');
+            const suiteDiv = document.createElement('div');
+            suiteDiv.innerHTML = `<h2>${suiteName}</h2>`;
+
+            results.forEach(r => {
+                const div = document.createElement('div');
+                div.className = `test-result ${r.passed ? 'pass' : 'fail'}`;
+                div.textContent = `${r.passed ? '✅' : '❌'} ${r.message}`;
+                suiteDiv.appendChild(div);
+            });
+
+            container.appendChild(suiteDiv);
+        }
+
+        // Run all suites
+        // Note: engine.test.js might not be an ES module, so we might need to handle it differently
+        // But for now, let's assume we can import them or they run themselves.
+        // Actually, the previous runner loaded them as scripts. Let's stick to that for non-modules.
+    </script>
+
+    <!-- Load Legacy Tests (Non-module) -->
+    <script>
+        // These files likely attach themselves to window or run immediately
+        document.write(`<script src="engine.test.js?v=${ts}"><\/script>`);
+        document.write(`<script src="scenarios.test.js?v=${ts}"><\/script>`);
+        document.write(`<script src="geometry.test.js?v=${ts}"><\/script>`);
+    </script>
+
+    <!-- Load New Integration Test (Module) -->
+    <script type="module">
+        import runIntegrationTests from './integration.test.js';
+
+        async function run() {
+            const results = await runIntegrationTests();
+            const container = document.getElementById('results');
+            const suiteDiv = document.createElement('div');
+            suiteDiv.innerHTML = `<h2>Integration Tests</h2>`;
+
+            results.forEach(r => {
+                const div = document.createElement('div');
+                div.className = `test-result ${r.passed ? 'pass' : 'fail'}`;
+                div.textContent = `${r.passed ? '✅' : '❌'} ${r.message}`;
+                suiteDiv.appendChild(div);
+            });
+            container.appendChild(suiteDiv);
+        }
+
+        run();
+    </script>
+</body>
+
+</html>

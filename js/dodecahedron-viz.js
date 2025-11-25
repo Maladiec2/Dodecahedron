@@ -11,6 +11,228 @@
  *
  * Note: Requires THREE.js and OrbitControls to be loaded as global scripts
  */
+// ========================================
+// HELPER FUNCTIONS (Topology & Geometry)
+// ========================================
+
+// Helper to map analytical vertex ID to geometric index
+window.getGeometricVertexIndex = function (id) {
+    return id - 1;
+};
+
+// Helper to build vertex-to-faces map (Analytical)
+window.buildVertexToFacesMap = function () {
+    const definitions = [
+        { id: 1, faces: [1, 2, 6] }, { id: 2, faces: [1, 5, 6] },
+        { id: 3, faces: [1, 5, 8] }, { id: 4, faces: [1, 8, 9] },
+        { id: 5, faces: [1, 2, 9] }, { id: 6, faces: [2, 3, 6] },
+        { id: 7, faces: [2, 3, 10] }, { id: 8, faces: [2, 9, 10] },
+        { id: 9, faces: [3, 4, 6] }, { id: 10, faces: [3, 4, 11] },
+        { id: 11, faces: [3, 10, 11] }, { id: 12, faces: [4, 5, 6] },
+        { id: 13, faces: [4, 5, 7] }, { id: 14, faces: [4, 7, 11] },
+        { id: 15, faces: [5, 7, 8] }, { id: 16, faces: [5, 8, 10] },
+        { id: 17, faces: [7, 8, 12] }, { id: 18, faces: [8, 9, 12] },
+        { id: 19, faces: [9, 10, 12] }, { id: 20, faces: [10, 11, 12] }
+    ];
+    const map = new Map();
+    definitions.forEach(def => {
+        // Map geometric index (id-1) to Set of analytical face IDs
+        map.set(def.id - 1, new Set(def.faces));
+    });
+    return map;
+};
+
+// Helper to find shared vertices between two faces
+window.findSharedEdgeVertices = function (face1Id, face2Id) {
+    const vertexToFacesMap = window.buildVertexToFacesMap();
+    const vertices = window.getDodecahedronVertices();
+    const sharedVertices = [];
+
+    if (!vertexToFacesMap || !vertices) {
+        console.warn('❌ findSharedEdgeVertices: Missing map or vertices');
+        return null;
+    }
+
+    // Iterate through all vertices to find ones shared by both faces
+    vertexToFacesMap.forEach((faces, vertexIndex) => {
+        if (faces.has(face1Id) && faces.has(face2Id)) {
+            if (vertices[vertexIndex]) {
+                sharedVertices.push(vertices[vertexIndex]);
+            }
+        }
+    });
+
+    return sharedVertices;
+};
+
+// Get actual vertex positions and build face topology from Three.js dodecahedron
+window.getDodecahedronVertices = function () {
+    // Check for cached vertices
+    if (window.cachedGeometricVertices) {
+        return window.cachedGeometricVertices;
+    }
+
+    // Try to get the actual geometry from the rendered dodecahedron
+    const dodecahedron = window.mainDodecahedron;
+
+    if (dodecahedron && dodecahedron.geometry) {
+        const positions = dodecahedron.geometry.attributes.position;
+        const vertices = [];
+        const uniqueVertices = new Map();
+
+        // Extract unique vertices (Three.js may duplicate vertices for each face)
+        for (let i = 0; i < positions.count; i++) {
+            const x = positions.getX(i);
+            const y = positions.getY(i);
+            const z = positions.getZ(i);
+
+            // Round to avoid floating point precision issues
+            const key = `${x.toFixed(6)},${y.toFixed(6)},${z.toFixed(6)}`;
+
+            if (!uniqueVertices.has(key)) {
+                uniqueVertices.set(key, new THREE.Vector3(x, y, z));
+            }
+        }
+
+        // Convert map to array
+        uniqueVertices.forEach(vertex => vertices.push(vertex));
+
+        console.log(`✅ Extracted ${vertices.length} unique vertices from Three.js geometry`);
+
+        // Cache for future calls
+        window.cachedGeometricVertices = vertices;
+        return vertices;
+    }
+
+    // Fallback to theoretical positions if geometry not available
+    console.warn('⚠️ Using fallback theoretical vertex positions');
+    const phi = (1 + Math.sqrt(5)) / 2;
+    const radius = 2;
+
+    const fallbackVertices = [
+        new THREE.Vector3(1, 1, 1).normalize().multiplyScalar(radius),
+        new THREE.Vector3(1, 1, -1).normalize().multiplyScalar(radius),
+        new THREE.Vector3(1, -1, 1).normalize().multiplyScalar(radius),
+        new THREE.Vector3(1, -1, -1).normalize().multiplyScalar(radius),
+        new THREE.Vector3(-1, 1, 1).normalize().multiplyScalar(radius),
+        new THREE.Vector3(-1, 1, -1).normalize().multiplyScalar(radius),
+        new THREE.Vector3(-1, -1, 1).normalize().multiplyScalar(radius),
+        new THREE.Vector3(-1, -1, -1).normalize().multiplyScalar(radius),
+        new THREE.Vector3(0, phi, 1 / phi).normalize().multiplyScalar(radius),
+        new THREE.Vector3(0, phi, -1 / phi).normalize().multiplyScalar(radius),
+        new THREE.Vector3(0, -phi, 1 / phi).normalize().multiplyScalar(radius),
+        new THREE.Vector3(0, -phi, -1 / phi).normalize().multiplyScalar(radius),
+        new THREE.Vector3(1 / phi, 0, phi).normalize().multiplyScalar(radius),
+        new THREE.Vector3(1 / phi, 0, -phi).normalize().multiplyScalar(radius),
+        new THREE.Vector3(-1 / phi, 0, phi).normalize().multiplyScalar(radius),
+        new THREE.Vector3(-1 / phi, 0, -phi).normalize().multiplyScalar(radius),
+        new THREE.Vector3(phi, 1 / phi, 0).normalize().multiplyScalar(radius),
+        new THREE.Vector3(phi, -1 / phi, 0).normalize().multiplyScalar(radius),
+        new THREE.Vector3(-phi, 1 / phi, 0).normalize().multiplyScalar(radius),
+        new THREE.Vector3(-phi, -1 / phi, 0).normalize().multiplyScalar(radius)
+    ];
+
+    window.cachedGeometricVertices = fallbackVertices;
+    return fallbackVertices;
+};
+
+/**
+ * Build a topology-aware mapping from Three.js face indices to analytical Face IDs
+ * Returns an array where index = Three.js face index (0-11), value = analytical Face ID (1-12)
+ */
+window.buildFaceIndexMapping = function () {
+    console.log('\n🔄 BUILDING TOPOLOGY-AWARE FACE MAPPING:');
+    console.log('='.repeat(60));
+
+    // Get the actual dodecahedron geometry
+    // Note: window.mainDodecahedron needs to be set by initDodecahedron
+    const dodecahedron = window.mainDodecahedron;
+    if (!dodecahedron || !dodecahedron.geometry) {
+        console.error('❌ Cannot build face mapping - dodecahedron not available');
+        return null;
+    }
+
+    const geometry = dodecahedron.geometry;
+    const position = geometry.attributes.position;
+
+    if (!window.getDodecahedronVertices) {
+        console.error('❌ getDodecahedronVertices not available');
+        return null;
+    }
+
+    const geometricVertices = window.getDodecahedronVertices();
+    const vertexToFacesMap = window.buildVertexToFacesMap();
+
+    if (!vertexToFacesMap) {
+        console.error('❌ Cannot build face mapping - vertex topology not available');
+        return null;
+    }
+
+    const mapping = [];
+
+    // For each of the 12 faces in Three.js geometry
+    for (let faceIdx = 0; faceIdx < 12; faceIdx++) {
+        // Each face is 3 triangles = 9 vertices
+        const start = faceIdx * 9;
+        const faceVertexIndices = new Set();
+
+        // Extract unique geometric vertex indices for this face
+        if (geometry.index) {
+            // Indexed geometry
+            for (let i = 0; i < 9; i++) {
+                const idx = geometry.index.getX(start + i);
+                faceVertexIndices.add(idx);
+            }
+        } else {
+            // Non-indexed - match by position
+            for (let i = 0; i < 9; i++) {
+                const vx = position.getX(start + i);
+                const vy = position.getY(start + i);
+                const vz = position.getZ(start + i);
+
+                // Find matching geometric vertex
+                for (let geoIdx = 0; geoIdx < geometricVertices.length; geoIdx++) {
+                    const geoV = geometricVertices[geoIdx];
+                    const dist = Math.sqrt(
+                        Math.pow(vx - geoV.x, 2) +
+                        Math.pow(vy - geoV.y, 2) +
+                        Math.pow(vz - geoV.z, 2)
+                    );
+                    if (dist < 0.01) {
+                        faceVertexIndices.add(geoIdx);
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Now we have the geometric vertex indices for this face
+        // Find which analytical face ID appears in ALL vertices' connected faces
+        const vertexFaceSets = Array.from(faceVertexIndices).map(geoIdx =>
+            vertexToFacesMap.get(geoIdx) || new Set()
+        );
+
+        // Find the common face ID across all vertices
+        let commonFaceId = null;
+        if (vertexFaceSets.length > 0) {
+            const firstSet = vertexFaceSets[0];
+            for (const faceId of firstSet) {
+                if (vertexFaceSets.every(set => set.has(faceId))) {
+                    commonFaceId = faceId;
+                    break;
+                }
+            }
+        }
+
+        mapping[faceIdx] = commonFaceId;
+        console.log(`Geometry Face ${faceIdx + 1} (${faceVertexIndices.size} vertices) → Analytical Face ${commonFaceId}`);
+    }
+
+    console.log('='.repeat(60));
+    console.log(`✅ Built face mapping for all 12 faces\n`);
+
+    return mapping;
+};
 
 // Wait for DOM and THREE.js to be ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -24,10 +246,6 @@ function initDodecahedron() {
         document.getElementById('loading').innerHTML = '<div class="loading-text">⚠️ THREE.js failed to load</div>';
         return;
     }
-
-    // ========================================
-    // INITIALIZATION
-    // ========================================
 
     // Check if running in iframe
     const isInIframe = window.self !== window.top;
@@ -48,6 +266,11 @@ function initDodecahedron() {
 
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(4, 4, 4);
+
+    // Expose to window for external access (VisualizationManager)
+    window.scene = scene;
+    window.camera = camera;
+    window.renderer = renderer;
 
     // ========================================
     // MOUSE TRACKING - Simplified approach
@@ -308,9 +531,9 @@ function initDodecahedron() {
         }
 
         // Build topology-aware face mapping and update face IDs
-        if (typeof buildFaceIndexMapping === 'function') {
+        if (typeof window.buildFaceIndexMapping === 'function') {
             console.log('[3D View] 🔧 Building topology-aware face mapping...');
-            const faceMapping = buildFaceIndexMapping();
+            const faceMapping = window.buildFaceIndexMapping();
 
             if (faceMapping) {
                 // Update face IDs based on topology mapping
@@ -1348,6 +1571,7 @@ function initDodecahedron() {
     // Export scene and camera globally for unified HTML mode system
     window.scene = scene;
     window.camera = camera;
+    window.renderer = renderer;
 
     // Export refreshVisualization globally (used by parent window communication)
     window.refreshVisualization = () => {
@@ -1356,4 +1580,7 @@ function initDodecahedron() {
         console.log('✅ Visualization refreshed');
     };
 
+    console.log('✅ 3D Dodecahedron initialized successfully!');
 } // End of initDodecahedron() function
+
+

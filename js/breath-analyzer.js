@@ -78,7 +78,7 @@ class BreathAnalyzer {
     // Breath ratio thresholds
     this.minBalanced = 0.8;
     this.maxBalanced = 1.2;
-    
+
     // Golden Ratio constants
     this.PHI = 1.618033988749895;
     this.PHI_INVERSE = 0.618033988749895;
@@ -109,28 +109,34 @@ class BreathAnalyzer {
    * @returns {Object} Complete breath analysis
    */
   analyze(faces) {
-    // Create face energy lookup
-    const faceEnergies = {};
-    faces.forEach(face => {
-      faceEnergies[face.id] = face.faceEnergy || 0;
-    });
+    try {
+      // Create face energy lookup
+      const faceEnergies = {};
+      faces.forEach(face => {
+        faceEnergies[face.id] = face.faceEnergy || 0;
+      });
 
-    // Calculate breath ratios for all axes
-    const breathRatios = this.axes.map(axis => {
-      return this.calculateAxisBreath(axis, faceEnergies);
-    });
+      // Calculate breath ratios for all axes
+      const breathRatios = this.axes.map(axis => {
+        return this.calculateAxisBreath(axis, faceEnergies);
+      });
 
-    // Calculate overall breath health
-    const overallBreath = this.calculateOverallBreath(breathRatios);
+      // Calculate overall breath health
+      const overallBreath = this.calculateOverallBreath(breathRatios);
 
-    // Generate insights
-    const insights = this.generateInsights(breathRatios, overallBreath);
+      // Generate insights
+      const insights = this.generateInsights(breathRatios, overallBreath);
 
-    return {
-      axes: breathRatios,
-      overall: overallBreath,
-      insights: insights
-    };
+      return {
+        axes: breathRatios,
+        overall: overallBreath,
+        insights: insights
+      };
+    } catch (error) {
+      console.error('❌ Error in BreathAnalyzer.analyze:', error);
+      console.error(error.stack);
+      throw error;
+    }
   }
 
   /**
